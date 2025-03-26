@@ -1,0 +1,55 @@
+/* Estilo para o link "Ver Reserva" */
+button.link-ver-reserva {
+    padding: 0;
+    font-size: 14px;
+    color: rgb(70, 114, 235);  /* Cor azul */
+    background-color: transparent;
+    border: none;
+    text-decoration: underline;  /* Sublinhado */
+    cursor: pointer;
+  }
+  
+  button.link-ver-reserva:hover {
+    color: #fa471a;  /* Cor do hover */
+    text-decoration: none;  /* Remover sublinhado no hover */
+  }
+  
+  /* Estilo para o botão "Cancelar Reserva" */
+  button.cancelar-reserva {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #fa471a;  /* Fundo vermelho */
+    color: white;  /* Texto branco */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button.cancelar-reserva:hover {
+    background-color: #e03e15;  /* Cor do hover (vermelho mais escuro) */
+  }
+  
+  /* Alinha os botões na mesma linha */
+  td div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  /* Tabela */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  thead th {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  tbody td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
