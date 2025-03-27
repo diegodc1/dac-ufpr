@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-color: #e0e0e0;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-section {
+    background-color: white;
+    padding: 30px;
+    border-radius: 0 0 8px 8px;
+}
+
+.results-section {
+    background-color: #e0e0e0;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+input {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #4b0082;
+}
+
+.voo-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: white;
+    padding: 16px;
+    margin: 10px auto;
+    width: 650px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.voo-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 618px;
+    height: 100px;
+}
+
+.voo-detalhes {
+    background-color: #FFF1E4;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 505px;
+    height: 100px;
+    gap: 8px;
+}
+
+.voo-detalhes .origem, .voo-detalhes .destino, .voo-detalhes .tempo-voo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.voo-preco {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.comprar-btn {
+    padding: 10px 20px;
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.comprar-btn:hover {
+    background-color: #4b0082;
+}
