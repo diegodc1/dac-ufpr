@@ -1,0 +1,45 @@
+
+<div class="ver-reserva-container">
+    <h2>Detalhes da Reserva - Código: {{ reserva.codigo }}</h2>
+  
+    <!-- Cabeçalho horizontal -->
+    <div class="reserva-header">
+      <h3>Informações da Reserva</h3>
+    </div>
+  
+    <table class="reserva-table">
+      <thead>
+        <tr>
+          <th>Campo</th>
+          <th>Detalhes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Data/Hora</strong></td>
+          <td>{{ reserva.dataHora }}</td>
+        </tr>
+        <tr>
+          <td><strong>Aeroporto Origem</strong></td>
+          <td>{{ reserva.aeroportoOrigem }}</td>
+        </tr>
+        <tr>
+          <td><strong>Aeroporto Destino</strong></td>
+          <td>{{ reserva.aeroportoDestino }}</td>
+        </tr>
+        <tr>
+          <td><strong>Valor Gasto</strong></td>
+          <td>{{ reserva.valorGasto | currency:'BRL' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Milhas Gastas</strong></td>
+          <td>{{ reserva.milhasGastadas }}</td>
+        </tr>
+        <tr>
+          <td><strong>Estado</strong></td>
+          <td>{{ reserva.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
