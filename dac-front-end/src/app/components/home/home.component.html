@@ -1,1 +1,41 @@
-<p>home works!</p>
+
+<div class="client-dashboard">
+    <div class="header">
+      <app-header></app-header>
+      <h2>Bem-vindo, Cliente X</h2>
+      <p><strong>Saldo em milhas:</strong> {{ saldoMilhas }} milhas</p>
+    </div>
+  
+    <!-- Link para filtrar reservas com estado "CRIADA" -->
+    <button (click)="mostrarReservasCriadas()" class="link-ver-reserva">Todas as Reservas Reservadas</button>
+  
+    <h3>Reservas</h3>
+    <table>
+      <thead class="thead-style">
+        <tr>
+          <th>Data/Hora</th>
+          <th>Aeroporto Origem</th>
+          <th>Aeroporto Destino</th>
+          <th>Estado</th>
+          <th *ngIf="mostrarAcoes">Ações</th> <!-- Condicional para mostrar a coluna Ações -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Gerando a lista de reservas -->
+        <tr *ngFor="let reserva of reservasFiltradas">
+          <td>{{ reserva.dataHora }}</td>
+          <td>{{ reserva.aeroportoOrigem }}</td>
+          <td>{{ reserva.aeroportoDestino }}</td>
+          <td>{{ reserva.estado }}</td>
+          <td *ngIf="mostrarAcoes">
+            <!-- Botões "Ver Reserva" e "Cancelar Reserva" na mesma linha -->
+            <div *ngIf="reserva.estado !== 'CANCELADA'">
+              <button *ngIf="reserva.estado === 'CRIADA' || reserva.estado === 'CHECK-IN'" [routerLink]="['/ver-reserva', reserva.codigo]" class="link-ver-reserva">Ver Reserva ||</button>
+              <button *ngIf="reserva.estado === 'CRIADA' || reserva.estado === 'CHECK-IN'" (click)="cancelarReserva(reserva)" class="cancelar-reserva">Cancelar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
