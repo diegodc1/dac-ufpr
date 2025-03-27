@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from "../header/header.component"; 
 
 interface Voo {
   origem: string;
@@ -12,7 +13,7 @@ interface Voo {
 @Component({
   selector: 'app-make-reservation',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule, HeaderComponent], 
   templateUrl: './make-reservation.component.html',
   styleUrls: ['./make-reservation.component.css']
 })
