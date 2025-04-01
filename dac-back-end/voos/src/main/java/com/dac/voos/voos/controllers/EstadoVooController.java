@@ -1,5 +1,6 @@
 package com.dac.voos.voos.controllers;
 
+import com.dac.voos.voos.dto.EstadoVooDTO;
 import com.dac.voos.voos.entitys.EstadoVoo;
 import com.dac.voos.voos.services.EstadoVooService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,11 @@ public class EstadoVooController {
     private EstadoVooService estadoVooService;
 
     @PostMapping("/newEstadoVoo")
-    public ResponseEntity<String> newEstadoVoo(@RequestBody Map<String, String> request){
-        String sigla = request.get("sigla");
-        String descricao = request.get("descricao");
-        EstadoVoo newEstadoVoo = estadoVooService.saveEstadoVoo(sigla, descricao);
-
+    public ResponseEntity<String> newEstadoVoo(@RequestBody EstadoVooDTO estadoVooDTO){
+        estadoVooService.saveEstadoVoo(
+                estadoVooDTO.sigla(),
+                estadoVooDTO.descricao()
+        );
         return ResponseEntity.ok("criado");
     }
 
