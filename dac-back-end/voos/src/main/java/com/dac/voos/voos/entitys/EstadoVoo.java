@@ -1,6 +1,6 @@
 package com.dac.voos.voos.entitys;
 import jakarta.persistence.*;
-import lombok.*;
+        import lombok.*;
 
 @Data
 @Entity
