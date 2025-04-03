@@ -1,33 +1,103 @@
-package com.dac.backend.funcionarioservice.controller;
+package com.empresa.aerea.funcionario;
 
-import com.dac.backend.funcionarioservice.model.Funcionario;
-import com.dac.backend.funcionarioservice.service.FuncionarioService;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
+
+@SpringBootApplication
+public class FuncionarioServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(FuncionarioServiceApplication.class, args);
+    }
+}
 
 @RestController
 @RequestMapping("/funcionarios")
-public class FuncionarioController {
+class FuncionarioController {
 
-    private final FuncionarioService funcionarioService;
-
-    public FuncionarioController(FuncionarioService funcionarioService) {
-        this.funcionarioService = funcionarioService;
-    }
+    @Autowired
+    private FuncionarioService funcionarioService;
 
     @GetMapping
-    public List<Funcionario> listar() {
-        return funcionarioService.listarTodos();
+    public List<Funcionario> getAllFuncionarios() {
+        return funcionarioService.getAllFuncionarios();
+    }
+
+    @GetMapping("/{id}")
+    public Funcionario getFuncionarioById(@PathVariable Long id) {
+        return funcionarioService.getFuncionarioById(id);
     }
 
     @PostMapping
-    public Funcionario salvar(@RequestBody Funcionario funcionario) {
-        return funcionarioService.salvar(funcionario);
+    public Funcionario createFuncionario(@RequestBody Funcionario funcionario) {
+        return funcionarioService.createFuncionario(funcionario);
     }
 
-    @DeleteMapping("/{cpf}")
-    public void deletar(@PathVariable String cpf) {
-        funcionarioService.deletar(cpf);
+    @PutMapping("/{id}")
+    public Funcionario updateFuncionario(@PathVariable Long id, @RequestBody Funcionario funcionario) {
+        return funcionarioService.updateFuncionario(id, funcionario);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteFuncionario(@PathVariable Long id) {
+        funcionarioService.deleteFuncionario(id);
     }
 }
+
+@Service
+class FuncionarioService {
+
+    @Autowired
+    private FuncionarioRepository funcionarioRepository;
+
+    public List<Funcionario> getAllFuncionarios() {
+        return funcionarioRepository.findAll();
+    }
+
+    public Funcionario getFuncionarioById(Long id) {
+        return funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Funcionario not found"));
+    }
+
+    public Funcionario createFuncionario(Funcionario funcionario) {
+        return funcionarioRepository.save(funcionario);
+    }
+
+    public Funcionario updateFuncionario(Long id, Funcionario funcionario) {
+        Funcionario existingFuncionario = getFuncionarioById(id);
+        existingFuncionario.setNome(funcionario.getNome());
+        existingFuncionario.setCargo(funcionario.getCargo());
+        existingFuncionario.setSalario(funcionario.getSalario());
+        return funcionarioRepository.save(existingFuncionario);
+    }
+
+    public void deleteFuncionario(Long id) {
+        funcionarioRepository.deleteById(id);
+    }
+}
+
+@Entity
+class Funcionario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nome;
+    private String cargo;
+    private Double salario;
+
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getCargo() { return cargo; }
+    public void setCargo(String cargo) { this.cargo = cargo; }
+
+    public Double getSalario() { return salario; }
+    public void setSalario(Double salario) { this.salario = salario; }
+}
+
+interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {}
