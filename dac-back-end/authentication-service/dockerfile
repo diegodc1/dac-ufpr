@@ -1,0 +1,7 @@
+FROM openjdk:21-jdk
+
+WORKDIR /app 
+
+COPY target/authentication-service-0.0.1-SNAPSHOT.jar /app/java-app.jar
+
+ENTRYPOINT ["java", "-jar", "java-app.jar"]
