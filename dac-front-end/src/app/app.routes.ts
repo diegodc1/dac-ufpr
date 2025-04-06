@@ -5,6 +5,7 @@ import { MakeReservationComponent } from './components/make-reservation/make-res
 import { VerReservaComponent } from './components/ver-reserva/ver-reserva.component';
 import { HomeComponent } from './components/home/home.component';
 import { HeaderComponent } from './components/header/header.component';
+import {ConfirmReservationComponent} from "./components/confirm-reservation/confirm-reservation.component";
 export const routes: Routes = [
   {
     path: '',
@@ -21,7 +22,11 @@ export const routes: Routes = [
   {
     path: 'make-reservation',
     component: MakeReservationComponent
-  }, 
+  },
+  {
+    path: 'confirm-reservation/:idVoo',
+    component: ConfirmReservationComponent
+  },
   { path: 'header',
     component: HeaderComponent,
 
