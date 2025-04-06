@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from "../header/header.component"; 
+import { HeaderComponent } from "../header/header.component";
+import { Router } from '@angular/router';
 
 interface Voo {
+  id: number;
   origem: string;
   destino: string;
   dataHora: string;
@@ -13,7 +15,7 @@ interface Voo {
 @Component({
   selector: 'app-make-reservation',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent], 
+  imports: [CommonModule, FormsModule, HeaderComponent],
   templateUrl: './make-reservation.component.html',
   styleUrls: ['./make-reservation.component.css']
 })
@@ -22,10 +24,12 @@ export class MakeReservationComponent {
   destino: string = '';
   filteredFlights: Voo[] = [];
 
+  constructor(private router: Router) {}
+
   voos: Voo[] = [
-    { origem: 'São Paulo', destino: 'Nova York', dataHora: '29 Jan 2026, 14:50', preco: 3500 },
-    { origem: 'Rio de Janeiro', destino: 'Paris', dataHora: '29 Jan 2026, 15:00', preco: 4000 },
-    { origem: 'Mombasa', destino: 'Nairobi', dataHora: '29 Jan 2026, 14:30', preco: 12000 }
+    { id: 1, origem: 'São Paulo', destino: 'Nova York', dataHora: '29 Jan 2026, 14:50', preco: 3500 },
+    { id: 2, origem: 'Rio de Janeiro', destino: 'Paris', dataHora: '29 Jan 2026, 15:00', preco: 4000 },
+    { id: 3, origem: 'Mombasa', destino: 'Nairobi', dataHora: '29 Jan 2026, 14:30', preco: 12000 }
   ];
 
   buscarVoos() {
@@ -37,5 +41,6 @@ export class MakeReservationComponent {
 
   selecionarVoo(voo: Voo) {
     alert(`Voo selecionado: ${voo.origem} para ${voo.destino}`);
+    this.router.navigate(['/confirm-reservation', voo.id]);
   }
 }
