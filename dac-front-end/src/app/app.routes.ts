@@ -6,6 +6,7 @@ import { VerReservaComponent } from './components/ver-reserva/ver-reserva.compon
 import { HomeComponent } from './components/home/home.component';
 import { HeaderComponent } from './components/header/header.component';
 import {ConfirmReservationComponent} from "./components/confirm-reservation/confirm-reservation.component";
+import { BuyMilesComponent } from './components/buy-miles/buy-miles.component';
 export const routes: Routes = [
   {
     path: '',
@@ -39,5 +40,9 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+  },
+  {
+    path:'buy-miles',
+    component: BuyMilesComponent
   }
 ];
