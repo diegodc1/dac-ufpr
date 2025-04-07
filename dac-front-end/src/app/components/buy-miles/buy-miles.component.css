@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.main-container{
+    display: flex;
+    flex-direction: column; 
+    min-height: 100vh;
+}
+
+.box{
+    display: flex;            
+    flex-direction: column;   
+    align-items: center;      
+    padding: 20px;           
+    border-radius: 10px;  
+}
+.title{
+    margin-left: 391px;
+    margin-top:50px ;
+}
+.content{
+    display: flex;
+    flex-direction: row;
+    gap: 115px;
+}
+.linha {
+    width: 2px;
+    height: 120px;
+    background-color: gray;
+  }
+
+  .igual {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .lines {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 200px; 
+    justify-content: center;
+    gap: 10px;
+  }
+  .h3{
+    color: #454545;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .txtTitle{
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+  }
+  .input{
+    height: 65px;
+    width: 280px;
+    padding: 0 15px; 
+    border-radius: 10px;
+    border: 1px solid #ccc; 
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    color:#454545;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .input::placeholder {
+    color: #454545; 
+    opacity: 1;
+}
+.p{
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 200;
+}
+
+.price{
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    color: #5D36AF;
+}
+.btn{
+   background-color: #5D36AF;
+   padding-left: 20px;
+   padding-right: 20px;
+   padding-top: 5px;
+   padding-bottom: 5px;
+   width: 195px;
+   font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    color: white;
+    border: 1px solid #5D36AF; 
+    border-radius: 5px;
+
+}
+.extract{
+    margin-top: 45px;
+}
+.extrato-container {
+    margin: 50px auto;
+    max-width: 1000px;
+    padding: 20px;
+  }
+  
+ 
+  .extrato-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .extrato-table thead {
+    text-align: left;
+    border-bottom: 2px solid #ccc;
+
+  }
+  
+  .extrato-table th, .extrato-table td {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 100;
+    color: #37352F
+  }
+  
+  .extrato-table tbody tr {
+    border-bottom: 1px solid #eee;
+
+  }
+  
+  .extrato-table tbody tr:last-child {
+    border-bottom: none;
+    
+  }
+  .extrato-table td, 
+  .extrato-table th {
+  text-align: center;
+  vertical-align: middle; 
+}
