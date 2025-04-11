@@ -1,0 +1,43 @@
+<div class="container">
+  <app-header-employee></app-header-employee>
+  <div class="content">
+    <h2>Próximos Voos</h2>
+    <table class="table-voos">
+      <thead class="thead-style">
+        <tr>
+          <th>Cód. Voo</th>
+          <th>Estado Atual</th>
+          <th>Data</th>
+          <th>Horário</th>
+          <th>Aeroporto Origem</th>
+          <th>Aeroporto Destino</th>
+          <th>Embarcar Passageiro</th>
+          <th>Realizar Voo</th>
+          <th>Cancelar Voo</th>
+        </tr>
+      </thead>
+      <tbody class="tbody-style">
+        <tr *ngFor="let voo of voos" >
+          <td>{{voo.id}}</td>
+          <td>{{voo.estado}}</td>
+          <td>{{ voo.dataHora | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ voo.dataHora | date: 'HH:mm' }}</td>
+          <td>{{voo.origem}}</td>
+          <td>{{voo.destino}}</td>
+          <td>
+            <button *ngIf="voo.estado == 'CONFIRMADO'" class="btn-embarcar-passageiro">
+              Embarcar Passageiro
+            </button>
+          </td>
+          <td *ngIf="voo.estado == 'CONFIRMADO'">
+            <span class="material-symbols-outlined btn-realizar-voo">check_circle</span>
+          </td>
+          <td *ngIf="voo.estado == 'CONFIRMADO'">
+            <span class="material-symbols-outlined btn-cancelar-voo">cancel</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
