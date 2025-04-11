@@ -67,10 +67,10 @@
 
       <div class="card-container">
         <h4 class="card-title">Quantidade de Passagens</h4>
-        <select class="select-tickets">
-            <option>1 Passagem</option>
-            <option>2 Passagens</option>
-            <option>3 Passagens</option>
+        <select class="select-tickets" [(ngModel)]="quantidadePassagens" (change)="atualizarValorFinal()">
+            <option [value]="1">1 Passagem</option>
+            <option [value]="2">2 Passagens</option>
+            <option [value]="3">3 Passagens</option>
         </select>
       </div>
 
@@ -83,7 +83,7 @@
           <div class="footer-card-payment">
               <span>Valor restante a ser pago em dinheiro:</span>
             <div class="footer-div-money-value">
-              <span class="footer-money-value">R$ 1.200,00</span>
+              <span class="footer-money-value">{{ precoPorPassagem | currency:'BRL' }}</span>
               <button class="btn-payment">Realizar Pagamento</button>
             </div>
           </div>
@@ -97,8 +97,10 @@
         <div class="resumo-box">
           <span class="resumo-title">Passagens</span>
           <div class="resumo-desc-box">
-            <span class="resumo-des">Adulto(s) (1 x R$1.200,00)</span>
-            <span class="resumo-value">R$1.200,00</span>
+            <span class="resumo-des">
+                Adulto(s) ({{ quantidadePassagens }} x {{ precoPorPassagem | currency:'BRL' }})
+            </span>
+            <span class="resumo-value">{{ valorFinal | currency:'BRL' }}</span>
           </div>
         </div>
         <div class="line-separate"></div>
@@ -106,17 +108,17 @@
           <span class="resumo-title">Milhas</span>
           <div class="resumo-desc-box">
             <span class="resumo-des">Milhas necessárias: </span>
-            <span class="resumo-value">2.500 milhas</span>
+            <span class="resumo-value">{{ milhasNecessarias }} milhas</span>
           </div>
         </div>
         <div class="line-separate"></div>
         <div class="footer-resumo">
           <span class="title-amount">Valor Total: </span>
-          <span class="value-amount">R$1.200,00 </span>
+          <span class="value-amount">{{ valorFinal | currency:'BRL' }}</span>
         </div>
       </div>
 
-      <div class="btn-milhas"><span>Suas milhas: 5.000</span></div>
+      <div class="btn-milhas"><span>Suas milhas: {{ saldoMilhasUsuario }}</span></div>
     </div>
   </div>
 </div>
