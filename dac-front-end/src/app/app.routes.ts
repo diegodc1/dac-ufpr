@@ -8,6 +8,8 @@ import { HeaderComponent } from './components/header/header.component';
 import {ConfirmReservationComponent} from "./components/confirm-reservation/confirm-reservation.component";
 import { BuyMilesComponent } from './components/buy-miles/buy-miles.component';
 import { CheckInComponent } from './components/check-in/check-in.component';
+import {HomeEmployeeComponent} from "./components/employee/home-employee/home-employee.component";
+
 export const routes: Routes = [
   {
     path: '',
@@ -46,8 +48,15 @@ export const routes: Routes = [
     path:'buy-miles',
     component: BuyMilesComponent
   },
+
   {
     path:'check-in',
     component:CheckInComponent
+  }
+
+  //FUNCIONÁRIO
+  {
+    path:'home-employee',
+    component: HomeEmployeeComponent
   }
 ];

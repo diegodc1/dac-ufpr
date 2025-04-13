@@ -86,6 +86,12 @@ button:hover {
     width: 618px;
     height: 100px;
 }
+.voo-card .line {
+    border-bottom: 1px solid #a7aeb3;
+    width: 100%;
+    height: 0.1px;
+    background-color: #a7aeb3;
+}
 
 .voo-detalhes {
     background-color: #FFF1E4;
@@ -105,10 +111,52 @@ button:hover {
     justify-content: center;
 }
 
+.voo-detalhes .origem p {
+    margin: 2px 0; 
+}
+
+.voo-detalhes .origem p:first-child {
+    margin: 2px 0;
+    font-size: 12px;
+    font-weight: 600; 
+    font-size: 18px;
+}
+
+.tempo-voo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; 
+}
+
+.tempo-voo .line {
+    flex: 1; 
+    height: 1px; 
+    background-color: #a7aeb3;
+}
+
+.tempo-voo .icon-flight {
+    width: 24px;
+    height: 24px;
+    color: #a7aeb3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .voo-preco {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    margin-left: 15px;
+}
+
+.voo-preco p {
+    font-weight: 700;
+    width: 92;
+    height: 32;
+    size: 24px;
+    line-height: 100%;
 }
 
 .comprar-btn {
