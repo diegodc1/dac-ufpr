@@ -1,11 +1,11 @@
 .header {
-    display: grid;
-    grid-template-columns: 1fr 5fr 1.5fr;
-    align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 5fr 1.5fr;
+  align-items: center;
   justify-content: center;
-    padding: 15px 30px;
-    background-color: white;
-    color: white;
+  padding: 15px 30px;
+  background-color: white;
+  color: white;
   /*-webkit-box-shadow: 1px 15px 3px -12px rgba(217,217,217,1);*/
   /*-moz-box-shadow: 1px 15px 3px -12px rgba(217,217,217,1);*/
   /*box-shadow: 1px 15px 3px -12px rgba(217,217,217,1);*/
@@ -52,13 +52,4 @@
 
 .user-infos-box {
   color: #482A89;
-}
-
-.milhas-btn {
-  background-color:#482A89;
-  padding: 0.7rem 1.4rem;
-  border-radius: 5px;
-  font-size:0.9rem;
-  display: flex;
-  gap: 0.6rem;
 }
