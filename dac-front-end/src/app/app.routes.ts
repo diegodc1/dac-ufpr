@@ -7,6 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { HeaderComponent } from './components/header/header.component';
 import {ConfirmReservationComponent} from "./components/confirm-reservation/confirm-reservation.component";
 import { BuyMilesComponent } from './components/buy-miles/buy-miles.component';
+import { CheckInComponent } from './components/check-in/check-in.component';
 export const routes: Routes = [
   {
     path: '',
@@ -44,5 +45,9 @@ export const routes: Routes = [
   {
     path:'buy-miles',
     component: BuyMilesComponent
+  },
+  {
+    path:'check-in',
+    component:CheckInComponent
   }
 ];
