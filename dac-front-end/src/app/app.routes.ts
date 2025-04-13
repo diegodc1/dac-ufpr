@@ -52,7 +52,7 @@ export const routes: Routes = [
   {
     path:'check-in',
     component:CheckInComponent
-  }
+  },
 
   //FUNCIONÁRIO
   {
