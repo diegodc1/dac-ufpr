@@ -1,0 +1,34 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <h3>Digite o Código da Reserva do Passageiro:</h3>
+    <div class="search-bar">
+      <input type="text" placeholder="Código" [(ngModel)]="codigoReserva" />
+      <button (click)="buscarReserva()">Buscar</button>
+    </div>
+
+    <table class="table-voos" *ngIf="reservaEncontrada">
+      <thead>
+        <tr>
+          <th>Cód. Reserva</th>
+          <th>Nome Passageiro</th>
+          <th>Origem</th>
+          <th>Destino</th>
+          <th>Embarque</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{reserva.codigo}}</td>
+          <td>{{reserva.nome}}</td>
+          <td>{{reserva.origem}}</td>
+          <td>{{reserva.destino}}</td>
+          <td>
+            <button class="confirmar-embarque-btn" (click)="confirmarEmbarque()">Confirmar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="fechar-modal-btn" (click)="fecharModal()">Fechar</button>
+  </div>
+</div>
