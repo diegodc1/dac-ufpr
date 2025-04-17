@@ -1,3 +1,5 @@
+<app-header></app-header>
+
 <div class="main-container">
   
   
@@ -6,8 +8,18 @@
           <h1>Buscar Voos</h1>
 
           <form>
-            <input type="text" id="origem" [(ngModel)]="origem" placeholder="De" />
-            <input type="text" id="destino" [(ngModel)]="destino" placeholder="Para" />
+            <div class="input-container">
+              <span class="material-symbols-outlined">flight_takeoff</span>
+              <input type="text" id="destino" [(ngModel)]="destino" placeholder="De" />
+            </div>
+
+            <span class="material-symbols-outlined">sync_alt</span>
+
+            <div class="input-container">
+              <span class="material-symbols-outlined">flight_land</span>
+              <input type="text" id="destino" [(ngModel)]="destino" placeholder="Para" />
+            </div>
+            
             <button type="button" (click)="buscarVoos()">Buscar</button>
           </form>
       </div>
