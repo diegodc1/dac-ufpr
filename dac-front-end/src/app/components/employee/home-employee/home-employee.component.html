@@ -2,6 +2,14 @@
   <app-header-employee></app-header-employee>
   <div class="content">
     <h2>Próximos Voos</h2>
+
+    <app-boarding-confirmation-modal
+      *ngIf="isModalOpen"
+      [passageiro]="passageiroSelecionado"
+      (confirmBoarding)="handleConfirmBoarding()"
+      (closeModal)="closeModal()">
+    </app-boarding-confirmation-modal>
+    
     <table class="table-voos">
       <thead class="thead-style">
         <tr>
@@ -17,7 +25,7 @@
         </tr>
       </thead>
       <tbody class="tbody-style">
-        <tr *ngFor="let voo of voos" >
+        <tr *ngFor="let voo of voos">
           <td>{{voo.id}}</td>
           <td>{{voo.estado}}</td>
           <td>{{ voo.dataHora | date: 'dd/MM/yyyy' }}</td>
@@ -25,7 +33,10 @@
           <td>{{voo.origem}}</td>
           <td>{{voo.destino}}</td>
           <td>
-            <button *ngIf="voo.estado == 'CONFIRMADO'" class="btn-embarcar-passageiro">
+            <button
+              *ngIf="voo.estado == 'CONFIRMADO'"
+              class="btn-embarcar-passageiro"
+              (click)="openModal(voo)">
               Embarcar Passageiro
             </button>
           </td>
