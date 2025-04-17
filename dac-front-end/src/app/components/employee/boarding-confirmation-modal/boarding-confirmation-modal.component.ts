@@ -16,6 +16,7 @@ export class BoardingConfirmationModalComponent {
 
   codigoReserva: string = '';
   reservaEncontrada = false;
+  erroConfirmacao = false;
 
   reserva = {
     codigo: 'ADC432',
@@ -25,7 +26,13 @@ export class BoardingConfirmationModalComponent {
   };
 
   buscarReserva() {
-    this.reservaEncontrada = this.codigoReserva.trim().toUpperCase() === this.reserva.codigo;
+    if (this.codigoReserva.trim().toUpperCase() === this.reserva.codigo) {
+      this.reservaEncontrada = true; 
+      this.erroConfirmacao = false; 
+    } else {
+      this.reservaEncontrada = false; 
+      this.erroConfirmacao = true; 
+    }
   }
 
   confirmarEmbarque() {
