@@ -6,8 +6,12 @@
       <button (click)="buscarReserva()">Buscar</button>
     </div>
 
-    <table class="table-voos" *ngIf="reservaEncontrada">
-      <thead>
+    <div class="error-message" *ngIf="erroConfirmacao">
+      <p>Esta reserva não pertence a este voo</p>
+    </div>
+
+    <table class="table-voos" *ngIf="reservaEncontrada && !erroConfirmacao">
+      <thead class="thead-style">
         <tr>
           <th>Cód. Reserva</th>
           <th>Nome Passageiro</th>
@@ -16,14 +20,14 @@
           <th>Embarque</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="tbody-style">
         <tr>
           <td>{{reserva.codigo}}</td>
           <td>{{reserva.nome}}</td>
           <td>{{reserva.origem}}</td>
           <td>{{reserva.destino}}</td>
           <td>
-            <button class="confirmar-embarque-btn" (click)="confirmarEmbarque()">Confirmar</button>
+            <button class="confirmar-embarque-btn" (click)="confirmarEmbarque()">Confirmar Embarque</button>
           </td>
         </tr>
       </tbody>
