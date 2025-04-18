@@ -21,19 +21,43 @@
                     </div>
                 </div>
 
-                <a class="a">Email</a>
-                <input class="input" placeholder="Insira seu e-mail" style="margin-bottom: 15px;"/>
+                <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+                    <a class="a">Email</a>
+                    <input
+                      class="input"
+                      placeholder="Insira seu e-mail"
+                      name="email"
+                      [(ngModel)]="loginData.email"
+                      required
+                      email
+                      style="margin-bottom: 15px;"
+                    />
 
-                <a class="a">Senha</a>
-                <input class="input" placeholder="Insira senha " style="margin-bottom: 5px;"/>
+                    <a class="a">Senha</a>
+                    <input
+                      type="password"
+                      class="input"
+                      placeholder="Insira senha"
+                      name="senha"
+                      [(ngModel)]="loginData.senha"
+                      required
+                      style="margin-bottom: 5px;"
+                    />
 
-                <div class="contanerForgot">
-                  <a class="forgot">Esqueceu senha?</a>
-                </div>
 
-                <div style="margin-top: 18%;">
-                  <button class="btn">Entrar</button>
-                </div>
+                    <div class="contanerForgot">
+                      <a class="forgot">Esqueceu senha?</a>
+                    </div>
+
+                    <div *ngIf="loginErrorMessage" class="error-message">
+                      {{ loginErrorMessage }}
+                    </div>
+
+
+                  <div style="margin-top: 18%;">
+                      <button class="btn">Entrar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
