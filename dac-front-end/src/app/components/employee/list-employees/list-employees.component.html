@@ -5,7 +5,7 @@
     <div class="header-page">
       <div></div>
       <h2>Funcionários</h2>
-      <button class="btn-add-employee">Adicionar Funcionário</button>
+      <button class="btn-add-employee" (click)="openModal()">Adicionar Funcionário</button>
     </div>
 
     <table class="table-voos">
@@ -24,9 +24,9 @@
       <tr *ngFor="let employee of employees">
         <td>{{employee.id}}</td>
         <td>{{employee.nome}}</td>
-        <td>{{employee.cpf}}</td>
+        <td>{{employee.cpf | mask: '000.000.000-00' }}</td>
         <td>{{employee.email}}</td>
-        <td>{{employee.telefone}}</td>
+        <td>{{employee.telefone | mask: '(00) 00000-0000' }}</td>
         <td>
           <span class="material-symbols-outlined btn-edit-employee">edit_square</span>
         </td>
@@ -38,4 +38,79 @@
     </table>
   </div>
 
+
+
+  <!-- Modal -->
+  <div class="custom-modal-backdrop" *ngIf="showModal">
+    <div class="custom-modal">
+      <h3>Inserir novo Funcionário</h3>
+      <form #form="ngForm" (ngSubmit)="addEmployee(form)">
+        <div class="div-inputs">
+
+          <div class="label-div">
+            <label>Nome
+              <div class="error-msg" *ngIf="nome.invalid && nome.touched"> - Nome é obrigatório.</div>
+            </label>
+            <input type="text" placeholder="Nome"
+                   [(ngModel)]="newEmployee.nome"
+                   name="nome"
+                   required
+                   #nome="ngModel"
+            />
+          </div>
+
+          <div class="label-div">
+            <label>CPF
+              <div class="error-msg" *ngIf="cpf.invalid && cpf.touched"> - CPF é obrigatório.</div>
+            </label>
+            <input type="text"
+                   placeholder="CPF"
+                   [(ngModel)]="newEmployee.cpf"
+                   name="cpf"
+                   mask="000.000.000-00"
+                   required
+                   #cpf="ngModel"
+            />
+          </div>
+        </div>
+
+        <div class="div-inputs">
+          <div class="label-div">
+            <label>Email
+              <div class="error-msg" *ngIf="email.invalid && email.touched"> - Digite um e-mail válido.</div>
+            </label>
+            <input
+              type="email"
+              placeholder="Email"
+              [(ngModel)]="newEmployee.email"
+              name="email"
+              required
+              #email="ngModel"
+            />
+          </div>
+
+          <div class="label-div">
+            <label>Telefone
+              <div class="error-msg" *ngIf="telefone.invalid && telefone.touched"> - Telefone é obrigatório.</div>
+            </label>
+            <input type="text"
+                   placeholder="Telefone"
+                   [(ngModel)]="newEmployee.telefone"
+                   name="telefone"
+                   [mask]="phoneMask"
+                   required
+                   #telefone="ngModel"
+            />
+          </div>
+
+
+        </div>
+
+        <div class="modal-buttons">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn-salvar-employee">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
