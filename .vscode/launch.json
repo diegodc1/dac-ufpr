@@ -9,6 +9,16 @@
             "projectName": "servico-funcionario",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SagasApplication<sagas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.aerolinha.SagasApplication",
+            "projectName": "sagas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
