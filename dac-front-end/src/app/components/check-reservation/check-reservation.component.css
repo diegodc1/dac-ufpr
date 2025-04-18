@@ -1,0 +1,250 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.container{
+   
+}
+.titleBox{
+    text-align: center;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12);
+    padding-bottom: 1px;
+    font-family:"Inter" sans-serif;
+    font-weight: 600;
+}
+.box{
+    background-color: #E9ECEF;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.cardSearch{
+    background-color: white;
+    border-radius: 5px;
+    padding-top: 15px;
+    padding-bottom: 20px;
+    padding-left: 120px;
+    padding-right: 120px;
+    margin-top: 15px;
+}
+.searchItens{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+.input{
+    padding: 10px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease-in-out;
+    outline: none;
+    width: 300px;
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+}
+.btn{
+    background-color: #5D36AF;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease-in-out;
+    outline: none;
+    border: 1px solid #5D36AF; 
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 4px;
+    color: white;
+}
+
+.cardAll{
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 12px;
+    padding-bottom: 25px;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 25px;
+    align-items: center;
+    margin-bottom: 250px;
+}
+.imgTitle{
+    gap: 10px;
+    display: flex;
+    
+}
+.img {
+    width: 35px; 
+    height: 35px;
+    margin-top: 7px;
+  }
+  .h4M{
+    font-family:"Inter" sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+
+}
+.h4{
+    font-family:"Inter" sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+}
+.h3{
+    font-family:"Inter" sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+}
+.h3Strong{
+    font-family:"Inter" sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: green;
+
+}
+.cardTtiles{
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+}
+.cardd{
+   flex-direction: row;
+    display: flex;
+     gap: 5px; 
+}
+
+
+.cardEnd{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;  
+    gap: 50px;
+}
+
+.card {
+    background-color: #ffeedd;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .date {
+    font-size: 12px;
+    color: black;
+    font-family: sans-serif "Inter";
+    font-weight: 400;
+    margin-bottom: 15px;
+  }
+
+  .flight-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .location {
+    text-align: center;
+  }
+
+  .time {
+    font-size: 18px;
+    font-family: sans-serif "Inter";
+    font-weight: 600;
+  }
+  .goIn{
+    font-family: sans-serif "Inter";
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .duration {
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    flex-direction: row;
+    display: flex;
+    gap: 5px;
+  }
+  .timeTxt{
+    font-family: sans-serif "Inter";
+    font-weight: 600;
+    font-size: 14px;
+  }
+.line{
+    width: 45px;
+    height: 1px;
+    background-color:#C8C8C8 ;
+    margin-top: 8px;
+}
+.planeImge{
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+}
+  .plane-icon {
+    font-size: 20px;
+    margin: 0 10px;
+  }
+
+.btn{
+    display: flex;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    justify-content: center;
+    background-color: #5D36AF;
+    border-radius: 5px;
+    border: 1px solid #5D36AF; 
+    color: white;
+    font-size: 14;
+    font-family: sans-serif "Inter";
+    font-weight: 600;
+    width: auto;
+
+
+  }
+  .txt{
+    font-family: sans-serif "Inter";
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .txtTitle{
+    font-family: sans-serif "Inter";
+    font-weight: 300;
+    font-size: 14px;
+  }
+  .btnCalcel{
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 15px;
+    justify-content: center;
+    align-items: center;
+    background-color: #F8F9FA;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease-in-out;
+    outline: none;
+    border: 1px solid red; 
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 4px;
+    color: red;
+  
+}
+
+  .btnConfirm{
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 15px;
+    justify-content: center;
+    align-items: center;
+    background-color: #5D36AF;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease-in-out;
+    outline: none;
+    border: 1px solid #5D36AF; 
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 4px;
+    color: white;
+  }
