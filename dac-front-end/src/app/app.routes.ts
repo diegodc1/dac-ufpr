@@ -10,6 +10,7 @@ import { BuyMilesComponent } from './components/buy-miles/buy-miles.component';
 import { CheckInComponent } from './components/check-in/check-in.component';
 import {HomeEmployeeComponent} from "./components/employee/home-employee/home-employee.component";
 import { CheckReservationComponent } from './components/check-reservation/check-reservation.component';
+import {ListEmployeesComponent} from "./components/employee/list-employees/list-employees.component";
 
 export const routes: Routes = [
   {
@@ -62,6 +63,10 @@ export const routes: Routes = [
   },
   {
     path:'check-reservation',
-    component:CheckReservationComponent
+    component: CheckReservationComponent
+  },
+  {
+    path:'list-employees',
+    component: ListEmployeesComponent
   }
 ];

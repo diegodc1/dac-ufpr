@@ -1,0 +1,239 @@
+* {
+  box-sizing: border-box;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem 3rem;
+}
+
+.content h2 {
+  width: 100%;
+  text-align: center;
+}
+
+.header-page {
+  display: grid;
+  grid-template-columns: 1fr 5fr 1fr;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-add-employee {
+  background-color: #198754;
+  color: white;
+  font-weight: 600;
+  width: 14rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  align-items: end;
+  height: 50%;
+}
+
+.btn-add-employee:hover {
+  cursor: pointer;
+  background-color: #1c955b;
+  transform: scale(1.02);
+}
+
+.table-voos {
+  border-collapse: collapse;
+
+}
+
+.table-voos thead {
+  border-collapse: unset;
+  text-align: left;
+  border-bottom: 3px solid #e1e1e1;
+  color: #575757;
+  margin-bottom: 1rem;
+}
+.table-voos thead th {
+  padding-bottom: 0.6rem;
+  text-align: center;
+}
+
+.table-voos tbody {
+  gap: 1rem;
+}
+
+.table-voos tbody td {
+  padding: 0.7rem 0 !important;
+  color: #454545;
+  text-align: center;
+}
+
+.btn-embarcar-passageiro {
+  background-color: #482A89;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  animation: 1s linear;
+}
+
+.btn-embarcar-passageiro:hover {
+  background-color: #764ada;
+  cursor: pointer;
+  transform: scale(1.05);
+  animation: 1s linear;
+}
+
+.btn-edit-employee {
+  color: #0d6efd;
+  animation: 1s linear;
+}
+
+.btn-remove-employee {
+  color: #DC3545;
+  animation: 1s linear;
+}
+
+.btn-edit-employee:hover, .btn-remove-employee:hover {
+  cursor: pointer;
+  transform: scale(1.08);
+  animation: 1s linear;
+}
+
+.btn-edit-employee:hover {
+  color: #3488ff;
+}
+
+.btn-remove-employee:hover {
+  color: #ff4958;
+}
+
+.custom-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.custom-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 90%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 3rem;
+}
+
+.custom-modal h3 {
+  margin: 0;
+  margin-bottom: 2rem;
+  font-size: 1.4rem;
+}
+
+.custom-modal form {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+}
+
+.div-inputs {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.label-div {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.label-div label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #606060;
+  display: flex;
+  gap: 0.2rem;
+}
+
+
+
+.custom-modal input {
+  display: block;
+  margin-bottom: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.custom-modal input::placeholder {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #979797;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-buttons button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+
+.btn-salvar-employee {
+  background-color: #198754;
+  color: white;
+  font-weight: 600;
+  width: 14rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  align-items: end;
+  height: 50%;
+}
+
+.btn-salvar-employee:hover {
+  cursor: pointer;
+  background-color: #1c955b;
+  transform: scale(1.02);
+}
+
+.modal-buttons {
+  margin-top: 1rem;
+}
+
+.btn-cancel {
+  background-color: #575757;
+  color: white;
+  font-weight: 600;
+  width: 14rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  align-items: end;
+  height: 50%;
+}
+
+.btn-cancel:hover {
+  cursor: pointer;
+  background-color: #6e6e6e;
+  transform: scale(1.02);
+}
+
+.error-msg {
+  color: #DC3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
