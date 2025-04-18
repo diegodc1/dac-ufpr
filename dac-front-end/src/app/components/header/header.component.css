@@ -1,14 +1,11 @@
 .header {
     display: grid;
-    grid-template-columns: 1fr 5fr 1.5fr;
+    grid-template-columns: 1.2fr 5fr 1.8fr;
     align-items: center;
   justify-content: center;
     padding: 15px 30px;
     background-color: white;
     color: white;
-  /*-webkit-box-shadow: 1px 15px 3px -12px rgba(217,217,217,1);*/
-  /*-moz-box-shadow: 1px 15px 3px -12px rgba(217,217,217,1);*/
-  /*box-shadow: 1px 15px 3px -12px rgba(217,217,217,1);*/
   box-shadow: 0 0 6px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -62,3 +59,14 @@
   display: flex;
   gap: 0.6rem;
 }
+
+.icon-logout {
+  color: #482A89;
+}
+
+.icon-logout:hover {
+  cursor: pointer;
+  transform: scale(1.02);
+  color: #583a9a;
+}
+
