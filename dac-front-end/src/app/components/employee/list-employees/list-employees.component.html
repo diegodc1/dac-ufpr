@@ -1,0 +1,41 @@
+<div class="container">
+  <app-header-employee></app-header-employee>
+  <div class="content">
+
+    <div class="header-page">
+      <div></div>
+      <h2>Funcionários</h2>
+      <button class="btn-add-employee">Adicionar Funcionário</button>
+    </div>
+
+    <table class="table-voos">
+      <thead class="thead-style">
+      <tr>
+        <th>Cód.</th>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Editar</th>
+        <th>Remover</th>
+      </tr>
+      </thead>
+      <tbody class="tbody-style">
+      <tr *ngFor="let employee of employees">
+        <td>{{employee.id}}</td>
+        <td>{{employee.nome}}</td>
+        <td>{{employee.cpf}}</td>
+        <td>{{employee.email}}</td>
+        <td>{{employee.telefone}}</td>
+        <td>
+          <span class="material-symbols-outlined btn-edit-employee">edit_square</span>
+        </td>
+        <td>
+          <span class="material-symbols-outlined btn-remove-employee">cancel</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
