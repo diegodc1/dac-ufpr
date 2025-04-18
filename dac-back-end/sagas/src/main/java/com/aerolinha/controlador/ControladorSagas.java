@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aerolinha.dto.requisicao.NovoFuncDTO;
 import com.aerolinha.dto.resposta.ResGenDTO;
-import com.aerolinha.sagas.requisicoes.VerificarFuncionario;
+import com.aerolinha.sagas.criafuncionariosaga.requisicoes.VerificarFuncionario;
+import com.aerolinha.sagas.criafuncionariosaga.respostas.VerificarFuncRes;
 import com.aerolinha.utils.ValidadorCPF;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -31,24 +33,29 @@ public class ControladorSagas {
 
     // R17
     @PostMapping("/novo-funcionario")
-    public ResponseEntity<ResGenDTO> registrarFunc(@RequestBody NovoFuncDTO novoFuncDTO) {
+    public ResponseEntity<ResGenDTO> registrarFunc(@RequestBody NovoFuncDTO novoFuncDTO)
+            throws JsonProcessingException {
 
         if (!validadorCPF.cpfValido(novoFuncDTO.getCpf())) {
             ResGenDTO dto = new ResGenDTO("CPF inválido!");
             return ResponseEntity.badRequest().body(dto);
-        } else {
-
-            ResGenDTO dto = new ResGenDTO("CPF ok!");
-            return ResponseEntity.ok(dto);
         }
 
-        // VerificarFuncionario consulta = VerificarFuncionario.builder()
-        // .cpf(novoFuncDTO.getCpf())
-        // .email(novoFuncDTO.getEmail())
-        // .mensagem("VerificarCliente")
-        // .build();
+        VerificarFuncionario consulta = VerificarFuncionario.builder()
+                .cpf(novoFuncDTO.getCpf())
+                .email(novoFuncDTO.getEmail())
+                .mensagem("VerificarCliente")
+                .build();
 
-        // return null;
+        var mensagem = objectMapper.writeValueAsString(consulta);
+
+        VerificarFuncRes verificarFuncRes = (VerificarFuncRes) rabbitTemplate.convertSendAndReceive(mensagem);
+
+        System.out.println(verificarFuncRes);
+
+        // rabbitTemplate.convertAndSend("CanalFuncionario", mensagem);
+
+        return null;
     }
 
 }

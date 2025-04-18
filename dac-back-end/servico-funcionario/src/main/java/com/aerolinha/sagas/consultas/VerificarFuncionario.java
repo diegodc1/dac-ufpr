@@ -1,4 +1,4 @@
-package com.aerolinha.sagas.requisicoes;
+package com.aerolinha.sagas.consultas;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
