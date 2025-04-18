@@ -42,9 +42,9 @@ export class ListEmployeesComponent {
 
   employees: Employee[] = [
     { id: 1, nome: 'João', cpf: '11111111111', email: 'joao@gmail.com', telefone: '41999999999'},
-    { id: 2, nome: 'Maria - GRU', cpf: '22222222222', email: 'maria@gmail.com', telefone: '41999999999'},
-    { id: 3, nome: 'Pedrinho - GRU', cpf: '33333333333', email: 'pedrinho@gmail.com', telefone: '41999999999' },
-    { id: 4, nome: 'Joana - GRU', cpf: '44444444444U', email: 'joana@gmail.com', telefone: '41999999999' }
+    { id: 2, nome: 'Maria', cpf: '22222222222', email: 'maria@gmail.com', telefone: '41999999999'},
+    { id: 3, nome: 'Pedrinho', cpf: '33333333333', email: 'pedrinho@gmail.com', telefone: '41999999999' },
+    { id: 4, nome: 'Joana', cpf: '44444444444U', email: 'joana@gmail.com', telefone: '41999999999' }
   ];
 
   newEmployee: Employee = {
