@@ -31,7 +31,7 @@
           <span class="material-symbols-outlined btn-edit-employee" (click)="editEmployee(employee)">edit_square</span>
         </td>
         <td>
-          <span class="material-symbols-outlined btn-remove-employee">cancel</span>
+          <span class="material-symbols-outlined btn-remove-employee" (click)="confirmRemove(employee)">cancel</span>
         </td>
       </tr>
       </tbody>
@@ -131,7 +131,8 @@
                    [(ngModel)]="selectedEmployee.nome"
                    name="editNome"
                    required
-                   #editNome="ngModel" />
+                   #editNome="ngModel"
+            />
           </div>
 
           <div class="label-div">
@@ -144,7 +145,8 @@
                    mask="000.000.000-00"
                    required
                    disabled
-                   #editCpf="ngModel" />
+                   #editCpf="ngModel"
+            />
           </div>
         </div>
 
@@ -183,5 +185,19 @@
       </form>
     </div>
   </div>
+
+  <!-- Modal de Confirmação de Remoção -->
+  <div class="custom-modal-backdrop" *ngIf="showConfirmModal">
+    <div class="custom-modal">
+      <h3>Confirmação</h3>
+      <p>Tem certeza que deseja remover o funcionário(a) <strong>{{ selectedEmployeeToRemove?.nome }}</strong>?</p>
+
+      <div class="modal-buttons">
+        <button class="btn-cancel" (click)="cancelRemove()">Cancelar</button>
+        <button class="btn-salvar-employee" (click)="removeEmployeeConfirmed()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
 
 </div>

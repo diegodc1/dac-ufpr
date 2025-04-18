@@ -36,8 +36,12 @@ interface Employee {
 export class ListEmployeesComponent {
   showModal = false;
   showEditModal = false;
-  phoneMask: string = '(00) 00000-0000';
+  showConfirmModal: boolean = false;
+
   selectedEmployee: any = {};
+  selectedEmployeeToRemove: any = null;
+
+  phoneMask: string = '(00) 00000-0000';
 
 
   employees: Employee[] = [
@@ -81,6 +85,29 @@ export class ListEmployeesComponent {
     this.selectedEmployee = { ...employee };
     this.showEditModal = true;
   }
+
+
+
+  confirmRemove(employee: any) {
+    this.selectedEmployeeToRemove = employee;
+    this.showConfirmModal = true;
+  }
+
+  removeEmployeeConfirmed() {
+    const index = this.employees.indexOf(this.selectedEmployeeToRemove);
+    if (index > -1) {
+      this.employees.splice(index, 1);
+    }
+    this.selectedEmployeeToRemove = null;
+    this.showConfirmModal = false;
+  }
+
+  cancelRemove() {
+    this.selectedEmployeeToRemove = null;
+    this.showConfirmModal = false;
+  }
+
+
 
   openModal() {
     this.showModal = true;
