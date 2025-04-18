@@ -35,7 +35,9 @@ interface Employee {
 })
 export class ListEmployeesComponent {
   showModal = false;
+  showEditModal = false;
   phoneMask: string = '(00) 00000-0000';
+  selectedEmployee: any = {};
 
 
   employees: Employee[] = [
@@ -59,10 +61,25 @@ export class ListEmployeesComponent {
       return;
     }
 
-    // Aqui você já sabe que todos os campos estão preenchidos e válidos
     this.employees.push({ ...this.newEmployee });
     this.newEmployee = { id: 0, nome: '', cpf: '', email: '', telefone: '' };
     this.closeModal();
+  }
+
+  updateEmployee(form: NgForm) {
+    if (form.invalid) return;
+
+    const index = this.employees.findIndex(e => e.id === this.selectedEmployee.id);
+    if (index !== -1) {
+      this.employees[index] = { ...this.selectedEmployee };
+    }
+
+    this.closeEditModal();
+  }
+
+  editEmployee(employee: any) {
+    this.selectedEmployee = { ...employee };
+    this.showEditModal = true;
   }
 
   openModal() {
@@ -72,6 +89,10 @@ export class ListEmployeesComponent {
   closeModal() {
     this.showModal = false;
     this.resetForm();
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
   }
 
   resetForm() {
