@@ -1,0 +1,78 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem 3rem;
+}
+
+.content h2 {
+  width: 100%;
+  text-align: center;
+}
+
+.table-voos {
+  border-collapse: collapse;
+
+}
+
+.table-voos thead {
+  border-collapse: unset;
+  text-align: left;
+  border-bottom: 3px solid #e1e1e1;
+  color: #575757;
+  margin-bottom: 1rem;
+}
+.table-voos thead th {
+  padding-bottom: 0.6rem;
+  text-align: center;
+}
+
+.table-voos tbody {
+  gap: 1rem;
+}
+
+.table-voos tbody td {
+  padding: 0.7rem 0 !important;
+  color: #454545;
+  text-align: center;
+}
+
+.btn-embarcar-passageiro {
+  background-color: #482A89;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  animation: 1s linear;
+}
+
+.btn-embarcar-passageiro:hover {
+  background-color: #764ada;
+  cursor: pointer;
+  transform: scale(1.05);
+  animation: 1s linear;
+}
+
+.btn-realizar-voo {
+  color: #198754;
+  animation: 1s linear;
+}
+
+.btn-cancelar-voo {
+  color: #DC3545;
+  animation: 1s linear;
+}
+
+.btn-realizar-voo:hover, .btn-cancelar-voo:hover {
+  cursor: pointer;
+  transform: scale(1.08);
+  animation: 1s linear;
+}
+
+.btn-realizar-voo:hover {
+  color: #17cd79;
+}
+
+.btn-cancelar-voo:hover {
+  color: #ff4958;
+}

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from "../header/header.component";
 import { Router } from '@angular/router';
+import {HeaderComponent} from "../header/header.component";
 
 interface Voo {
   id: number;

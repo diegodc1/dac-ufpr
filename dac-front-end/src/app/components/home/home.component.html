@@ -1,41 +1,69 @@
-
 <div class="client-dashboard">
-    <div class="header">
-      <app-header></app-header>
-      <h2>Bem-vindo, Cliente X</h2>
-      <p><strong>Saldo em milhas:</strong> {{ saldoMilhas }} milhas</p>
+  <app-header></app-header>
+
+  <div class="container">
+    <div class="start">
+      <img src="../../../assets/images/Rectangle 1.webp" class="img" />
+      <h1 class="text-overlay">Transforming Travel,<br />One Trip at a Time.</h1>
+      <div class="reserva-overlay">
+        <app-make-reservation></app-make-reservation>
+      </div>
     </div>
-  
-    <!-- Link para filtrar reservas com estado "CRIADA" -->
-    <button (click)="mostrarReservasCriadas()" class="link-ver-reserva">Todas as Reservas Reservadas</button>
-  
-    <h3>Reservas</h3>
-    <table>
-      <thead class="thead-style">
-        <tr>
-          <th>Data/Hora</th>
-          <th>Aeroporto Origem</th>
-          <th>Aeroporto Destino</th>
-          <th>Estado</th>
-          <th *ngIf="mostrarAcoes">Ações</th> <!-- Condicional para mostrar a coluna Ações -->
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Gerando a lista de reservas -->
-        <tr *ngFor="let reserva of reservasFiltradas">
-          <td>{{ reserva.dataHora }}</td>
-          <td>{{ reserva.aeroportoOrigem }}</td>
-          <td>{{ reserva.aeroportoDestino }}</td>
-          <td>{{ reserva.estado }}</td>
-          <td *ngIf="mostrarAcoes">
-            <!-- Botões "Ver Reserva" e "Cancelar Reserva" na mesma linha -->
-            <div *ngIf="reserva.estado !== 'CANCELADA'">
-              <button *ngIf="reserva.estado === 'CRIADA' || reserva.estado === 'CHECK-IN'" [routerLink]="['/ver-reserva', reserva.codigo]" class="link-ver-reserva">Ver Reserva ||</button>
-              <button *ngIf="reserva.estado === 'CRIADA' || reserva.estado === 'CHECK-IN'" (click)="cancelarReserva(reserva)" class="cancelar-reserva">Cancelar</button>
+
+    <h2 class="main-title">Suas Passagens</h2>
+
+    <div *ngFor="let reserva of reservasFiltradas" class="reserva-card">
+      <div class="reserva-top">
+        <span class="airline">TopUs </span>
+        <span class="reserva-status">
+          <span class="titulo-status">Estatus da Reserva:</span>
+          <span [ngClass]="{
+            'status-verde': reserva.estado === 'CRIADA',
+            'status-azul': reserva.estado === 'CHECK-IN',
+            'status-vermelho': reserva.estado === 'CANCELADA'
+          }">
+            {{ getStatusTexto(reserva.estado) }}
+          </span>
+        </span>
+      </div>
+
+      <div class="reserva-conteudo">
+        <div class="reserva-detalhes">
+          <p class="reserva-dia">
+            {{ formatarData(reserva.dataHora, 'EEEE, dd MMMM yyyy') }}
+          </p>
+
+          <p class="reserva-hora">
+            <strong>{{ formatarData(reserva.dataHora, 'HH:mm') }}</strong>
+          </p>
+
+          <div class="voo-info">
+            <div class="aeroporto">
+              <span class="hora">{{ formatarData(reserva.dataHora, 'HH:mm') }}</span>
+              <span>{{ reserva.aeroportoOrigem }}</span>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+            <div class="voo-linha">
+              <span class="aviao">✈</span>
+              <span class="duracao">01h 30min</span>
+            </div>
+
+            <div class="aeroporto destino">
+              <span class="hora">{{ calcularHoraChegada(reserva.dataHora, 1, 30) }}</span>
+              <span>{{ reserva.aeroportoDestino }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="botoes-lateral">
+          <button [routerLink]="['/ver-reserva', reserva.codigo]" class="btn-ver">
+            VER RESERVA
+          </button>
+          <button *ngIf="reserva.estado === 'CRIADA'" (click)="cancelarReserva(reserva)" class="btn-cancelar">
+            CANCELAR 
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-  
+</div>
