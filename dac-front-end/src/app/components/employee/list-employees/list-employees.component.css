@@ -232,8 +232,9 @@
   transform: scale(1.02);
 }
 
-.error-msg {
+.error-message {
   color: #DC3545;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
 }
