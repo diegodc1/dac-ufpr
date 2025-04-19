@@ -24,6 +24,9 @@ public class EstadoVooService {
     public List<EstadoVoo> listEstadoVoo(){
         return estadoVooRepository.findAll();
     }
+    public Optional<EstadoVoo> listEstadoVooId(Long id){
+        return estadoVooRepository.findById(id);
+    }
 
     public void removerEstadoVoo(Long id){
         Optional<EstadoVoo> estadoVoo = estadoVooRepository.findById(id);
