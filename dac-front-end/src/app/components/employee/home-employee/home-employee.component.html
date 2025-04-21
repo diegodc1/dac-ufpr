@@ -4,11 +4,18 @@
     <h2>Próximos Voos</h2>
 
     <app-boarding-confirmation-modal
-      *ngIf="isModalOpen"
-      [passageiro]="passageiroSelecionado"
+      *ngIf="modals.boarding.isOpen"
+      [passageiro]="modals.boarding.data"
       (confirmBoarding)="handleConfirmBoarding()"
-      (closeModal)="closeModal()">
+      (closeModal)="closeModal('boarding')">
     </app-boarding-confirmation-modal>
+
+    <app-cancel-flight-modal
+      *ngIf="modals.cancelFlight.isOpen"
+      [voo]="modals.cancelFlight.data"
+      (confirmCancelFlight)="handleCancelFlight()"
+      (closeModalEvent)="closeModal('cancelFlight')">
+    </app-cancel-flight-modal>
     
     <table class="table-voos">
       <thead class="thead-style">
@@ -36,7 +43,7 @@
             <button
               *ngIf="voo.estado == 'CONFIRMADO'"
               class="btn-embarcar-passageiro"
-              (click)="openModal(voo)">
+              (click)="openModal('boarding', voo)">
               Embarcar Passageiro
             </button>
           </td>
@@ -44,7 +51,11 @@
             <span class="material-symbols-outlined btn-realizar-voo">check_circle</span>
           </td>
           <td *ngIf="voo.estado == 'CONFIRMADO'">
-            <span class="material-symbols-outlined btn-cancelar-voo">cancel</span>
+            <span
+              class="material-symbols-outlined btn-cancelar-voo"
+              (click)="openModal('cancelFlight', voo)">
+              cancel
+            </span>
           </td>
         </tr>
       </tbody>
