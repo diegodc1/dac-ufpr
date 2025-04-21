@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import {HeaderEmployeeComponent} from "../header-employee/header-employee.component";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import { BoardingConfirmationModalComponent } from "../boarding-confirmation-modal/boarding-confirmation-modal.component"; 
+import { ca } from 'date-fns/locale';
+import { CancelFlightModalComponent } from "../cancel-flight-modal/cancel-flight-modal.component";
 
 
 interface Voo {
@@ -20,7 +22,8 @@ interface Voo {
     NgForOf,
     NgIf,
     DatePipe,
-    BoardingConfirmationModalComponent
+    BoardingConfirmationModalComponent,
+    CancelFlightModalComponent
   ],
   templateUrl: './home-employee.component.html',
   styleUrl: './home-employee.component.css'
@@ -34,27 +37,29 @@ export class HomeEmployeeComponent {
     { id: 4, origem: 'Guarulhos - GRU', destino: 'Guarulhos - GRU', dataHora: '29 Jan 2026, 14:30', estado: 'CANCELADO' }
   ];
 
-  isModalOpen = false; 
-  passageiroSelecionado: any = null; 
+  modals = {
+    boarding: { isOpen: false, data: null },
+    cancelFlight: { isOpen: false, data: null },
+  };
 
-  openModal(voo: Voo) {
-    this.passageiroSelecionado = {
-      codigo: voo.id,
-      nome: 'Passageiro Exemplo', 
-      origem: voo.origem,
-      destino: voo.destino
-    };
-    this.isModalOpen = true;
+  openModal(modalName: keyof typeof this.modals, data: any) {
+    this.modals[modalName].isOpen = true;
+    this.modals[modalName].data = data;
   }
 
-  closeModal() {
-    this.isModalOpen = false;
-    this.passageiroSelecionado = null;
+  closeModal(modalName: keyof typeof this.modals) {
+    this.modals[modalName].isOpen = false;
+    this.modals[modalName].data = null;
   }
 
   handleConfirmBoarding() {
-    console.log('Embarque confirmado para:', this.passageiroSelecionado);
-    this.closeModal();
+    console.log('Embarque confirmado para:', this.modals.boarding.data);
+    this.closeModal('boarding');
+  }
+
+  handleCancelFlight() {
+    console.log('Cancelando voo:', this.modals.cancelFlight.data);
+    this.closeModal('cancelFlight');
   }
   
 
