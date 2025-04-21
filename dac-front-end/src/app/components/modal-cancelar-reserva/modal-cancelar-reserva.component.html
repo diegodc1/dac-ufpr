@@ -6,7 +6,7 @@
       <h2 class="modal-pergunta">Deseja realmente cancelar a reserva?</h2>
     
       <div class="modal-info">
-        <span class="logo">TopUs</span>
+        <span class="logo">TopUS</span>
         <div class="status-container">
           <span class="status-label">Status da Reserva:</span>
           <span class="status status-verde">RESERVADO</span>
@@ -25,8 +25,8 @@
           <div class="aviao">✈</div>
         </div>
         <div class="destino">
-          <div class="destino-dia">{{ reserva.dataHora | date: 'dd MMM yyyy' }}</div>
-          <div class="hora-chegada">{{ reserva.dataHora | date: 'HH:mm' }}</div>
+          <div class="destino-dia">{{ reserva.dataHora | dataFormat: 'dd MMM yyyy' }}</div>
+          <div class="hora-chegada">{{ reserva.dataHora | dataFormat: 'HH:mm' }}</div>
           <div class="aeroporto">{{ reserva.aeroportoDestino }}</div>
         </div>
       </div>

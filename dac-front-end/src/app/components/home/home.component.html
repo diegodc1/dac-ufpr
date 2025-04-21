@@ -41,13 +41,13 @@
     </div>
   </div>
 
-  <!-- Lista de reservas do usuário -->
+ 
   <div class="container">
     <h2 class="main-title">Suas Passagens</h2>
 
     <div *ngFor="let reserva of reservasFiltradas" class="reserva-card">
       <div class="reserva-top">
-        <span class="airline">TopUs</span>
+        <span class="airline">TopUS</span>
         <span class="reserva-status">
           <span class="titulo-status">Status da Reserva:</span>
           <span
@@ -65,17 +65,17 @@
       <div class="reserva-conteudo">
         <div class="reserva-detalhes">
           <p class="reserva-dia">
-            {{ formatarData(reserva.dataHora, 'EEEE, dd MMMM yyyy') }}
+            {{ reserva.dataHora | dataFormat:'EEEE, dd MMMM yyyy' }}
           </p>
 
           <p class="reserva-hora">
-            <strong>{{ formatarData(reserva.dataHora, 'HH:mm') }}</strong>
+            <strong>  {{ reserva.dataHora | dataFormat:'HH:mm' }}</strong>
           </p>
 
           <div class="voo-info">
             <div class="aeroporto">
               <span class="hora">
-                {{ formatarData(reserva.dataHora, 'HH:mm') }}
+                {{ reserva.dataHora | dataFormat:'HH:mm' }}
               </span>
               <span>{{ reserva.aeroportoOrigem }}</span>
             </div>

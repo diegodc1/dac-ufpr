@@ -3,12 +3,11 @@ import { ReservaService } from '../../services/reserva.service';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { Router, RouterLink } from '@angular/router';
-import { MakeReservationComponent } from '../make-reservation/make-reservation.component';
 import { ModalCancelarReservaComponent } from '../modal-cancelar-reserva/modal-cancelar-reserva.component';
 import { format, addMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { FormsModule } from '@angular/forms';
-
+import { DataFormatPipe } from '../../shared/pipes/data-format.pipe';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -17,7 +16,7 @@ import { FormsModule } from '@angular/forms';
     HeaderComponent,
     RouterLink,
     FormsModule,
-    ModalCancelarReservaComponent,  // 👉 Importando o componente do modal
+    ModalCancelarReservaComponent,  DataFormatPipe
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
@@ -31,7 +30,6 @@ export class HomeComponent implements OnInit {
   origem: string = '';
   destino: string = '';
 
-  // 👉 Controle do modal
   mostrarModal: boolean = false;
   reservaSelecionada: any = null;
 
@@ -49,11 +47,11 @@ export class HomeComponent implements OnInit {
       {
         codigo: 'ABC123',
         dataHora: '2025-04-10T10:00:00',
-        aeroportoOrigem: ' São Paulo (GRU)',
-        aeroportoDestino: ' Rio de Janeiro (GIG)',
+        aeroportoOrigem: 'São Paulo (GRU)',
+        aeroportoDestino: 'Rio de Janeiro (GIG)',
         estado: 'RESERVADO',
-        milhasGastadas:2000,
-        valorGasto:180.00
+        milhasGastadas: 2000,
+        valorGasto: 180.00
       },
       {
         codigo: 'DEF456',
@@ -75,16 +73,15 @@ export class HomeComponent implements OnInit {
         aeroportoOrigem: 'Porto Alegre (POA)',
         aeroportoDestino: 'Curitiba (CWB)',
         estado: 'RESERVADO',
+        milhasGastadas: 1900,
+        valorGasto: 300.00
       },
     ];
 
     this.reservasFiltradas = this.reservas;
   }
-
-  formatarData(data: string, formato: string): string {
-    const dataObj = new Date(data);
-    return format(dataObj, formato);
-  }
+  
+  
 
   calcularHoraChegada(dataHora: string, horas: number, minutos: number): string {
     const dataPartida = new Date(dataHora);
@@ -105,14 +102,12 @@ export class HomeComponent implements OnInit {
       this.reservaService.cancelarReserva(this.reservaSelecionada);
       this.mostrarModal = false;
   
-      // Atualiza a reserva no array original
       const index = this.reservas.findIndex(r => r.codigo === this.reservaSelecionada.codigo);
       if (index !== -1) {
         this.reservas[index].estado = 'CANCELADO';
       }
     }
   }
-  
 
   fecharModal() {
     this.mostrarModal = false;

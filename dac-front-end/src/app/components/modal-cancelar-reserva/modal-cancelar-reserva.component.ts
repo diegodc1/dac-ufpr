@@ -2,13 +2,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Reserva } from '../../models/reserva';
 import { formatDate, CommonModule } from '@angular/common';
 import { VerReservaComponent } from '../ver-reserva/ver-reserva.component';
-
+import { DataFormatPipe } from '../../shared/pipes/data-format.pipe';
 @Component({
   selector: 'app-modal-cancelar-reserva',
   standalone: true,
   templateUrl: './modal-cancelar-reserva.component.html',
   styleUrls: ['./modal-cancelar-reserva.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule, DataFormatPipe],
 })
 export class ModalCancelarReservaComponent {
   @Input() reserva!: Reserva;
@@ -40,9 +40,7 @@ export class ModalCancelarReservaComponent {
     }
   }
 
-  formatarData(data: string, formato: string): string {
-    return formatDate(data, formato, 'pt-BR');
-  }
+  
 
   calcularHoraChegada(data: string, horas: number, minutos: number): string {
     const dataPartida = new Date(data);
