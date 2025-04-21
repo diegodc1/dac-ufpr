@@ -2,7 +2,12 @@ package com.dac.authentication_service.securityService;
 
 import com.dac.authentication_service.collection.User;
 import com.dac.authentication_service.repository.UserRepository;
+import com.dac.authentication_service.sagas.comandos.ComandoCriarFuncUser;
+import com.dac.authentication_service.sagas.eventos.EventoFuncUserCriado;
 import com.dac.authentication_service.security.TokenService;
+
+import java.security.SecureRandom;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +33,48 @@ public class AuthService {
         }
     }
 
+    // R17
+    public EventoFuncUserCriado novoFuncionario(ComandoCriarFuncUser comando) {
+
+        String senha = gerarSenhaAleatoria();
+
+        User user = User.builder()
+                .name(comando.getNome())
+                .login(comando.getEmail())
+                .password(passwordEncoder.encode(senha))
+                .role("FUNCIONARIO")
+                .userStatus("ATIVO")
+                .build();
+
+        user = userRepository.save(user);
+
+        EventoFuncUserCriado evento = EventoFuncUserCriado.builder()
+                .idUsuario(user.getId())
+                .senhaUsuario(senha)
+                .mensagem("EventoFuncUserCriado")
+                .build();
+
+        return evento;
+    }
+
+    private String gerarSenhaAleatoria() {
+
+        String CARACTERES = "0123456789";
+
+        int TAMANHO_SENHA = 4;
+
+        SecureRandom aleatorio = new SecureRandom();
+
+        StringBuilder construtorString = new StringBuilder(TAMANHO_SENHA);
+
+        for (int i = 0; i < TAMANHO_SENHA; i++) {
+            int indice = aleatorio.nextInt(CARACTERES.length());
+            construtorString.append(CARACTERES.charAt(indice));
+        }
+
+        return construtorString.toString();
+    }
+
     public String generateToken(String username) {
         return tokenService.generateToken(username);
     }
@@ -35,7 +82,5 @@ public class AuthService {
     public void validateToken(String token) {
         tokenService.validateToken(token);
     }
-
-
 
 }

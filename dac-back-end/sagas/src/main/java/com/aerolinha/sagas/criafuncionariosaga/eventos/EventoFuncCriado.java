@@ -1,4 +1,4 @@
-package com.aerolinha.sagas.resposta;
+package com.aerolinha.sagas.criafuncionariosaga.eventos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VerificarFuncRes {
-
+public class EventoFuncCriado {
+    private String email;
     private String mensagem;
-    private Boolean comecaSaga;
-    private String cpf;
 }
