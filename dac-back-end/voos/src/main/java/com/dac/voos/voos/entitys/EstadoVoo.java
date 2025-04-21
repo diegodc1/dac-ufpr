@@ -2,6 +2,8 @@ package com.dac.voos.voos.entitys;
 import jakarta.persistence.*;
         import lombok.*;
 
+import java.net.SocketOption;
+
 @Data
 @Entity
 @Table(name = "estadoVoo")
@@ -19,7 +21,7 @@ public class EstadoVoo{
     private String descricao;
 
 
-    public EstadoVoo() {
 
-    }
+
+
 }

@@ -51,5 +51,19 @@
 }
 
 .user-infos-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
   color: #482A89;
+}
+
+.icon-logout {
+  color: #482A89;
+}
+
+.icon-logout:hover {
+  cursor: pointer;
+  transform: scale(1.02);
+  color: #583a9a;
 }

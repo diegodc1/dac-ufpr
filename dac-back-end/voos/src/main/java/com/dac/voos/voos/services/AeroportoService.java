@@ -26,7 +26,9 @@ public class AeroportoService {
     public List<Aeroporto> listAeroporto(){
         return aeroportoRepository.findAll();
     }
-
+    public Optional<Aeroporto> listAeroportoId(String codigo){
+        return aeroportoRepository.findById(codigo);
+    }
     public void removerAeroporto(String codigo){
         Optional<Aeroporto> aeroporto = aeroportoRepository.findById(codigo);
         if(aeroporto.isPresent()){

@@ -4,7 +4,6 @@ Para rodar manualmente o container antes da dockerização completa do sistema:
 
 docker run -d --name=auth-db -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password -p 27017:27017 mongo:4.4.19
 
-
 - URI: 
 
 mongodb://localhost:27017

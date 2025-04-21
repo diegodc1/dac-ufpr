@@ -4,6 +4,7 @@ import com.dac.voos.voos.dto.EstadoVooDTO;
 import com.dac.voos.voos.entitys.EstadoVoo;
 import com.dac.voos.voos.services.EstadoVooService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -34,6 +36,13 @@ public class EstadoVooController {
     public ResponseEntity<List<EstadoVoo>> todosEstadoVoo(){
         List<EstadoVoo> estadoVoos = estadoVooService.listEstadoVoo();
         return ResponseEntity.ok(estadoVoos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EstadoVoo> buscarPorId(@PathVariable Long id){
+        Optional<EstadoVoo> estadoVoo = estadoVooService.listEstadoVooId(id);
+        return estadoVoo.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

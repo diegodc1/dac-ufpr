@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ReservaService } from '../../services/reserva.service';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MakeReservationComponent } from '../make-reservation/make-reservation.component';
 import { format, addMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MakeReservationComponent, RouterLink],
+  imports: [CommonModule, HeaderComponent, RouterLink, FormsModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
@@ -21,7 +21,14 @@ export class HomeComponent implements OnInit {
   reservasFiltradas: any[] = [];
   mostrarAcoes: boolean = true;
 
-  constructor(private reservaService: ReservaService) {}
+  // 🆕 Campos para origem e destino
+  origem: string = '';
+  destino: string = '';
+
+  constructor(
+    private reservaService: ReservaService,
+    private router: Router // 🆕 Injetando o Router
+  ) {}
 
   ngOnInit() {
     this.carregarReservas();
@@ -76,17 +83,31 @@ export class HomeComponent implements OnInit {
   cancelarReserva(reserva: any) {
     if (reserva.estado === 'CRIADA') {
       reserva.estado = 'CANCELADA';
-      this.reservaService.cancelarReserva(reserva);  
+      this.reservaService.cancelarReserva(reserva);
       this.carregarReservas();
     }
   }
 
   getStatusTexto(estado: string): string {
     switch (estado) {
-      case 'CRIADA': return 'RESERVADO';
-      case 'CHECK-IN': return 'REALIZADO';
-      case 'CANCELADA': return 'CANCELADO';
-      default: return estado;
+      case 'CRIADA':
+        return 'RESERVADO';
+      case 'CHECK-IN':
+        return 'REALIZADO';
+      case 'CANCELADA':
+        return 'CANCELADO';
+      default:
+        return estado;
     }
+  }
+
+  // 🆕 Redirecionar com parâmetros para /make-reservation
+  buscarVoos() {
+    this.router.navigate(['/make-reservation'], {
+      queryParams: {
+        origem: this.origem,
+        destino: this.destino
+      }
+    });
   }
 }
