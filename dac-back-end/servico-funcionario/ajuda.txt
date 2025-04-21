@@ -1,1 +1,4 @@
 docker run --name funcionario-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=funcionario -p 5434:5432 -d postgres:latest
+
+PGADMIN
+docker run --name pgadmin-container -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=dac@email.com -e PGADMIN_DEFAULT_PASSWORD=password -d dpage/pgadmin4

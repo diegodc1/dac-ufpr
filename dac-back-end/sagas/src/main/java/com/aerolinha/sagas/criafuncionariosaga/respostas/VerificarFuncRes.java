@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class VerificarFuncRes {
-    
+
     private String mensagem;
     private Boolean comecaSaga;
-
+    private String cpf;
 }

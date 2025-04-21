@@ -1,4 +1,4 @@
-package com.aerolinha.sagas.resposta;
+package com.dac.authentication_service.sagas.eventos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VerificarFuncRes {
-
+public class EventoFuncUserCriado {
+    private String idUsuario;
+    private String senhaUsuario;
     private String mensagem;
-    private Boolean comecaSaga;
-    private String cpf;
 }

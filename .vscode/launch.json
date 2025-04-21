@@ -19,6 +19,16 @@
             "projectName": "sagas",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AuthenticationServiceApplication<authentication-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.dac.authentication_service.AuthenticationServiceApplication",
+            "projectName": "authentication-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
