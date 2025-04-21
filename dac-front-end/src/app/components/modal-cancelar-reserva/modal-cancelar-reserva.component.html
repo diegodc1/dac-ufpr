@@ -1,0 +1,45 @@
+<div class="modal-overlay" *ngIf="mostrar" (click)="onFechar()">
+  <div class="modal-cancelar" (click)="$event.stopPropagation()">
+    
+    
+    <div class="modal-header">
+      <h2 class="modal-pergunta">Deseja realmente cancelar a reserva?</h2>
+    
+      <div class="modal-info">
+        <span class="logo">TopUs</span>
+        <div class="status-container">
+          <span class="status-label">Status da Reserva:</span>
+          <span class="status status-verde">RESERVADO</span>
+        </div>
+      </div>
+    </div>
+    <div class="frame-container">
+      <div class="frame-voo">
+        <div class="origem">
+          <div class="data-dia">{{ reserva.dataHora | date: 'dd MMM yyyy' }}</div>
+          <div class="hora-voo">{{ reserva.dataHora | date: 'HH:mm' }}</div>
+          <div class="aeroporto">{{ reserva.aeroportoOrigem }}</div>
+        </div>
+        <div class="voo-linha">
+          <div class="duracao">01h 30min</div>
+          <div class="aviao">✈</div>
+        </div>
+        <div class="destino">
+          <div class="destino-dia">{{ reserva.dataHora | date: 'dd MMM yyyy' }}</div>
+          <div class="hora-chegada">{{ reserva.dataHora | date: 'HH:mm' }}</div>
+          <div class="aeroporto">{{ reserva.aeroportoDestino }}</div>
+        </div>
+      </div>
+
+      <div class="modal-valore">
+        <div>Milhas gastas:<strong> {{ reserva.milhasGastadas }} </strong></div>
+        <div>Valor gastos: R$ <strong> {{ reserva.valorGasto | number:'1.2-2' }}</strong></div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-voltar" (click)="onFechar()">Voltar</button>
+      <button class="btn-cancelar" (click)="onConfirmar()">Cancelar</button>
+    </div>
+  </div>
+</div>

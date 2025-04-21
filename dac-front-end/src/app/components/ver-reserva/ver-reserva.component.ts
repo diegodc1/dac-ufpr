@@ -16,11 +16,11 @@ export class VerReservaComponent implements OnInit {
     this.reserva = {
       codigo: 'AB123',
       dataHora: '2025-03-26 15:30',
-      aeroportoOrigem: 'Aeroporto Internacional de São Paulo',
-      aeroportoDestino: 'Aeroporto do Rio de Janeiro',
+      aeroportoOrigem: ' São Paulo (GRU)',
+      aeroportoDestino: 'Rio de Janeiro (GIG)',
       valorGasto: 500,
       milhasGastadas: 1500,
-      estado: 'CRIADA'
+      estado: 'RESERVADO'
     };
   }
 }

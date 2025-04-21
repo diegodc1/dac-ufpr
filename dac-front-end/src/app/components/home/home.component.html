@@ -1,7 +1,7 @@
 <div class="client-dashboard">
   <app-header></app-header>
 
-  <!-- Bloco do topo com imagem de fundo e busca -->
+ 
   <div class="start">
 
     <h1 class="text-overlay">
@@ -52,9 +52,9 @@
           <span class="titulo-status">Status da Reserva:</span>
           <span
             [ngClass]="{
-              'status-verde': reserva.estado === 'CRIADA',
+              'status-verde': reserva.estado === 'RESERVADO',
               'status-azul': reserva.estado === 'CHECK-IN',
-              'status-vermelho': reserva.estado === 'CANCELADA'
+              'status-vermelho': reserva.estado === 'CANCELADO'
             }"
           >
             {{ getStatusTexto(reserva.estado) }}
@@ -102,7 +102,7 @@
             VER RESERVA
           </button>
           <button
-            *ngIf="reserva.estado === 'CRIADA'"
+            *ngIf="reserva.estado === 'RESERVADO'"
             (click)="cancelarReserva(reserva)"
             class="btn-cancelar"
           >
@@ -113,3 +113,11 @@
     </div>
   </div>
 </div>
+
+<app-modal-cancelar-reserva
+  [reserva]="reservaSelecionada"
+  [mostrar]="mostrarModal"
+  (fechar)="fecharModal()"
+  (confirmar)="confirmarCancelamento()"
+></app-modal-cancelar-reserva>
+

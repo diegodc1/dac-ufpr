@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { Router, RouterLink } from '@angular/router';
 import { MakeReservationComponent } from '../make-reservation/make-reservation.component';
+import { ModalCancelarReservaComponent } from '../modal-cancelar-reserva/modal-cancelar-reserva.component';
 import { format, addMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +12,13 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, RouterLink, FormsModule],
+  imports: [
+    CommonModule,
+    HeaderComponent,
+    RouterLink,
+    FormsModule,
+    ModalCancelarReservaComponent,  // 👉 Importando o componente do modal
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
@@ -21,13 +28,16 @@ export class HomeComponent implements OnInit {
   reservasFiltradas: any[] = [];
   mostrarAcoes: boolean = true;
 
-  // 🆕 Campos para origem e destino
   origem: string = '';
   destino: string = '';
 
+  // 👉 Controle do modal
+  mostrarModal: boolean = false;
+  reservaSelecionada: any = null;
+
   constructor(
     private reservaService: ReservaService,
-    private router: Router // 🆕 Injetando o Router
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -39,9 +49,11 @@ export class HomeComponent implements OnInit {
       {
         codigo: 'ABC123',
         dataHora: '2025-04-10T10:00:00',
-        aeroportoOrigem: 'Aeroporto de São Paulo (GRU)',
-        aeroportoDestino: 'Aeroporto do Rio de Janeiro (GIG)',
-        estado: 'CRIADA',
+        aeroportoOrigem: ' São Paulo (GRU)',
+        aeroportoDestino: ' Rio de Janeiro (GIG)',
+        estado: 'RESERVADO',
+        milhasGastadas:2000,
+        valorGasto:180.00
       },
       {
         codigo: 'DEF456',
@@ -55,14 +67,14 @@ export class HomeComponent implements OnInit {
         dataHora: '2025-04-15T08:00:00',
         aeroportoOrigem: 'Aeroporto de Salvador (SSA)',
         aeroportoDestino: 'Aeroporto de Fortaleza (FOR)',
-        estado: 'CANCELADA',
+        estado: 'CANCELADO',
       },
       {
         codigo: 'JKL012',
         dataHora: '2025-04-20T18:00:00',
-        aeroportoOrigem: 'Aeroporto de Porto Alegre (POA)',
-        aeroportoDestino: 'Aeroporto de Curitiba (CWB)',
-        estado: 'CRIADA',
+        aeroportoOrigem: 'Porto Alegre (POA)',
+        aeroportoDestino: 'Curitiba (CWB)',
+        estado: 'RESERVADO',
       },
     ];
 
@@ -81,33 +93,50 @@ export class HomeComponent implements OnInit {
   }
 
   cancelarReserva(reserva: any) {
-    if (reserva.estado === 'CRIADA') {
-      reserva.estado = 'CANCELADA';
-      this.reservaService.cancelarReserva(reserva);
-      this.carregarReservas();
+    if (reserva.estado === 'RESERVADO') {
+      this.reservaSelecionada = reserva;
+      this.mostrarModal = true;
     }
+  }
+
+  confirmarCancelamento() {
+    if (this.reservaSelecionada) {
+      this.reservaSelecionada.estado = 'CANCELADO';
+      this.reservaService.cancelarReserva(this.reservaSelecionada);
+      this.mostrarModal = false;
+  
+      // Atualiza a reserva no array original
+      const index = this.reservas.findIndex(r => r.codigo === this.reservaSelecionada.codigo);
+      if (index !== -1) {
+        this.reservas[index].estado = 'CANCELADO';
+      }
+    }
+  }
+  
+
+  fecharModal() {
+    this.mostrarModal = false;
   }
 
   getStatusTexto(estado: string): string {
     switch (estado) {
-      case 'CRIADA':
+      case 'RESERVADO':
         return 'RESERVADO';
       case 'CHECK-IN':
         return 'REALIZADO';
-      case 'CANCELADA':
+      case 'CANCELADO':
         return 'CANCELADO';
       default:
         return estado;
     }
   }
 
-  // 🆕 Redirecionar com parâmetros para /make-reservation
   buscarVoos() {
     this.router.navigate(['/make-reservation'], {
       queryParams: {
         origem: this.origem,
-        destino: this.destino
-      }
+        destino: this.destino,
+      },
     });
   }
 }
