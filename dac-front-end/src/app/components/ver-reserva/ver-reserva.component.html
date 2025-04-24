@@ -1,45 +1,75 @@
 
-<div class="ver-reserva-container">
-    <h2>Detalhes da Reserva - Código: {{ reserva.codigo }}</h2>
+<app-header></app-header>
+<div class="reserva-container">
+  <h1 class="titulo">Dados da Reserva</h1>
+
+  <div class="reserva-box">
+
   
-    <!-- Cabeçalho horizontal -->
-    <div class="reserva-header">
-      <h3>Informações da Reserva</h3>
+    <div class="rota-info">
+      <div class="rota-info-cidade">São Paulo (GRU) → Rio de Janeiro (GIG)</div>
+      <div class="rota-info-detalhes">
+        <span>Segunda, 29 Jun</span>
+        <span>-</span>
+        <span>Sem parada</span>
+        <span>-</span>
+        <span>9h 50min</span>
+      </div>
     </div>
-  
-    <table class="reserva-table">
-      <thead>
-        <tr>
-          <th>Campo</th>
-          <th>Detalhes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Data/Hora</strong></td>
-          <td>{{ reserva.dataHora }}</td>
-        </tr>
-        <tr>
-          <td><strong>Aeroporto Origem</strong></td>
-          <td>{{ reserva.aeroportoOrigem }}</td>
-        </tr>
-        <tr>
-          <td><strong>Aeroporto Destino</strong></td>
-          <td>{{ reserva.aeroportoDestino }}</td>
-        </tr>
-        <tr>
-          <td><strong>Valor Gasto</strong></td>
-          <td>{{ reserva.valorGasto | currency:'BRL' }}</td>
-        </tr>
-        <tr>
-          <td><strong>Milhas Gastas</strong></td>
-          <td>{{ reserva.milhasGastadas }}</td>
-        </tr>
-        <tr>
-          <td><strong>Estado</strong></td>
-          <td>{{ reserva.estado }}</td>
-        </tr>
-      </tbody>
-    </table>
+
+   
+    <div class="reserva-header">
+      <h2 class="voo-detalhes">Detalhes do Voo</h2>
+      <p class="reserva-status">
+        <strong>Status da Reserva:</strong> <span class="reservado">RESERVADO</span>
+      </p>
+    </div>
+
+ 
+    <div class="reserva-info-bar">
+      <div style="flex: 1;">
+        <p class="info-item"><strong>Código da Reserva:</strong> ABC123</p>
+      </div>
+      <div style="flex: 1; text-align: right;">
+        <p class="info-item"><strong>Classe:</strong> Econômica</p>
+      </div>
+    </div>
+
+    
+    <div class="reserva-conteudo">
+     
+      <div class="local-info">
+        <p class="iata">GRU</p>
+        <p class="hora">14:50</p>
+        <p class="data">Dom, 29 Jan 2023</p>
+        <p class="aeroporto">Moi Intl, Mombasa, Kenya</p>
+        <p class="terminal">Terminal - 2, Gate - 25</p>
+      </div>
+
+     
+      <div class="duracao-container">
+        <p class="duracao">9h 50min</p>
+        <div class="linha-com-aviao">
+          <div class="linha"></div>
+          <div class="icone-aviao">✈️</div>
+          <div class="linha"></div>
+        </div>
+      </div>
+
+    
+      <div class="local-info">
+        <p class="iata">JFK</p>
+        <p class="hora">14:50</p>
+        <p class="data">Dom, 29 Jan 2023</p>
+        <p class="aeroporto">JFK Terminal, Nairobi, Kenya</p>
+        <p class="terminal">Terminal - 2, Gate - 25</p>
+      </div>
+
+   
+      <div class="valor-container">
+        <p class="valor">R$ 4.500</p>
+      </div>
+    </div>
+
   </div>
-  
+</div>

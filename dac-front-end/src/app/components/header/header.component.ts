@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 
 
 @Component({
@@ -10,5 +10,9 @@ import { RouterLink } from '@angular/router';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+  constructor(private router: Router){}
 
+  logout(): void {
+    this.router.navigate(['/login']);
+  }
 }

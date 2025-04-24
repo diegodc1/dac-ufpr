@@ -32,4 +32,7 @@ public class User implements Serializable {
     private String password;
 
     private String role;
+
+    private String userStatus; // verificar no login do funcionário
+
 }

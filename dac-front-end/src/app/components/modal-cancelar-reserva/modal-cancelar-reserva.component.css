@@ -1,0 +1,242 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 60px;
+    overflow-y: auto;
+  }
+  
+  .modal-cancelar {
+    background: white;
+    width: 100%;
+    max-width: 760px;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+    animation: fadeInUp 0.3s ease-in-out;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* HEADER COMPLETO */
+  .modal-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+  }
+  
+  .modal-pergunta {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    text-align: center;
+  }
+  
+  .modal-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .status-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .status-label {
+    color: #333;
+  }
+  
+  .status-verde {
+    color: green;
+    font-weight: bold;
+  }
+  
+  /* Container com voo + valores */
+  .frame-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  
+  /* Frame do voo */
+  .frame-voo {
+    background: #ffe3e3;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  /* Lados */
+  .origem, .destino {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .data-dia, .destino-dia {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  
+  .hora-voo, .hora-chegada {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .aeroporto {
+    font-size: 13px;
+    color: #333;
+  }
+  
+  /* Avião central com duração */
+  .voo-linha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    min-width: 80px;
+  }
+  
+  .voo-linha::before {
+    content: "";
+    height: 1px;
+    width: 50px;
+    background: #999;
+    position: absolute;
+    left: -60px;
+    top: 50%;
+  }
+  
+  .voo-linha::after {
+    content: "";
+    height: 1px;
+    width: 50px;
+    background: #999;
+    position: absolute;
+    right: -60px;
+    top: 50%;
+  }
+  
+  .duracao {
+    font-size: 12px;
+    color: #555;
+  }
+  
+  .aviao {
+    font-size: 24px;
+    color: #d0312d;
+    transform: rotate(90deg);
+  }
+  
+  /* Valores ao lado */
+  .modal-valores {
+    flex: 0 0 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  /* Botões centralizados */
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  
+  .btn-cancelar {
+    background-color: #fff0f0;
+    color: #d0312d;
+    border: 1px solid #f4b2b2;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-cancelar:hover {
+    background-color: #fcd3d3;
+  }
+  
+  .btn-voltar {
+    background-color: #6a0dad;
+    color: #ffffff;
+    border: 1px solid #c4c4ff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-voltar:hover {
+    background-color: #dcdcff;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 680px) {
+    .frame-container {
+      flex-direction: column;
+    }
+  
+    .modal-valores {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  
+    .voo-linha::before,
+    .voo-linha::after {
+      display: none;
+    }
+  
+    .modal-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  
+    .status-container {
+      justify-content: flex-start;
+    }
+  }
+  .logo{
+    text-decoration-color: brown;
+    font-size: 20px;
+  }

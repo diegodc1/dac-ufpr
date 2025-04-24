@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ServicoFuncionarioApplication<servico-funcionario>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.aerolinha.ServicoFuncionarioApplication",
+            "projectName": "servico-funcionario",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SagasApplication<sagas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.aerolinha.SagasApplication",
+            "projectName": "sagas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AuthenticationServiceApplication<authentication-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.dac.authentication_service.AuthenticationServiceApplication",
+            "projectName": "authentication-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
