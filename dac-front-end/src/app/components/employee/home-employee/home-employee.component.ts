@@ -4,6 +4,7 @@ import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import { BoardingConfirmationModalComponent } from "../boarding-confirmation-modal/boarding-confirmation-modal.component"; 
 import { ca } from 'date-fns/locale';
 import { CancelFlightModalComponent } from "../cancel-flight-modal/cancel-flight-modal.component";
+import { FlightCompletionModalComponent } from "../flight-completion-modal/flight-completion-modal.component";
 
 
 interface Voo {
@@ -23,7 +24,8 @@ interface Voo {
     NgIf,
     DatePipe,
     BoardingConfirmationModalComponent,
-    CancelFlightModalComponent
+    CancelFlightModalComponent,
+    FlightCompletionModalComponent
   ],
   templateUrl: './home-employee.component.html',
   styleUrl: './home-employee.component.css'
@@ -40,6 +42,7 @@ export class HomeEmployeeComponent {
   modals = {
     boarding: { isOpen: false, data: null },
     cancelFlight: { isOpen: false, data: null },
+    flightCompletion: { isOpen: false, data: null }
   };
 
   openModal(modalName: keyof typeof this.modals, data: any) {
@@ -61,7 +64,10 @@ export class HomeEmployeeComponent {
     console.log('Cancelando voo:', this.modals.cancelFlight.data);
     this.closeModal('cancelFlight');
   }
-  
 
+  handleFlightCompletion() {
+    console.log('Voo marcado como realizado:', this.modals.flightCompletion.data);
+    this.closeModal('flightCompletion');
+  }
 
 }

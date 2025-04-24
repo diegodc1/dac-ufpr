@@ -16,6 +16,13 @@
       (confirmCancelFlight)="handleCancelFlight()"
       (closeModalEvent)="closeModal('cancelFlight')">
     </app-cancel-flight-modal>
+
+    <app-flight-completion-modal
+      *ngIf="modals.flightCompletion.isOpen"
+      [voo]="modals.flightCompletion.data"
+      (confirmFlightCompletion)="handleFlightCompletion()"
+      (closeModalEvent)="closeModal('flightCompletion')">
+    </app-flight-completion-modal>
     
     <table class="table-voos">
       <thead class="thead-style">
@@ -48,7 +55,11 @@
             </button>
           </td>
           <td *ngIf="voo.estado == 'CONFIRMADO'">
-            <span class="material-symbols-outlined btn-realizar-voo">check_circle</span>
+            <span
+              class="material-symbols-outlined btn-realizar-voo"
+              (click)="openModal('flightCompletion', voo)">
+              check_circle
+            </span>
           </td>
           <td *ngIf="voo.estado == 'CONFIRMADO'">
             <span
