@@ -3,6 +3,7 @@ package com.dac.authentication_service.controller;
 import com.dac.authentication_service.collection.User;
 import com.dac.authentication_service.dto.AuthRequestDTO;
 import com.dac.authentication_service.dto.LoginReturnDTO;
+import com.dac.authentication_service.dto.LogoutResponse;
 import com.dac.authentication_service.repository.UserRepository;
 import com.dac.authentication_service.securityService.AuthService;
 import com.dac.authentication_service.services.IUserService;
@@ -55,7 +56,7 @@ public class AuthController {
             Authentication authenticate = authenticationManager
                     .authenticate(
                             new UsernamePasswordAuthenticationToken(authRequestDTO.getLogin(),
-                                    authRequestDTO.getPassword()));
+                                    authRequestDTO.getSenha()));
 
             if (authenticate.isAuthenticated()) {
                 String userToken = authService.generateToken(authRequestDTO.getLogin());
@@ -65,10 +66,11 @@ public class AuthController {
                     User user = optionalUser.get();
                     LoginReturnDTO response = LoginReturnDTO.builder()
                             .userId(user.getId())
-                            .token(userToken)
+                            .access_token(userToken)
+                            .token_type("bearer")
                             .name(user.getName())
                             .login(user.getLogin())
-                            .role(user.getRole())
+                            .tipo(user.getRole())
                             .build();
 
                     return ResponseEntity.ok(response);
@@ -81,6 +83,23 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível realizar o login! Tente novamente!");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> doLogout(@RequestBody AuthRequestDTO authRequestDTO) {
+        try {
+            Optional<User> optionalUser = userService.findBylogin(authRequestDTO.getLogin());
+
+            if (optionalUser.isPresent()) {
+                return ResponseEntity.ok(new LogoutResponse(authRequestDTO.getLogin()));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        } catch (Exception e) {
+            log.error("Erro ao realizar logout: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao realizar logout!");
+        }
+    }
+
 
     @GetMapping("/validate")
     public String validateToken(@RequestHeader("x-access-token") String token) {
