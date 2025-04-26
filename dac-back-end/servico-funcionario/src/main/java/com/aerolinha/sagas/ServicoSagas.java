@@ -6,9 +6,13 @@ import org.springframework.stereotype.Service;
 import com.aerolinha.modelo.Funcionario;
 import com.aerolinha.repositorio.FuncionarioRepositorio;
 import com.aerolinha.sagas.comandos.ComandoCriarFunc;
+import com.aerolinha.sagas.comandos.ComandoInativarFunc;
 import com.aerolinha.sagas.consultas.VerificarFuncionario;
 import com.aerolinha.sagas.eventos.EventoFuncCriado;
+import com.aerolinha.sagas.eventos.EventoFuncInativado;
 import com.aerolinha.sagas.resposta.VerificarFuncRes;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ServicoSagas {
@@ -83,6 +87,27 @@ public class ServicoSagas {
                 .build();
 
         return evento;
+    }
+
+    // R19
+    @Transactional
+    public EventoFuncInativado inativarFuncionario(ComandoInativarFunc comando) {
+
+        Funcionario funcionario = funcionarioRepositorio.findByIdUsuario(comando.getUsuarioId());
+
+        funcionario.setEstado(comando.getEstadoUsuario());
+
+        funcionario = funcionarioRepositorio.save(funcionario);
+
+        EventoFuncInativado evento = EventoFuncInativado.builder()
+                .idUsuario(funcionario.getIdUsuario())
+                .nome(funcionario.getNome())
+                .estadoFuncionario(funcionario.getEstado())
+                .mensagem("EventoFuncInativado")
+                .build();
+
+        return evento;
+
     }
 
 }

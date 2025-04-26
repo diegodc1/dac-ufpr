@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.dac.authentication_service.sagas.comandos.ComandoCriarFuncUser;
+import com.dac.authentication_service.sagas.comandos.ComandoDelFunc;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserCriado;
+import com.dac.authentication_service.sagas.eventos.EventoFuncUserDeletado;
 import com.dac.authentication_service.securityService.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -48,6 +50,21 @@ public class GerenciaSagas {
                     var msg = objectMapper.writeValueAsString(evento);
 
                     rabbitTemplate.convertAndSend("CanalAutRes", msg);
+
+                    break;
+
+                }
+
+                // R19
+                case "ComandoDelFunc" -> {
+
+                    ComandoDelFunc comando = objectMapper.convertValue(map, ComandoDelFunc.class);
+
+                    EventoFuncUserDeletado evento = authService.removerFuncionario(comando);
+
+                    var resMensagem = objectMapper.writeValueAsString(evento);
+
+                    rabbitTemplate.convertAndSend("CanalAutRes", resMensagem);
 
                     break;
 

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import com.aerolinha.dto.resposta.ResGenDTO;
 import com.aerolinha.sagas.criafuncionariosaga.CriaFuncionarioSAGA;
 import com.aerolinha.sagas.criafuncionariosaga.requisicoes.VerificarFuncionario;
 import com.aerolinha.sagas.criafuncionariosaga.respostas.VerificarFuncRes;
+import com.aerolinha.sagas.deletarfuncionariosaga.DelFuncSaga;
 import com.aerolinha.utils.ValidadorCPF;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +42,9 @@ public class ControladorSagas {
 
     @Autowired
     private CriaFuncionarioSAGA criaFuncionarioSAGA;
+
+    @Autowired
+    private DelFuncSaga delFuncSaga;
 
     // Armazenamento temporário para respostas
     private final Map<String, VerificarFuncRes> respostasTemporarias = new ConcurrentHashMap<>();
@@ -105,6 +111,17 @@ public class ControladorSagas {
         // CPF da resposta para usar como chave
         String chave = resposta.getCpf();
         respostasTemporarias.put(chave, resposta);
+    }
+
+    // R19
+    @DeleteMapping("remover/{id}")
+    public ResponseEntity<ResGenDTO> removerFuncionario(@PathVariable("id") String idUsuario)
+            throws JsonProcessingException {
+
+        this.delFuncSaga.manipularRequisicao(idUsuario);
+        ResGenDTO dto = new ResGenDTO("Funcionário com id " + idUsuario + " foi removido");
+
+        return ResponseEntity.ok().body(dto);
     }
 
 }
