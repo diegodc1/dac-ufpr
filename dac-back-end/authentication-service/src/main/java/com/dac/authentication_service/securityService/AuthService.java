@@ -3,7 +3,9 @@ package com.dac.authentication_service.securityService;
 import com.dac.authentication_service.collection.User;
 import com.dac.authentication_service.repository.UserRepository;
 import com.dac.authentication_service.sagas.comandos.ComandoCriarFuncUser;
+import com.dac.authentication_service.sagas.comandos.ComandoDelFunc;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserCriado;
+import com.dac.authentication_service.sagas.eventos.EventoFuncUserDeletado;
 import com.dac.authentication_service.security.TokenService;
 
 import java.security.SecureRandom;
@@ -11,6 +13,7 @@ import java.security.SecureRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -34,6 +37,7 @@ public class AuthService {
     }
 
     // R17
+    @Transactional
     public EventoFuncUserCriado novoFuncionario(ComandoCriarFuncUser comando) {
 
         String senha = gerarSenhaAleatoria();
@@ -81,6 +85,27 @@ public class AuthService {
 
     public void validateToken(String token) {
         tokenService.validateToken(token);
+    }
+
+    // R19
+    @Transactional
+    public EventoFuncUserDeletado removerFuncionario(ComandoDelFunc comando) {
+
+        User user = userRepository.findById(comando.getIdUsuario()).orElse(null);
+
+        user.setUserStatus("INATIVO");
+
+        user = userRepository.save(user);
+
+        EventoFuncUserDeletado evento = EventoFuncUserDeletado.builder()
+
+                .idUsuario(user.getId())
+                .estadoUsuario(user.getUserStatus())
+                .mensagem("EventoFuncUserDeletado")
+                .build();
+
+        return evento;
+
     }
 
 }

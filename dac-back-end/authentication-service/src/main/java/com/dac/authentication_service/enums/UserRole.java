@@ -1,8 +1,8 @@
 package com.dac.authentication_service.enums;
 
 public enum UserRole {
-    EMPLOYEE("EMPLOYEE"),
-    CLIENT("CLIENT");
+    EMPLOYEE("FUNCIONARIO"),
+    CLIENT("CLIENTE");
 
     private String role;
 

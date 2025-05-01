@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.aerolinha.sagas.comandos.ComandoCriarFunc;
+import com.aerolinha.sagas.comandos.ComandoInativarFunc;
 import com.aerolinha.sagas.consultas.VerificarFuncionario;
 import com.aerolinha.sagas.eventos.EventoFuncCriado;
+import com.aerolinha.sagas.eventos.EventoFuncInativado;
 import com.aerolinha.sagas.resposta.VerificarFuncRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -59,6 +61,21 @@ public class GerenciaSagas {
                     ComandoCriarFunc comando = objectMapper.convertValue(map, ComandoCriarFunc.class);
 
                     EventoFuncCriado evento = servicoSagas.criarFuncionario(comando);
+
+                    String msg = objectMapper.writeValueAsString(evento);
+
+                    rabbitTemplate.convertAndSend("CanalFuncRes", msg);
+
+                    break;
+
+                }
+
+                // R19
+                case "ComandoInativarFunc" -> {
+
+                    ComandoInativarFunc comando = objectMapper.convertValue(map, ComandoInativarFunc.class);
+
+                    EventoFuncInativado evento = servicoSagas.inativarFuncionario(comando);
 
                     String msg = objectMapper.writeValueAsString(evento);
 

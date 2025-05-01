@@ -18,4 +18,6 @@ public interface FuncionarioRepositorio extends JpaRepository<Funcionario, UUID>
     @Query(value = "SELECT * FROM tabela_funcionario f WHERE f.email = ?1", nativeQuery = true)
     Funcionario getFuncionarioByEmail(String email);
 
+    Funcionario findByIdUsuario(String idUsuario);
+
 }

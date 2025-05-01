@@ -63,7 +63,7 @@
   animation: 1s linear;
 }
 
-.btn-realizar-voo:hover, .btn-cancelar-voo:hover {
+.btn-realizar-voo:hover, .btn-cancelar-voo:hover, .btn-cadastrar-voo:hover {
   cursor: pointer;
   transform: scale(1.08);
   animation: 1s linear;
@@ -75,4 +75,18 @@
 
 .btn-cancelar-voo:hover {
   color: #ff4958;
+}
+
+.btn-cadastrar-voo {
+  background-color: #198754; 
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  margin-left: 50px; 
+  cursor: pointer;
+}
+
+.btn-cadastrar-voo:hover {
+  background-color: #3abd7f; 
 }

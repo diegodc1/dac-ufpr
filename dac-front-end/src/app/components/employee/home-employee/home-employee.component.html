@@ -23,7 +23,13 @@
       (confirmFlightCompletion)="handleFlightCompletion()"
       (closeModalEvent)="closeModal('flightCompletion')">
     </app-flight-completion-modal>
-    
+
+    <app-create-flight-modal
+  *ngIf="modals.createFlight.isOpen"
+  (createFlight)="handleCreateFlight($event)"
+  (closeModalEvent)="closeModal('createFlight')">
+</app-create-flight-modal>
+
     <table class="table-voos">
       <thead class="thead-style">
         <tr>
@@ -72,5 +78,10 @@
       </tbody>
     </table>
   </div>
+  <button
+    class="btn-cadastrar-voo"
+    (click)="openModal('createFlight', null)">
+    Cadastrar Novo Voo
+  </button>
 
 </div>
