@@ -10,21 +10,26 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./create-flight-modal.component.css']
 })
 export class CreateFlightModalComponent {
-  @Output() createFlight = new EventEmitter<any>(); 
-  @Output() closeModalEvent = new EventEmitter<void>(); 
+  @Output() createFlight = new EventEmitter<any>();
+  @Output() closeModalEvent = new EventEmitter<void>();
 
   flightData = {
+    codigo: '',
     origem: '',
     destino: '',
     dataHora: '',
-    valor: ''
+    valor: '',
+    milhas: '',
+    poltronas: ''
   };
+
+  aeroportos = ['Guarulhos - GRU', 'Congonhas - CGH', 'Brasília - BSB', 'Galeão - GIG'];
 
   submitForm() {
     this.createFlight.emit(this.flightData);
   }
 
   closeModal() {
-    this.closeModalEvent.emit(); 
+    this.closeModalEvent.emit();
   }
 }
