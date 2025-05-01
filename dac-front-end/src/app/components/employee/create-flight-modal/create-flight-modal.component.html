@@ -1,0 +1,27 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <h3 class="modal-title">Cadastrar Novo Voo</h3>
+    <form (ngSubmit)="submitForm()">
+      <div class="form-group">
+        <label for="origem">Origem</label>
+        <input id="origem" type="text" [(ngModel)]="flightData.origem" name="origem" required />
+      </div>
+      <div class="form-group">
+        <label for="destino">Destino</label>
+        <input id="destino" type="text" [(ngModel)]="flightData.destino" name="destino" required />
+      </div>
+      <div class="form-group">
+        <label for="dataHora">Data e Hora</label>
+        <input id="dataHora" type="datetime-local" [(ngModel)]="flightData.dataHora" name="dataHora" required />
+      </div>
+      <div class="form-group">
+        <label for="valor">Valor</label>
+        <input id="valor" type="number" [(ngModel)]="flightData.valor" name="valor" required />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn-confirm">Cadastrar</button>
+      </div>
+    </form>
+  </div>
+</div>

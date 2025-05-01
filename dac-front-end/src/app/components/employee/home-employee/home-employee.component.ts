@@ -5,7 +5,7 @@ import { BoardingConfirmationModalComponent } from "../boarding-confirmation-mod
 import { ca } from 'date-fns/locale';
 import { CancelFlightModalComponent } from "../cancel-flight-modal/cancel-flight-modal.component";
 import { FlightCompletionModalComponent } from "../flight-completion-modal/flight-completion-modal.component";
-
+import { CreateFlightModalComponent } from "../create-flight-modal/create-flight-modal.component";
 
 interface Voo {
   id: number;
@@ -25,7 +25,8 @@ interface Voo {
     DatePipe,
     BoardingConfirmationModalComponent,
     CancelFlightModalComponent,
-    FlightCompletionModalComponent
+    FlightCompletionModalComponent,
+    CreateFlightModalComponent
   ],
   templateUrl: './home-employee.component.html',
   styleUrl: './home-employee.component.css'
@@ -42,10 +43,11 @@ export class HomeEmployeeComponent {
   modals = {
     boarding: { isOpen: false, data: null },
     cancelFlight: { isOpen: false, data: null },
-    flightCompletion: { isOpen: false, data: null }
+    flightCompletion: { isOpen: false, data: null },
+    createFlight: { isOpen: false, data: null }
   };
 
-  openModal(modalName: keyof typeof this.modals, data: any) {
+  openModal(modalName: keyof typeof this.modals, data: any = null) {
     this.modals[modalName].isOpen = true;
     this.modals[modalName].data = data;
   }
@@ -70,4 +72,11 @@ export class HomeEmployeeComponent {
     this.closeModal('flightCompletion');
   }
 
+  handleCreateFlight(flightData: any) {
+    console.log('Novo voo cadastrado:', flightData);
+    this.closeModal('createFlight');
+  }
+
 }
+
+
