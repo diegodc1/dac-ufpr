@@ -8,9 +8,12 @@ import com.dac.voos.voos.repositorys.AeroportoRepository;
 import com.dac.voos.voos.repositorys.EstadoVooRepository;
 import com.dac.voos.voos.repositorys.VooRepository;
 import com.dac.voos.voos.services.VooService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.spel.ast.OpAnd;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,23 +34,43 @@ public class VoosController {
     private EstadoVooRepository estadoVooRepository;
     @Autowired
     private AeroportoRepository aeroportoRepository;
+    private static final Logger logger = LoggerFactory.getLogger(VoosController.class);
 
-    @PostMapping("/newVoo")
-   public ResponseEntity<String> newVoos(@RequestBody VooDTO vooDTO){
-       vooService.saveVoos(vooDTO);
-       return ResponseEntity.ok("Criado voo com sucesso");
-   }
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> newVoo(@RequestBody VooDTO vooDTO) {
+        logger.info("VooDTO recebido no controller: {}", vooDTO);
+        Voos novoVoo = vooService.saveNewVoo(vooDTO);
+        Map<String, Object> retorno = vooService.converterVooParaJsonComEstadoConfirmado(novoVoo);
+        return new ResponseEntity<>(retorno, HttpStatus.CREATED);
+    }
+
+
    @GetMapping("/todosVoos")
    public ResponseEntity<List<Voos>> todosVoos(){
         List<Voos> voos = vooService.listVoos();
         return ResponseEntity.ok(voos);
    }
-@GetMapping("/{codigo}")
-   public  ResponseEntity<Voos> buscarCodigo(@PathVariable Long codigo){
-       Optional<Voos> voos = vooService.listVoosCod(codigo);
-       return voos.map(ResponseEntity ::ok ).orElse(ResponseEntity.notFound().build());
+    @GetMapping("/voos/{codigo}")
+    public ResponseEntity<?> buscarCodigo(@PathVariable Long codigo) {
+        Optional<Voos> voosOptional = vooService.listVoosCod(codigo);
 
-   }
+        if (voosOptional.isPresent()) {
+            Voos voo = voosOptional.get();
+            Map<String, Object> retorno = new HashMap<>();
+            retorno.put("codigo", voo.getCodigo());
+            retorno.put("data", voo.getData_hora().atOffset(ZoneOffset.UTC).toString().replace("Z", "-03:00"));
+            retorno.put("valor_passagem", voo.getValorPassagem());
+            retorno.put("quantidade_poltronas_total", voo.getQuantidadePoltronasTotal());
+            retorno.put("quantidade_poltronas_ocupadas", voo.getQuantidadePoltronasOculpadas());
+            retorno.put("estado", voo.getEstadoVoo().getSigla());
+            retorno.put("aeroporto_origem", converterAeroportoParaJson(voo.getAeroportoOrigem()));
+            retorno.put("aeroporto_destino", converterAeroportoParaJson(voo.getAeroportoDestino()));
+            return ResponseEntity.ok(retorno);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
    @DeleteMapping("/{codigo}")
    public ResponseEntity<?> removerVoo(@PathVariable Long codigo){
         try {
@@ -127,7 +150,7 @@ public class VoosController {
                 put("valor_passagem", voo.getValorPassagem());
                 put("quantidade_poltronas_total", voo.getQuantidadePoltronasTotal());
                 put("quantidade_poltronas_ocupadas", voo.getQuantidadePoltronasOculpadas());
-                put("estado", voo.getEstadoVoo().getSigla()); // Ou getDescricao(), conforme sua preferência
+                put("estado", voo.getEstadoVoo().getSigla());
                 put("aeroporto_origem", converterAeroportoParaJson(voo.getAeroportoOrigem()));
                 put("aeroporto_destino", converterAeroportoParaJson(voo.getAeroportoDestino()));
             }};
@@ -135,7 +158,14 @@ public class VoosController {
 
         return ResponseEntity.ok(listaVoosResposta);
     }
+    @PatchMapping("/{codigoVoo}/estado")
+    public ResponseEntity<?> cancelarVoo(@PathVariable Long codigoVoo, @RequestBody Map<String, String> payload) {
+        if (payload == null || !payload.containsKey("estado") || !payload.get("estado").equalsIgnoreCase("CANCELADO")) {
+            return ResponseEntity.badRequest().body("JSON de requisição inválido. Esperado: { \"estado\": \"CANCELADO\" }");
+        }
 
+        return vooService.cancelarVoo(codigoVoo);
+    }
 }
 
 
