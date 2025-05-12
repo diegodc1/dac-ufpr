@@ -100,6 +100,11 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/teste")
+    public ResponseEntity<?> teste() {
+        return ResponseEntity.ok("foi");
+    }
+
 
     @GetMapping("/validate")
     public String validateToken(@RequestHeader("x-access-token") String token) {
