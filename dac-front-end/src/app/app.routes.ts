@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+// giy pullimport { Routes } from '@angular/router';
 import {RegisterComponent} from "./components/register/register.component";
 import { LoginComponent } from './components/login/login.component';
 import { MakeReservationComponent } from './components/make-reservation/make-reservation.component';
@@ -11,6 +11,7 @@ import { CheckInComponent } from './components/check-in/check-in.component';
 import {HomeEmployeeComponent} from "./components/employee/home-employee/home-employee.component";
 import { CheckReservationComponent } from './components/check-reservation/check-reservation.component';
 import {ListEmployeesComponent} from "./components/employee/list-employees/list-employees.component";
+import { Routes } from "@angular/router";
 
 export const routes: Routes = [
   {
