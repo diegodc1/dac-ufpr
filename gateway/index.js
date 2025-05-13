@@ -84,6 +84,11 @@ app.get('/voos', validateTokenProxy, (req, res, next) => {
     console.log('Query params recebidos:', req.query);
     voosProxy(req, res, next);
 });
+//R15-Cadastra voo
+app.post('/voos', validateTokenProxy, (req, res, next) => {
+    voosProxy(req, res, next);
+});
+
 
 
 // *********************************************************************************
