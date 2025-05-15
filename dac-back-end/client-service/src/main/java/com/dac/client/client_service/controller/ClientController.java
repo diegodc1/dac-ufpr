@@ -5,9 +5,13 @@ import com.dac.backend.clientservice.dto.ClienteResponseDTO;
 import com.dac.backend.clientservice.model.Cliente;
 import com.dac.backend.clientservice.service.ClienteService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/clientes")
@@ -38,6 +42,24 @@ public class ClienteController {
         clienteService.deletar(cpf);
     }
     
+    @GetMapping("/{codigoCliente}/milhas")
+    public ResponseEntity<Map<String, Object>> getMilhasCliente(@PathVariable Long codigoCliente) {
+        Cliente cliente = clienteService.buscarPorCodigo(codigoCliente);
+        
+        if (cliente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        List<Map<String, Object>> transacoes = clienteService.buscarTransacoesPorCliente(codigoCliente);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("codigo", cliente.getCodigo());
+        response.put("saldo_milhas", cliente.getSaldoMilhas());
+        response.put("transacoes", transacoes);
+        
+        return ResponseEntity.ok(response);
+    }
+
     private ClienteResponseDTO toResponseDTO(Cliente cliente) {
         return new ClienteResponseDTO(
                 cliente.getCodigo(),
