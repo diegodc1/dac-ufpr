@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/aeroporto")
+@RequestMapping("/aeroportos")
 public class AeroportoController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class AeroportoController {
         );
         return ResponseEntity.ok("Criado aeroporto");
     }
-    @GetMapping("/todosAeroportos")
+    @GetMapping
     public  ResponseEntity<List<Aeroporto>> todosAeroportos(){
         List<Aeroporto> aeroportos = aeroportoService.listAeroporto();
         return ResponseEntity.ok(aeroportos);

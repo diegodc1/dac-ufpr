@@ -1,5 +1,6 @@
 package com.aerolinha.repositorio;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,10 @@ public interface FuncionarioRepositorio extends JpaRepository<Funcionario, UUID>
 
     @Query(value = "SELECT * FROM tabela_funcionario f WHERE f.email = ?1", nativeQuery = true)
     Funcionario getFuncionarioByEmail(String email);
+
+    // R16
+    @Query(value = "SELECT * FROM tabela_funcionario f WHERE f.estado = 'ATIVO' ORDER BY f.nome", nativeQuery = true)
+    List<Funcionario> getFuncionariosAtivos();
 
     Funcionario findByIdUsuario(String idUsuario);
 

@@ -39,7 +39,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity addNewUser(@RequestBody User user) {
+    public ResponseEntity<?> addNewUser(@RequestBody User user) {
         if (this.userRepository.findByLogin(user.getLogin()).isPresent()) return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuário já existe!");
 
         if (authService.saveUser(user)) {
@@ -50,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity doLogin(@RequestBody AuthRequestDTO authRequestDTO) {
+    public ResponseEntity<?> doLogin(@RequestBody AuthRequestDTO authRequestDTO) {
 
         try {
             Authentication authenticate = authenticationManager
@@ -96,8 +96,13 @@ public class AuthController {
             }
         } catch (Exception e) {
             log.error("Erro ao realizar logout: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao realizar logout!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao realizar logout! Tente novamente!");
         }
+    }
+
+    @GetMapping("/teste")
+    public ResponseEntity<?> teste() {
+        return ResponseEntity.ok("foi");
     }
 
 

@@ -11,9 +11,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginReturnDTO {
     private String userId;
+
     private String access_token;
+
     private String token_type;
+
     private String name;
+
     private String login;
+
     private String tipo;
 }

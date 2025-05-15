@@ -28,6 +28,17 @@
             "mainClass": "com.dac.authentication_service.AuthenticationServiceApplication",
             "projectName": "authentication-service",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=39211 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=authentication-service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-VoosApplication<voos>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.dac.voos.voos.VoosApplication",
+            "projectName": "voos",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         },
         {

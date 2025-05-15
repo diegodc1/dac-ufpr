@@ -22,17 +22,12 @@ public class User implements Serializable {
 
     @MongoId
     private String id;
-
     private String name;
-
     @Field(name = "login")
     @Indexed(unique = true)
     private String login; // email
-
     private String password;
-
     private String role;
-
     private String userStatus; // verificar no login do funcionário
 
 }

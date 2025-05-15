@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {FormsModule, NgForm, ReactiveFormsModule} from "@angular/forms";
 import {NgIf} from "@angular/common";
+import {AuthService} from "../../services/auth.service";
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 interface Login {
   email: string;
@@ -15,13 +18,15 @@ interface Login {
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    NgIf
+    NgIf,
+    HttpClientModule
   ],
+  providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  constructor(private router: Router){}
+  constructor(private router: Router, private authService: AuthService, private http: HttpClient) {}
   showLoginError = false;
   loginErrorMessage: string = '';
 
@@ -57,9 +62,6 @@ export class LoginComponent {
       this.loginErrorMessage = "Email ou senha incorretos.";
     }
   }
-
-
-
 
   goToRegister() {
       this.router.navigate(['/register']); // Redireciona para a página de registro

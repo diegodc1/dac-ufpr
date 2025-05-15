@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import {HeaderEmployeeComponent} from "../header-employee/header-employee.component";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import { BoardingConfirmationModalComponent } from "../boarding-confirmation-modal/boarding-confirmation-modal.component"; 
-import { ca } from 'date-fns/locale';
+import { ca, th } from 'date-fns/locale';
 import { CancelFlightModalComponent } from "../cancel-flight-modal/cancel-flight-modal.component";
 import { FlightCompletionModalComponent } from "../flight-completion-modal/flight-completion-modal.component";
 import { CreateFlightModalComponent } from "../create-flight-modal/create-flight-modal.component";
+import { HttpClientModule  } from '@angular/common/http'; 
+import { FlightService } from '../../../services/flight.service';
+
 
 interface Voo {
   id: number;
@@ -23,6 +26,7 @@ interface Voo {
     NgForOf,
     NgIf,
     DatePipe,
+    HttpClientModule,
     BoardingConfirmationModalComponent,
     CancelFlightModalComponent,
     FlightCompletionModalComponent,
@@ -33,6 +37,7 @@ interface Voo {
 })
 export class HomeEmployeeComponent {
 
+  
   voos: Voo[] = [
     { id: 1, origem: 'Guarulhos - GRU', destino: 'Guarulhos - GRU', dataHora: '29 Jan 2026, 14:50', estado: 'CONFIRMADO'},
     { id: 2, origem: 'Guarulhos - GRU', destino: 'Guarulhos - GRU', dataHora: '29 Jan 2026, 15:00', estado: 'CONFIRMADO'},
@@ -73,7 +78,7 @@ export class HomeEmployeeComponent {
   }
 
   handleCreateFlight(flightData: any) {
-    console.log('Novo voo cadastrado:', flightData);
+    console.log('Novo voo cadastrado:',flightData);
     this.closeModal('createFlight');
   }
 

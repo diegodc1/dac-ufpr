@@ -1,7 +1,7 @@
 
 .client-dashboard {
   font-family: 'Inter', sans-serif;
-  background-color: #ffffff;
+  background-color: #F3F3F3;
   color: #333;
 }
 
@@ -9,12 +9,12 @@
   position: relative;
   top: 0;
   width: 100%;
-  height: 100vh; 
+  height: 100vh;
   overflow: hidden;
   background-image: url('../../../assets/images/Rectangle 1.webp');
-  background-size: cover; 
-  background-position: center center; 
-  background-repeat: no-repeat; 
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +97,7 @@ button:hover {
 
 
 .main-title {
-  text-align: left;
+  text-align: center;
   margin-left: 5%;
   margin-top: 50px;
   font-size: 28px;
@@ -107,13 +107,13 @@ button:hover {
 
 .reserva-card {
   background: #f8f9fa;
-  border: 1px solid #ccc;
   padding: 20px;
   margin: 20px auto;
   border-radius: 10px;
   width: 90%;
   max-width: 700px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
 }
 
 .reserva-top {
@@ -152,9 +152,10 @@ button:hover {
 
 .reserva-detalhes {
   background: #fff1e4;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 15px;
   width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .reserva-dia {
@@ -224,7 +225,7 @@ button:hover {
 }
 
 .btn-cancelar {
-  background-color: #c5b7b3;
+  background-color: white;
   color: rgb(245, 5, 5);
   border: 2px solid #fdb19a;
 }
@@ -235,6 +236,7 @@ button:hover {
 
 .btn-cancelar:hover {
   background-color: #d03c10;
+  color: white;
 }
 
 
