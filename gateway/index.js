@@ -76,7 +76,7 @@ app.get('/auth/validate', (req, res, next) => {
 });
 
 // R01 - Autocadastro
-app.post('/clientes/cadastro', (req, res, next) => {
+app.post('/clientes', (req, res, next) => {
     clienteServiceProxy(req, res, next);
 });
 
