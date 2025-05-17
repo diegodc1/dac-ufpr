@@ -7,8 +7,13 @@ import { Observable } from 'rxjs';
 })
 export class ClienteService {
   private API_URL = 'http://localhost:8091/client';
+  private API_GATEWAY_URL = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
+
+  cadastrarCliente(dados: any): Observable<any> {
+    return this.http.post(`${this.API_GATEWAY_URL}/clientes`, dados);
+  }
 
   getSaldoMilhas(): Observable<number> {
     return this.http.get<number>(`${this.API_URL}/saldo-milhas`);
@@ -28,9 +33,9 @@ export class ClienteService {
       'Content-Type': 'application/json',
       'x-access-token': authToken || ''
     });
-    
-    return this.http.post<any>(`${this.API_URL}/comprar-milhas`, 
-      { quantidade, valorPago }, 
+
+    return this.http.post<any>(`${this.API_URL}/comprar-milhas`,
+      { quantidade, valorPago },
       { headers }
     );
   }
