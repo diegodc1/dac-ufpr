@@ -29,6 +29,10 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
+    public Cliente findByEmail(String email){
+        return clienteRepository.findByEmail(email);
+    };
+
     public List<Cliente> listarTodos() {
         return clienteRepository.findAll();
     }

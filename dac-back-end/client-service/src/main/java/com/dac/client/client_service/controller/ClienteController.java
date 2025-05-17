@@ -57,6 +57,10 @@ public class ClienteController {
         }
     }
 
+    @GetMapping("/{login}")
+    public CadastroClienteDTO getByLogin(@PathVariable String login) {
+        return new CadastroClienteDTO(clienteService.findByEmail(login));
+    }
 
     @GetMapping
     public List<ClienteResponseDTO> listar() {

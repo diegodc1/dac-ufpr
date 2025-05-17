@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+const axios = require('axios');
+
 
 const corsOptions = {
     origin: ['http://localhost:4200'],
@@ -81,10 +83,6 @@ app.post('/clientes', (req, res, next) => {
 });
 
 
-// R02 - login
-app.post('/auth/login', (req, res, next) => {
-    authServiceProxy(req, res, next);
-});
 
 // R11 - tela inicial funcionario
 app.get('/voos', validateTokenProxy, (req, res, next) => {
@@ -94,6 +92,40 @@ app.get('/voos', validateTokenProxy, (req, res, next) => {
 //R15-Cadastra voo
 app.post('/voos', validateTokenProxy, (req, res, next) => {
     voosProxy(req, res, next);
+});
+
+
+// ********************************* API COMPOSITION ************************************************
+
+// R02 - login
+app.post('/auth/login', async (req, res) => {
+    try {
+        const authRes = await axios.post('http://localhost:8080/auth/login', req.body);
+
+        const loginData = authRes.data;
+        const userLogin = req.body.login; 
+
+        const clienteRes = await axios.get(`http://localhost:8082/clientes/${userLogin}`, {
+            headers: { 'x-access-token': loginData.access_token }
+        });
+
+        const clienteData = clienteRes.data;
+
+        const responseComposta = {
+            ...loginData,
+            usuario: clienteData
+        };
+
+
+        return res.status(200).json(responseComposta);
+
+    } catch (err) {
+        if (err.response && err.response.status === 401) {
+            return res.status(401).json({ message: 'Login inválido' });
+        }
+        console.error('Erro no login via gateway:', err.message);
+        return res.status(500).json({ message: 'Erro no login', error: err.message });
+    }
 });
 
 
