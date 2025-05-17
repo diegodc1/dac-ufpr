@@ -30,6 +30,8 @@ const authServiceProxy = httpProxy('http://localhost:8080');
 
 const voosProxy = httpProxy('http://localhost:8081');
 
+const clienteServiceProxy = httpProxy('http://localhost:8082'); 
+
 const validateTokenProxy = (req, res, next) => {
 
     const token = req.headers['x-access-token'];
@@ -71,6 +73,11 @@ const validateTokenProxy = (req, res, next) => {
 // teste validacao token
 app.get('/auth/validate', (req, res, next) => {
     authServiceProxy(req, res, next);
+});
+
+// R01 - Autocadastro
+app.post('/clientes/cadastro', (req, res, next) => {
+    clienteServiceProxy(req, res, next);
 });
 
 
