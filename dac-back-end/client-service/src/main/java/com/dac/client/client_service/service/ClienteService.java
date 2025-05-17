@@ -46,7 +46,7 @@ public class ClienteService {
     }
 
     public void iniciarCadastroCliente(CadastroClienteDTO cadastroDTO) throws JsonProcessingException {
-        if (clienteRepository.existsById(cadastroDTO.getCpf())) {
+        if (clienteRepository.existsByCpf(cadastroDTO.getCpf()) || clienteRepository.existsByEmail(cadastroDTO.getEmail()) ) {
             throw new ClientAlreadyExistsException();
         }
 
@@ -82,6 +82,7 @@ public class ClienteService {
         cliente.setCep(comando.getCep());
         cliente.setRua(comando.getRua());
         cliente.setComplemento(comando.getComplemento());
+        cliente.setBairro(comando.getBairro());
         cliente.setCidade(comando.getCidade());
         cliente.setUf(comando.getUf());
         cliente.setNumero(comando.getNumero());

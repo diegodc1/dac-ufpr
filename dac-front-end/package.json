@@ -23,6 +23,7 @@
     "material-symbols": "^0.29.3",
     "ngx-mask": "^19.0.6",
     "rxjs": "~7.8.0",
+    "sweetalert2": "^11.21.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
   },
