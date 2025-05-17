@@ -8,8 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cliente {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long codigo;
+
     @Column(length = 11, nullable = false, unique = true)
     private String cpf;
 
@@ -25,6 +27,7 @@ public class Cliente {
     private String cep;
     private String cidade;
     private String uf;
+    private String bairro;
 
     @Column(nullable = false)
     private int saldoMilhas;

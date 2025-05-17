@@ -1,6 +1,7 @@
 package com.dac.client.client_service.service;
 
 import com.dac.client.client_service.dto.CadastroClienteDTO;
+import com.dac.client.client_service.exception.ClientAlreadyExistsException;
 import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.repository.ClienteRepository;
 import com.dac.client.client_service.sagas.comandos.ComandoCadastroCliente;
@@ -42,7 +43,7 @@ public class ClienteService {
 
     public void iniciarCadastroCliente(CadastroClienteDTO cadastroDTO) throws JsonProcessingException {
         if (clienteRepository.existsById(cadastroDTO.getCpf())) {
-            throw new RuntimeException("Cliente com CPF " + cadastroDTO.getCpf() + " já existe!");
+            throw new ClientAlreadyExistsException();
         }
 
         // senha aleatoria
@@ -54,12 +55,13 @@ public class ClienteService {
         comando.setCpf(cadastroDTO.getCpf());
         comando.setNome(cadastroDTO.getNome());
         comando.setEmail(cadastroDTO.getEmail());
-        comando.setCep(cadastroDTO.getCep());
-        comando.setRua(cadastroDTO.getRua());
-        comando.setNumero(cadastroDTO.getNumero());
-        comando.setComplemento(cadastroDTO.getComplemento());
-        comando.setCidade(cadastroDTO.getCidade());
-        comando.setUf(cadastroDTO.getUf());
+        comando.setCep(cadastroDTO.getEndereco().getCep());
+        comando.setRua(cadastroDTO.getEndereco().getRua());
+        comando.setNumero(cadastroDTO.getEndereco().getNumero());
+        comando.setComplemento(cadastroDTO.getEndereco().getComplemento());
+        comando.setCidade(cadastroDTO.getEndereco().getCidade());
+        comando.setUf(cadastroDTO.getEndereco().getUf());
+        comando.setSaldo_milhas(cadastroDTO.getSaldo_milhas());
         comando.setSenha(senha);
 
         // envia mensagem para o serviço de autenticação
@@ -67,8 +69,9 @@ public class ClienteService {
         rabbitTemplate.convertAndSend("CanalAut", mensagem);
     }
 
-    public void salvarCliente(ComandoCadastroCliente comando) {
+    public Cliente salvarCliente(ComandoCadastroCliente comando) {
         Cliente cliente = new Cliente();
+        cliente.setCodigo(comando.getCodigo());
         cliente.setCpf(comando.getCpf());
         cliente.setNome(comando.getNome());
         cliente.setEmail(comando.getEmail());
@@ -77,8 +80,9 @@ public class ClienteService {
         cliente.setComplemento(comando.getComplemento());
         cliente.setCidade(comando.getCidade());
         cliente.setUf(comando.getUf());
-        cliente.setSaldoMilhas(0);
+        cliente.setNumero(comando.getNumero());
+        cliente.setSaldoMilhas(comando.getSaldo_milhas() != null ? comando.getSaldo_milhas() : 0);
 
-        clienteRepository.save(cliente);
+        return clienteRepository.save(cliente);
     }
 }

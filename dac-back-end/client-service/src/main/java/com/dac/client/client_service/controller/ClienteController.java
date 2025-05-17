@@ -1,17 +1,23 @@
 package com.dac.client.client_service.controller;
 
+import com.dac.client.client_service.components.EsperaResposta;
 import com.dac.client.client_service.dto.CadastroClienteDTO;
 import com.dac.client.client_service.dto.ClienteRequestDTO;
 import com.dac.client.client_service.dto.ClienteResponseDTO;
-import com.dac.client.client_service.dto.EnderecoViaCepDTO;
+import com.dac.client.client_service.exception.ClientAlreadyExistsException;
 import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,14 +30,30 @@ public class ClienteController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @PostMapping("/cadastro")
+    @Autowired
+    private EsperaResposta esperaResposta;
+
+    @PostMapping
     public ResponseEntity<?> cadastrarCliente(@RequestBody CadastroClienteDTO cadastroDTO) {
         try {
-            clienteService.iniciarCadastroCliente(cadastroDTO);
-            return ResponseEntity.ok().body("Cadastro em processamento! Aguarde o email com sua senha.");
+            String cpf = cadastroDTO.getCpf();
+            CompletableFuture<Cliente> future = new CompletableFuture<>();
+            esperaResposta.aguardar(cpf, future);
 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao cadastrar cliente: " + e.getMessage());
+            clienteService.iniciarCadastroCliente(cadastroDTO);
+
+            Cliente cliente = future.get(10, TimeUnit.SECONDS);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(new CadastroClienteDTO(cliente));
+
+        }  catch (ClientAlreadyExistsException  e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+        catch (TimeoutException e) {
+            return ResponseEntity.status(504).body("Tempo de espera excedido para criação do cliente.");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(409).body("Erro ao cadastrar cliente: " + e.getMessage());
         }
     }
 
@@ -43,12 +65,12 @@ public class ClienteController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping
-    public ClienteResponseDTO salvar(@RequestBody ClienteRequestDTO clienteRequestDTO) {
-        Cliente cliente = toEntity(clienteRequestDTO);
-        Cliente clienteSalvo = clienteService.salvar(cliente);
-        return toResponseDTO(clienteSalvo);
-    }
+//    @PostMapping
+//    public ClienteResponseDTO salvar(@RequestBody ClienteRequestDTO clienteRequestDTO) {
+//        Cliente cliente = toEntity(clienteRequestDTO);
+//        Cliente clienteSalvo = clienteService.salvar(cliente);
+//        return toResponseDTO(clienteSalvo);
+//    }
 
     @DeleteMapping("/{cpf}")
     public void deletar(@PathVariable String cpf) {

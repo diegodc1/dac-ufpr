@@ -3,6 +3,8 @@ package com.dac.client.client_service.sagas;
 
 import java.util.Map;
 
+import com.dac.client.client_service.components.EsperaResposta;
+import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.sagas.comandos.ComandoCadastroCliente;
 import com.dac.client.client_service.sagas.eventos.EventoAutenticacaoCriada;
 import com.dac.client.client_service.service.ClienteService;
@@ -28,6 +30,9 @@ public class GerenciaSagas {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private EsperaResposta esperaResposta;
+
     @RabbitListener(queues = "CanalClienteRes")
     public void gerenciaMensagem(String mensagem) throws JsonMappingException, JsonProcessingException {
 
@@ -44,10 +49,12 @@ public class GerenciaSagas {
                 if (evento.isSucesso()) {
                     ComandoCadastroCliente comando = evento.getComando();
 
-                    clienteService.salvarCliente(comando);
+                    Cliente cliente = clienteService.salvarCliente(comando);
                     emailService.enviarSenhaPorEmail(evento.getEmail(), evento.getSenha());
+                    esperaResposta.resolver(comando.getCpf(), cliente);
                 } else {
                     System.out.println("Falha ao criar autenticação: " + evento.getMensagemErro());
+                    esperaResposta.erro(evento.getLogin(), evento.getMensagemErro());
                 }
                 break;
             }
