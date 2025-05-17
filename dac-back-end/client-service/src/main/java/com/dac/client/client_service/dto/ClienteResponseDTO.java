@@ -1,12 +1,19 @@
-import lombok.Data;
+package com.dac.client.client_service.dto;
+
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 @Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class ClienteResponseDTO {
 
     @NotNull
@@ -19,11 +26,7 @@ public class ClienteResponseDTO {
     @Email
     private String email;
 
-    @NotBlank
     private String nome;
-
-    @Pattern(regexp = "\\d{10,11}")
-    private String telefone;
 
     @PositiveOrZero
     private Integer saldoMilhas;

@@ -1,10 +1,15 @@
-package com.dac.backend.clientservice.controller;
+package com.dac.client.client_service.controller;
 
-import com.dac.backend.clientservice.dto.ClienteRequestDTO;
-import com.dac.backend.clientservice.dto.ClienteResponseDTO;
-import com.dac.backend.clientservice.model.Cliente;
-import com.dac.backend.clientservice.service.ClienteService;
+import com.dac.client.client_service.dto.CadastroClienteDTO;
+import com.dac.client.client_service.dto.ClienteRequestDTO;
+import com.dac.client.client_service.dto.ClienteResponseDTO;
+import com.dac.client.client_service.dto.EnderecoViaCepDTO;
+import com.dac.client.client_service.model.Cliente;
+import com.dac.client.client_service.service.ClienteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,11 +18,23 @@ import java.util.stream.Collectors;
 @RequestMapping("/clientes")
 public class ClienteController {
 
-    private final ClienteService clienteService;
+    @Autowired
+    private ClienteService clienteService;
 
-    public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @PostMapping("/cadastro")
+    public ResponseEntity<?> cadastrarCliente(@RequestBody CadastroClienteDTO cadastroDTO) {
+        try {
+            clienteService.iniciarCadastroCliente(cadastroDTO);
+            return ResponseEntity.ok().body("Cadastro em processamento! Aguarde o email com sua senha.");
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao cadastrar cliente: " + e.getMessage());
+        }
     }
+
 
     @GetMapping
     public List<ClienteResponseDTO> listar() {
@@ -37,14 +54,13 @@ public class ClienteController {
     public void deletar(@PathVariable String cpf) {
         clienteService.deletar(cpf);
     }
-    
+
     private ClienteResponseDTO toResponseDTO(Cliente cliente) {
         return new ClienteResponseDTO(
-                cliente.getCodigo(),
+                Long.valueOf(cliente.getCpf()),
                 cliente.getCpf(),
                 cliente.getEmail(),
                 cliente.getNome(),
-                cliente.getTelefone(),
                 cliente.getSaldoMilhas()
         );
     }
@@ -54,8 +70,6 @@ public class ClienteController {
         cliente.setCpf(clienteRequestDTO.getCpf());
         cliente.setEmail(clienteRequestDTO.getEmail());
         cliente.setNome(clienteRequestDTO.getNome());
-        cliente.setTelefone(clienteRequestDTO.getTelefone());
-        cliente.setSenha(clienteRequestDTO.getSenha());
         return cliente;
     }
 }

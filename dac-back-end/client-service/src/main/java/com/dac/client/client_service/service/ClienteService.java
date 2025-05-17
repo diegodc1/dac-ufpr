@@ -1,0 +1,84 @@
+package com.dac.client.client_service.service;
+
+import com.dac.client.client_service.dto.CadastroClienteDTO;
+import com.dac.client.client_service.model.Cliente;
+import com.dac.client.client_service.repository.ClienteRepository;
+import com.dac.client.client_service.sagas.comandos.ComandoCadastroCliente;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Random;
+
+@Service
+public class ClienteService {
+
+    private final ClienteRepository clienteRepository;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    public ClienteService(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
+    }
+
+    public List<Cliente> listarTodos() {
+        return clienteRepository.findAll();
+    }
+
+    public Cliente salvar(Cliente cliente) {
+        return clienteRepository.save(cliente);
+    }
+
+    public void deletar(String cpf) {
+        clienteRepository.deleteById(cpf);
+    }
+
+    public void iniciarCadastroCliente(CadastroClienteDTO cadastroDTO) throws JsonProcessingException {
+        if (clienteRepository.existsById(cadastroDTO.getCpf())) {
+            throw new RuntimeException("Cliente com CPF " + cadastroDTO.getCpf() + " já existe!");
+        }
+
+        // senha aleatoria
+        Random random = new Random();
+        String senha = String.format("%04d", random.nextInt(10000));
+
+        // cria o comando para o serviço de autenticação
+        ComandoCadastroCliente comando = new ComandoCadastroCliente();
+        comando.setCpf(cadastroDTO.getCpf());
+        comando.setNome(cadastroDTO.getNome());
+        comando.setEmail(cadastroDTO.getEmail());
+        comando.setCep(cadastroDTO.getCep());
+        comando.setRua(cadastroDTO.getRua());
+        comando.setNumero(cadastroDTO.getNumero());
+        comando.setComplemento(cadastroDTO.getComplemento());
+        comando.setCidade(cadastroDTO.getCidade());
+        comando.setUf(cadastroDTO.getUf());
+        comando.setSenha(senha);
+
+        // envia mensagem para o serviço de autenticação
+        String mensagem = objectMapper.writeValueAsString(comando);
+        rabbitTemplate.convertAndSend("CanalAut", mensagem);
+    }
+
+    public void salvarCliente(ComandoCadastroCliente comando) {
+        Cliente cliente = new Cliente();
+        cliente.setCpf(comando.getCpf());
+        cliente.setNome(comando.getNome());
+        cliente.setEmail(comando.getEmail());
+        cliente.setCep(comando.getCep());
+        cliente.setRua(comando.getRua());
+        cliente.setComplemento(comando.getComplemento());
+        cliente.setCidade(comando.getCidade());
+        cliente.setUf(comando.getUf());
+        cliente.setSaldoMilhas(0);
+
+        clienteRepository.save(cliente);
+    }
+}

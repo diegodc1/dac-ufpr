@@ -1,6 +1,6 @@
-package com.dac.backend.clientservice.repository;
+package com.dac.client.client_service.repository;
 
-import com.dac.backend.clientservice.model.Cliente;
+import com.dac.client.client_service.model.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClienteRepository extends JpaRepository<Cliente, String> {
