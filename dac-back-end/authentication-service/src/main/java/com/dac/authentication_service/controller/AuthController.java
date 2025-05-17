@@ -65,11 +65,8 @@ public class AuthController {
                 if (optionalUser.isPresent()) {
                     User user = optionalUser.get();
                     LoginReturnDTO response = LoginReturnDTO.builder()
-                            .userId(user.getId())
                             .access_token(userToken)
                             .token_type("bearer")
-                            .name(user.getName())
-                            .login(user.getLogin())
                             .tipo(user.getRole())
                             .build();
 
