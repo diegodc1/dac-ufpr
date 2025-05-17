@@ -1,7 +1,12 @@
 package com.dac.authentication_service.sagas;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import com.dac.authentication_service.sagas.comandos.ComandoCadastroCliente;
+import com.dac.authentication_service.sagas.eventos.EventoAutenticacaoCriada;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,52 +33,36 @@ public class GerenciaSagas {
     private AuthService authService;
 
     @RabbitListener(queues = "CanalAut")
-    public void gerenciaMensagem(String mensagem) throws JsonProcessingException, JsonMappingException {
+    public void gerenciaMensagem(String mensagem) throws JsonProcessingException {
 
-        Object object = objectMapper.readValue(mensagem, Object.class);
+        if (mensagem.startsWith("\"{")) {
+            mensagem = objectMapper.readValue(mensagem, String.class);
+        }
+        Map<String, Object> map = objectMapper.readValue(mensagem, new TypeReference<>() {});
+        String tipoMensagem = (String) map.get("mensagem");
 
-        if (object instanceof Map) {
-
-            Map<?, ?> map = (Map<?, ?>) object;
-
-            String tipoMensagem = (String) map.get("mensagem");
-
-            switch (tipoMensagem) {
-
-                // R17
-                case "ComandoCriarFuncUser" -> {
-
-                    ComandoCriarFuncUser comando = objectMapper.convertValue(map, ComandoCriarFuncUser.class);
-
-                    EventoFuncUserCriado evento = authService.novoFuncionario(comando);
-
-                    var msg = objectMapper.writeValueAsString(evento);
-
-                    rabbitTemplate.convertAndSend("CanalAutRes", msg);
-
-                    break;
-
-                }
-
-                // R19
-                case "ComandoDelFunc" -> {
-
-                    ComandoDelFunc comando = objectMapper.convertValue(map, ComandoDelFunc.class);
-
-                    EventoFuncUserDeletado evento = authService.removerFuncionario(comando);
-
-                    var resMensagem = objectMapper.writeValueAsString(evento);
-
-                    rabbitTemplate.convertAndSend("CanalAutRes", resMensagem);
-
-                    break;
-
-                }
-
+        switch (tipoMensagem) {
+            case "ComandoCadastroCliente" -> {
+                ComandoCadastroCliente comando = objectMapper.convertValue(map, ComandoCadastroCliente.class);
+                EventoAutenticacaoCriada evento = authService.cadastrarCliente(comando);
+                String resMensagem = objectMapper.writeValueAsString(evento);
+                rabbitTemplate.convertAndSend("CanalClienteRes", resMensagem);
             }
 
+            case "ComandoCriarFuncUser" -> {
+                ComandoCriarFuncUser comando = objectMapper.convertValue(map, ComandoCriarFuncUser.class);
+                EventoFuncUserCriado evento = authService.novoFuncionario(comando);
+                String msg = objectMapper.writeValueAsString(evento);
+                rabbitTemplate.convertAndSend("CanalAutRes", msg);
+            }
+
+            case "ComandoDelFunc" -> {
+                ComandoDelFunc comando = objectMapper.convertValue(map, ComandoDelFunc.class);
+                EventoFuncUserDeletado evento = authService.removerFuncionario(comando);
+                String resMensagem = objectMapper.writeValueAsString(evento);
+                rabbitTemplate.convertAndSend("CanalAutRes", resMensagem);
+            }
         }
-
     }
-
 }
+
