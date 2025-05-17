@@ -14,8 +14,8 @@ public class EmailService {
     public void enviarSenhaPorEmail(String emailDestino, String senha) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(emailDestino);
-        message.setSubject("Sua senha de acesso ao sistema da Empresa Aérea");
-        message.setText("Olá! Seu cadastro foi realizado com sucesso. Sua senha de acesso é: " + senha);
+        message.setSubject("Sua senha de acesso TripUs");
+        message.setText("Olá! Seu cadastro na TripUs foi realizado com sucesso! Sua senha de acesso é: " + senha);
 
         emailSender.send(message);
     }

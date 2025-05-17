@@ -45,7 +45,7 @@ public class GerenciaSagas {
                     ComandoCadastroCliente comando = evento.getComando();
 
                     clienteService.salvarCliente(comando);
-//                    emailService.enviarSenhaPorEmail(evento.getEmail(), evento.getSenha());
+                    emailService.enviarSenhaPorEmail(evento.getEmail(), evento.getSenha());
                 } else {
                     System.out.println("Falha ao criar autenticação: " + evento.getMensagemErro());
                 }
