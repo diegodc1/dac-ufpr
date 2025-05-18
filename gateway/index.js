@@ -104,16 +104,26 @@ app.post('/auth/login', async (req, res) => {
 
         const loginData = authRes.data;
         const userLogin = req.body.login; 
+        const userType = loginData.tipo;
+        let usuarioRes = null;
+    
 
-        const clienteRes = await axios.get(`http://localhost:8082/clientes/${userLogin}`, {
-            headers: { 'x-access-token': loginData.access_token }
-        });
+        if(userType === 'CLIENTE') {
+            usuarioRes = await axios.get(`http://localhost:8082/clientes/${userLogin}`, {
+                headers: { 'x-access-token': loginData.access_token }
+            });
+        } else {
+            usuarioRes = await axios.get(`http://localhost:8083/funcionarios/${userLogin}`, {
+                headers: { 'x-access-token': loginData.access_token }
+            });
+        }
+     
 
-        const clienteData = clienteRes.data;
+        const usuarioData = usuarioRes.data;
 
         const responseComposta = {
             ...loginData,
-            usuario: clienteData
+            usuario: usuarioData
         };
 
 
