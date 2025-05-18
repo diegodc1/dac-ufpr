@@ -5,6 +5,7 @@ import {NgIf} from "@angular/common";
 import {AuthService} from "../../services/auth.service";
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 interface Login {
   email: string;
@@ -44,26 +45,64 @@ export class LoginComponent {
     this.loginErrorMessage = '';
 
     if (form.invalid) {
-      this.loginErrorMessage = "Preencha todos os campos corretamente.";
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos obrigatórios',
+        text: 'Preencha todos os campos corretamente.'
+      });
       return;
     }
 
-    const loginEncontrado = this.logins.find(
-      user => user.email === this.loginData.email && user.senha === this.loginData.senha
-    );
-
-    if (loginEncontrado) {
-      if (loginEncontrado.tipo === 'FUNCIONARIO') {
-        this.router.navigate(['/home-employee']);
-      } else if (loginEncontrado.tipo === 'CLIENTE') {
-        this.router.navigate(['/home']);
+    Swal.fire({
+      title: 'Entrando...',
+      text: 'Verificando suas credenciais.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
       }
-    } else {
-      this.loginErrorMessage = "Email ou senha incorretos.";
-    }
+    });
+
+    this.http.post('http://localhost:3000/auth/login', {
+      login: this.loginData.email,
+      senha: this.loginData.senha
+    }).subscribe({
+      next: (response: any) => {
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('usuario', JSON.stringify(response.usuario));
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Login realizado!',
+          text: `Bem-vindo(a), ${response.usuario.nome}!`,
+          confirmButtonText: 'Continuar'
+        }).then(() => {
+          const tipoUsuario = response.usuario.tipo;
+          if (tipoUsuario === 'FUNCIONARIO') {
+            this.router.navigate(['/home-employee']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        });
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Login inválido',
+            text: 'Email ou senha incorretos.'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao fazer login',
+            text: err.error?.message || 'Tente novamente mais tarde.'
+          });
+        }
+      }
+    });
   }
 
   goToRegister() {
-      this.router.navigate(['/register']); // Redireciona para a página de registro
+      this.router.navigate(['/register']);
     }
 }
