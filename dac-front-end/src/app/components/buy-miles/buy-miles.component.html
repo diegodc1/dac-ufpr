@@ -8,7 +8,7 @@
             <div>
                 <h3 class="h3">Quantas minhas você deseja 
                     <br> comprar ?</h3>
-                <input  class="input" placeholder="1.000"/>
+                <input  class="input" placeholder="1.000" type="number" ngModel="milesToBuy" (input)="onMilesInputChange"/>
                 <p class="p">milhas</p>
             </div>
             <div class="lines">
@@ -18,8 +18,8 @@
             </div>
             <div>
                 <h3 class="h3">Total</h3>
-                <h1 class="price">R$5.000,00</h1>
-                <button class="btn">
+                <h1 class="price">{{totalPrice}}</h1>
+                <button class="btn" (click)="buyMiles">
                     Comprar milhas 
                 </button>
             </div>
@@ -37,56 +37,16 @@
                     <th>Qtd. Milhas</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>12/03/2025</td>
-                    <td>DSC344</td>
-                    <td>R$59,90</td>
-                    <td>COMPRA DE MILHAS</td>
-                    <td>3453</td>
-                  </tr>
-                  <tr>
-                    <td>12/03/2025</td>
-                    <td>YTR534</td>
-                    <td>R$59,90</td>
-                    <td>CWB→GRU</td>
-                    <td>270</td>
-                  </tr>
-                  <tr>
-                    <td>12/03/2025</td>
-                    <td>GFJ880</td>
-                    <td>R$59,90</td>
-                    <td>COMPRA DE MILHAS</td>
-                    <td>4507</td>
-                  </tr>
-                  <tr>
-                    <td>12/03/2025</td>
-                    <td>ADG442</td>
-                    <td>R$59,90</td>
-                    <td>COMPRA DE MILHAS</td>
-                    <td>1682</td>
-                  </tr>
-                  <tr>
-                    <td>12/03/2025</td>
-                    <td>DAV424</td>
-                    <td>R$59,90</td>
-                    <td>CWB→GRU</td>
-                    <td>3453</td>
-                  </tr>
-                  <tr>
-                    <td>12/03/2025</td>
-                    <td>URF523</td>
-                    <td>R$59,90</td>
-                    <td>COMPRA DE MILHAS</td>
-                    <td>500</td>
-                  </tr>
-                  <tr>
-                    <td>12/03/2025</td>
-                    <td>LOP733</td>
-                    <td>R$59,90</td>
-                    <td>CWB→GRU</td>
-                    <td>1659</td>
-                  </tr>
+                 <tbody>
+                    <tr *ngFor="let transaction of mileageExtract">
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.reservationCode || '' }}</td> <td>{{ transaction.amountReais }}</td>
+                        <td>{{ transaction.miles }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td>{{ transaction.type }}</td> </tr>
+                    <tr *ngIf="mileageExtract.length === 0">
+                      <td colspan="6" style="text-align: center;">Nenhuma transação encontrada.</td>
+                    </tr>
                 </tbody>
               </table>
          </div>
