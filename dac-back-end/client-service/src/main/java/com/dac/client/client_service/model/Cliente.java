@@ -31,4 +31,6 @@ public class Cliente {
 
     @Column(nullable = false)
     private int saldoMilhas;
+
+
 }

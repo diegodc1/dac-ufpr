@@ -1,5 +1,6 @@
 package com.dac.client.client_service.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -40,4 +41,21 @@ public class TransacaoMilhas {
 
     @Column(name = "descricao", nullable = false, length = 200)
     private String descricao;
+
+    public void setCodigoReserva(Object o) {
+    }
+
+    public void setValorEmReais(BigDecimal bigDecimal) {
+    }
+
+
+
+    public Number getValorEmReais() {
+        Number o = null;
+        return o;
+    }
+
+    public String getCodigoReserva() {
+        return null;
+    }
 }
