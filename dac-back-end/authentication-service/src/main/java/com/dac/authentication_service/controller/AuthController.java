@@ -37,16 +37,16 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-
     @PostMapping("/register")
     public ResponseEntity<?> addNewUser(@RequestBody User user) {
-        if (this.userRepository.findByLogin(user.getLogin()).isPresent()) return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuário já existe!");
+        if (this.userRepository.findByLogin(user.getLogin()).isPresent())
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuário já existe!");
 
         if (authService.saveUser(user)) {
             return ResponseEntity.ok().body("Usuário cadastrado com sucesso!");
         }
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível criar o novo usuário!") ;
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível criar o novo usuário!");
     }
 
     @PostMapping("/login")
@@ -65,8 +65,11 @@ public class AuthController {
                 if (optionalUser.isPresent()) {
                     User user = optionalUser.get();
                     LoginReturnDTO response = LoginReturnDTO.builder()
+                            .userId(user.getId())
                             .access_token(userToken)
                             .token_type("bearer")
+                            .name(user.getName())
+                            .login(user.getLogin())
                             .tipo(user.getRole())
                             .build();
 
@@ -78,7 +81,8 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Erro ao realizar login: ", e);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível realizar o login! Tente novamente!");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Não foi possível realizar o login! Tente novamente!");
     }
 
     @PostMapping("/logout")
@@ -93,7 +97,8 @@ public class AuthController {
             }
         } catch (Exception e) {
             log.error("Erro ao realizar logout: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao realizar logout! Tente novamente!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao realizar logout! Tente novamente!");
         }
     }
 
@@ -101,7 +106,6 @@ public class AuthController {
     public ResponseEntity<?> teste() {
         return ResponseEntity.ok("foi");
     }
-
 
     @GetMapping("/validate")
     public String validateToken(@RequestHeader("x-access-token") String token) {
