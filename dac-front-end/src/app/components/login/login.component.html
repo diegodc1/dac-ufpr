@@ -1,64 +1,51 @@
-<head >
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <div class="ALL">
-    <div class="header">
-        <h2 class="title1">TripUS</h2>
+  <div class="header">
+    <h2 class="title1">TripUS</h2>
+  </div>
+  <div class="container">
+    <div class="start">
+      <img src="../../../assets/images/Rectangle 1.webp" class="img" />
+      <h1 class="text-overlay">Seu próximo destino começa aqui.
+        <br>Conecte-se e decole!
+      </h1>
     </div>
-    <div class="container">
-        <div class="start">
-            <img src="../../../assets/images/Rectangle 1.webp" class="img"/>
-            <h1 class="text-overlay">Seu próximo destino começa aqui.
-              <br>Conecte-se e decole!</h1>
+    <div class="container_login">
+      <div class="containerBox">
+        <div class="boxTitle">
+          <h1 class="h1">Login</h1>
+          <div style="display: flex; flex-direction: column">
+            <a class="noCont">Não tem conta?</a>
+            <a class="sing" (click)="goToRegister()">Registre-se</a>
+          </div>
         </div>
-        <div class="container_login">
-            <div class="containerBox">
-                <div class="boxTitle">
-                    <h1 class="h1">Login</h1>
-                    <div style="display: flex; flex-direction: column">
-                        <a class="noCont">Não tem conta?</a>
-                        <a class="sing" (click) ="goToRegister()">Registre-se</a>
-                    </div>
-                </div>
 
-                <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
-                    <a class="a">Email</a>
-                    <input
-                      class="input"
-                      placeholder="Insira seu e-mail"
-                      name="email"
-                      [(ngModel)]="loginData.email"
-                      required
-                      email
-                      style="margin-bottom: 15px;"
-                    />
+        <form #loginForm="ngForm" (ngSubmit)="fazerLogin(loginForm)">
+          <a class="a">Email</a>
+          <input class="input" placeholder="Insira seu e-mail" name="email" [(ngModel)]="loginData.login" required email
+            style="margin-bottom: 15px;" />
 
-                    <a class="a">Senha</a>
-                    <input
-                      type="password"
-                      class="input"
-                      placeholder="Insira senha"
-                      name="senha"
-                      [(ngModel)]="loginData.senha"
-                      required
-                      style="margin-bottom: 5px;"
-                    />
+          <a class="a">Senha</a>
+          <input type="password" class="input" placeholder="Insira senha" name="senha" [(ngModel)]="loginData.senha"
+            required style="margin-bottom: 5px;" />
 
 
-                    <div class="contanerForgot">
-                      <a class="forgot">Esqueceu senha?</a>
-                    </div>
+          <div class="contanerForgot">
+            <a class="forgot">Esqueceu senha?</a>
+          </div>
 
-                    <div *ngIf="loginErrorMessage" class="error-message">
-                      {{ loginErrorMessage }}
-                    </div>
+          <div *ngIf="loginErrorMessage" class="error-message">
+            {{ loginErrorMessage }}
+          </div>
 
 
-                  <div style="margin-top: 18%;">
-                      <button class="btn">Entrar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+          <div style="margin-top: 18%;">
+            <button class="btn">Entrar</button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>

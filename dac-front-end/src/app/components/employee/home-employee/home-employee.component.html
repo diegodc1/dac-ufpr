@@ -3,32 +3,21 @@
   <div class="content">
     <h2>Próximos Voos</h2>
 
-    <app-boarding-confirmation-modal
-      *ngIf="modals.boarding.isOpen"
-      [passageiro]="modals.boarding.data"
-      (confirmBoarding)="handleConfirmBoarding()"
-      (closeModal)="closeModal('boarding')">
+    <app-boarding-confirmation-modal *ngIf="modals.boarding.isOpen" [passageiro]="modals.boarding.data"
+      (confirmBoarding)="handleConfirmBoarding()" (closeModal)="closeModal('boarding')">
     </app-boarding-confirmation-modal>
 
-    <app-cancel-flight-modal
-      *ngIf="modals.cancelFlight.isOpen"
-      [voo]="modals.cancelFlight.data"
-      (confirmCancelFlight)="handleCancelFlight()"
-      (closeModalEvent)="closeModal('cancelFlight')">
+    <app-cancel-flight-modal *ngIf="modals.cancelFlight.isOpen" [voo]="modals.cancelFlight.data"
+      (confirmCancelFlight)="handleCancelFlight()" (closeModalEvent)="closeModal('cancelFlight')">
     </app-cancel-flight-modal>
 
-    <app-flight-completion-modal
-      *ngIf="modals.flightCompletion.isOpen"
-      [voo]="modals.flightCompletion.data"
-      (confirmFlightCompletion)="handleFlightCompletion()"
-      (closeModalEvent)="closeModal('flightCompletion')">
+    <app-flight-completion-modal *ngIf="modals.flightCompletion.isOpen" [voo]="modals.flightCompletion.data"
+      (confirmFlightCompletion)="handleFlightCompletion()" (closeModalEvent)="closeModal('flightCompletion')">
     </app-flight-completion-modal>
 
-    <app-create-flight-modal
-  *ngIf="modals.createFlight.isOpen"
-  (createFlight)="handleCreateFlight($event)"
-  (closeModalEvent)="closeModal('createFlight')">
-</app-create-flight-modal>
+    <app-create-flight-modal *ngIf="modals.createFlight.isOpen" (createFlight)="handleCreateFlight($event)"
+      (closeModalEvent)="closeModal('createFlight')">
+    </app-create-flight-modal>
 
     <table class="table-voos">
       <thead class="thead-style">
@@ -46,31 +35,25 @@
       </thead>
       <tbody class="tbody-style">
         <tr *ngFor="let voo of voos">
-          <td>{{voo.id}}</td>
+          <td>{{voo.codigo}}</td>
           <td>{{voo.estado}}</td>
-          <td>{{ voo.dataHora | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ voo.dataHora | date: 'HH:mm' }}</td>
-          <td>{{voo.origem}}</td>
-          <td>{{voo.destino}}</td>
+          <td>{{ voo.data | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ voo.data | date: 'HH:mm' }}</td>
+          <td>{{voo.aeroporto_origem?.nome}}</td>
+          <td>{{voo.aeroporto_destino?.nome}}</td>
           <td>
-            <button
-              *ngIf="voo.estado == 'CONFIRMADO'"
-              class="btn-embarcar-passageiro"
+            <button *ngIf="voo.estado == 'CONFIRMADO'" class="btn-embarcar-passageiro"
               (click)="openModal('boarding', voo)">
               Embarcar Passageiro
             </button>
           </td>
           <td *ngIf="voo.estado == 'CONFIRMADO'">
-            <span
-              class="material-symbols-outlined btn-realizar-voo"
-              (click)="openModal('flightCompletion', voo)">
+            <span class="material-symbols-outlined btn-realizar-voo" (click)="openModal('flightCompletion', voo)">
               check_circle
             </span>
           </td>
           <td *ngIf="voo.estado == 'CONFIRMADO'">
-            <span
-              class="material-symbols-outlined btn-cancelar-voo"
-              (click)="openModal('cancelFlight', voo)">
+            <span class="material-symbols-outlined btn-cancelar-voo" (click)="openModal('cancelFlight', voo)">
               cancel
             </span>
           </td>
@@ -78,9 +61,7 @@
       </tbody>
     </table>
   </div>
-  <button
-    class="btn-cadastrar-voo"
-    (click)="openModal('createFlight', null)">
+  <button class="btn-cadastrar-voo" (click)="openModal('createFlight', null)">
     Cadastrar Novo Voo
   </button>
 
