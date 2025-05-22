@@ -33,7 +33,7 @@ public class CommandController {
     }
 
     
-    @PutMapping("/embarque-passageiro/{code}")
+    @PutMapping("/embarque-passageiro/{cod}")
     public ResponseEntity<CheckinDTO> embarquePassageiro(@PathVariable(value = "cod") String codReserva)
             throws JsonProcessingException {
         CheckinDTO dto =  commandService.updateStatusReserva(codReserva, 4); 
