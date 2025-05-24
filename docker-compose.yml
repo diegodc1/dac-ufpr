@@ -39,6 +39,24 @@ services:
       timeout: 5s
       retries: 5
 
+  api-gateway:
+    build: ./gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000" 
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8080
+      VOOS_SERVICE_URL: http://voos-service:8081
+      CLIENTE_SERVICE_URL: http://cliente-service:8082
+      FUNCIONARIOS_SERVICE_URL: http://funcionarios-service:8083
+      RESERVAS_SERVICE_URL: http://reservas-service:8084
+    depends_on: 
+      - auth-service
+      - voos-service
+      - cliente-service
+      - funcionarios-service
+      - reservas-service
+
 
   auth-service:
     build: ./dac-back-end/authentication-service
@@ -52,8 +70,7 @@ services:
       - MONGO_HOST=mongo
       - MONGO_PORT=27017
       - MONGO_DATABASE=auth_db
-      - MONGO_USERNAME=admin
-      - MONGO_PASSWORD=password
+      - SPRING_PROFILES_ACTIVE=docker
 
 
   voos-service:
