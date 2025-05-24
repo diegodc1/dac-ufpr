@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clientes")
+@CrossOrigin
 public class ClienteController {
 
     @Autowired
@@ -79,6 +82,89 @@ public class ClienteController {
     @DeleteMapping("/{cpf}")
     public void deletar(@PathVariable String cpf) {
         clienteService.deletar(cpf);
+    }
+
+    @GetMapping("/saldo-milhas")
+    public ResponseEntity<Integer> getSaldoMilhas(@RequestHeader(value = "x-access-token", required = false) String token) {
+        String email = getUserEmailFromToken(token);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        Cliente cliente = clienteService.findByEmail(email);
+        if (cliente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(cliente.getSaldoMilhas());
+    }
+
+    @GetMapping("/perfil")
+    public ResponseEntity<CadastroClienteDTO> getPerfilCliente(@RequestHeader(value = "x-access-token", required = false) String token) {
+        String email = getUserEmailFromToken(token);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        Cliente cliente = clienteService.findByEmail(email);
+        if (cliente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(new CadastroClienteDTO(cliente));
+    }
+
+    @PutMapping("/perfil")
+    public ResponseEntity<CadastroClienteDTO> atualizarPerfil(
+            @RequestHeader(value = "x-access-token", required = false) String token,
+            @RequestBody CadastroClienteDTO perfilDTO) {
+        String email = getUserEmailFromToken(token);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        Cliente clienteAtualizado = clienteService.atualizarPerfil(email, perfilDTO);
+        return ResponseEntity.ok(new CadastroClienteDTO(clienteAtualizado));
+    }
+
+    @PostMapping("/comprar-milhas")
+    public ResponseEntity<?> comprarMilhas(
+            @RequestHeader(value = "x-access-token", required = false) String token,
+            @RequestBody Map<String, Object> dados) {
+        String email = getUserEmailFromToken(token);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        Integer quantidade = (Integer) dados.get("quantidade");
+        Double valorPago = Double.valueOf(dados.get("valorPago").toString());
+        
+        try {
+            Cliente cliente = clienteService.comprarMilhas(email, quantidade, valorPago);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("saldoAtual", cliente.getSaldoMilhas());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    private String getUserEmailFromToken(String token) {
+        if (token == null) {
+            return null;
+        }
+        
+        try {
+            // Esta é uma implementação temporária - deverá ser substituída pela validação real do token
+            // Para fins de demonstração, estamos apenas retornando um email fixo
+            return "user@example.com";
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private ClienteResponseDTO toResponseDTO(Cliente cliente) {
