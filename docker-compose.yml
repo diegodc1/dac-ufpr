@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: auth_db
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  auth-service:
+    build: ./dac-back-end/authentication-service
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=auth_db
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password
+
+
+  voos-service:
+    build: ./dac-back-end/voos
+    container_name: voos-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: voos
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq
+
+
+  cliente-service:
+    build: ./dac-back-end/client-service
+    container_name: clientes-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: clientes
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq
+
+
+  funcionarios-service:
+    build: ./dac-back-end/servico-funcionario
+    container_name: funcionarios-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: funcionarios
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq
+    
+
+  reservas-service:
+    build: ./dac-back-end/reservas/reservas
+    container_name: reservas-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: reservas
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq
+
+volumes:
+  mongo-data:
+  postgres-data:

@@ -1,4 +1,4 @@
-package com.dac.backend.clientservice.model;
+package com.dac.client.client_service.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,10 +7,11 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Cliente {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long codigo;
+
     @Column(length = 11, nullable = false, unique = true)
     private String cpf;
 
@@ -20,15 +21,16 @@ public class Cliente {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String senha;
-
-    private String ruaNumero;
+    private String rua;
+    private String numero;
     private String complemento;
     private String cep;
     private String cidade;
     private String uf;
+    private String bairro;
 
     @Column(nullable = false)
     private int saldoMilhas;
+
+
 }

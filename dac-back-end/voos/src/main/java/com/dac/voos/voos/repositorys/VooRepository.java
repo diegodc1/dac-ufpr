@@ -20,7 +20,7 @@ public interface VooRepository extends JpaRepository<Voos, Long> {
             @Param("origem") Aeroporto origem,
             @Param("destino") Aeroporto destino
     );
-    @Query("SELECT v FROM Voos v WHERE v.data_hora BETWEEN :dataInicio AND :dataFim")
+    @Query("SELECT v FROM Voos v WHERE v.data_hora BETWEEN :dataInicio AND :dataFim ORDER BY v.data_hora")
     List<Voos> buscarVoosPorIntervaloDeDatas(
             @Param("dataInicio") LocalDateTime dataInicio,
             @Param("dataFim") LocalDateTime dataFim

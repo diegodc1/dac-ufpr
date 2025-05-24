@@ -1,0 +1,150 @@
+1. rodar container docker
+
+docker run --name dac-voo-bd -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=voos -p 5432:5432 -d postgres:latest
+
+docker run --name dac-pgadmin -p 5051:80 -e PGADMIN_DEFAULT_EMAIL=dac@email.com -e PGADMIN_DEFAULT_PASSWORD=password -d dpage/pgadmin4
+
+1. inserir aeroportos
+
+{
+  "codigo": "CWB",
+  "nome": "AEROPORTO AFONSO PENA",
+  "cidade": "CURITIBA",
+  "uf": "PR"
+}
+
+2. inserir estados
+
+{
+  "sigla": "CONFIRMADO",
+  "descricao": "CONFIRMADO"
+}
+
+3. inserir voo
+
+{
+  "data": "2025-05-12T18:30:00Z-03:00",
+  "valor_passagem": 300.0,
+  "quantidade_poltronas_total": 180,
+  "quantidade_poltronas_ocupadas": 0,
+  "codigo_aeroporto_origem": "CWB",
+  "codigo_aeroporto_destino": "GRU"
+}
+
+{
+  "data": "2025-05-12T15:30:00Z-03:00",
+  "valor_passagem": 300.0,
+  "quantidade_poltronas_total": 180,
+  "quantidade_poltronas_ocupadas": 0,
+  "codigo_aeroporto_origem": "CWB",
+  "codigo_aeroporto_destino": "GRU"
+}
+
+* ajeitar a query do repositorio!
+
+4. buscar voos em: http://localhost:8081/voos?data=2025-05-10&data-fim=2025-05-15
+
+5. retorno do serviço voos:
+
+[
+  {
+    "codigo": 1,
+    "estado": "CONFIRMADO",
+    "data": "2025-05-12T21:30-03:00",
+    "aeroporto_destino": {
+      "uf": "SÃO PAULO",
+      "codigo": "GRU",
+      "cidade": "SP",
+      "nome": "AEROPORTO DE GUARULHOS"
+    },
+    "quantidade_poltronas_ocupadas": 0,
+    "quantidade_poltronas_total": 180,
+    "aeroporto_origem": {
+      "uf": "CURITIBA",
+      "codigo": "CWB",
+      "cidade": "PR",
+      "nome": "AEROPORTO AFONSO PENA"
+    },
+    "valor_passagem": 300.00
+  },
+  {
+    "codigo": 2,
+    "estado": "CONFIRMADO",
+    "data": "2025-05-12T18:30-03:00",
+    "aeroporto_destino": {
+      "uf": "SÃO PAULO",
+      "codigo": "GRU",
+      "cidade": "SP",
+      "nome": "AEROPORTO DE GUARULHOS"
+    },
+    "quantidade_poltronas_ocupadas": 0,
+    "quantidade_poltronas_total": 180,
+    "aeroporto_origem": {
+      "uf": "CURITIBA",
+      "codigo": "CWB",
+      "cidade": "PR",
+      "nome": "AEROPORTO AFONSO PENA"
+    },
+    "valor_passagem": 300.00
+  }
+]
+
+FRONT-END
+
+1. Criar modelos loginData e usuario: 
+
+    ng g class models/login/login-data --type=model
+
+export class LoginData {
+    constructor(
+        public login?: string, // emal
+        public senha?: string
+    ) { }
+}
+
+    ng g class models/usuario/usuario --type=model
+
+2. criar serviço login
+
+    ng g service services/login/login
+
+- ajeitar o html e .ts do componente de login
+
+3. criar serviço de guarda
+
+    ng g guard services/auth/auth
+
+4. ajeitar as rotas
+
+5. 
+    em app.config.ts:
+
+    import { provideHttpClient } from '@angular/common/http'; 
+
+6. arrumar HeaderEmployeeComponent para exibir nome 
+
+7. vamos ao HomeEmployeeComponent, mas antes
+
+8. primeiro criamos o servico de funcionario
+
+    ng g service services/funcionario/funcionario
+
+ - criar modelo Aeroporto: 
+
+    ng g class models/aeroporto/aeroporto --type=model
+
+ - criar modelo Voo: 
+
+    ng g class models/voo/voo --type=model
+
+9. agora sim arrumar o HomeEmployeeComponent!
+
+API - GATEWAY
+
+1. iniciar projeto com
+
+    npm init -y
+
+2. instalar pacotes e dependencias:
+
+    npm install express express-http-proxy dotenv-safe cors helmet morgan cookie-parser
