@@ -1,0 +1,13 @@
+
+spring:
+  data:
+    mongodb:
+      host: mongo
+      port: 27017
+      database: auth_db
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
