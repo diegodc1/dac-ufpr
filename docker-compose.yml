@@ -55,6 +55,25 @@ services:
       - MONGO_USERNAME=admin
       - MONGO_PASSWORD=password
 
+
+  voos-service:
+    build: ./dac-back-end/voos
+    container_name: voos-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: voos
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq
+
+
   cliente-service:
     build: ./dac-back-end/client-service
     container_name: clientes-service
@@ -68,6 +87,42 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_DB: clientes
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq
+
+
+  funcionarios-service:
+    build: ./dac-back-end/servico-funcionario
+    container_name: funcionarios-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: funcionarios
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq
+    
+
+  reservas-service:
+    build: ./dac-back-end/reservas/reservas
+    container_name: reservas-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: reservas
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       RABBITMQ_HOST: rabbitmq
