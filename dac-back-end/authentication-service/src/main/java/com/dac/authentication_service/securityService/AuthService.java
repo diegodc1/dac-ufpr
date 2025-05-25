@@ -2,8 +2,10 @@ package com.dac.authentication_service.securityService;
 
 import com.dac.authentication_service.collection.User;
 import com.dac.authentication_service.repository.UserRepository;
+import com.dac.authentication_service.sagas.comandos.ComandoCadastroCliente;
 import com.dac.authentication_service.sagas.comandos.ComandoCriarFuncUser;
 import com.dac.authentication_service.sagas.comandos.ComandoDelFunc;
+import com.dac.authentication_service.sagas.eventos.EventoAutenticacaoCriada;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserCriado;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserDeletado;
 import com.dac.authentication_service.security.TokenService;
@@ -35,6 +37,52 @@ public class AuthService {
             return false;
         }
     }
+
+    // R01 - autocadastro
+    public EventoAutenticacaoCriada cadastrarCliente(ComandoCadastroCliente comando) {
+        try {
+            // verifica se já existe usuário com o login
+            if (userRepository.findByLogin(comando.getEmail()).isPresent()) {
+                return new EventoAutenticacaoCriada(
+                        "EventoAutenticacaoCriada",
+                        comando.getCpf(),
+                        null,
+                        comando.getEmail(),
+                        false,
+                        "Usuário já existe",
+                        comando
+                );
+            }
+
+            // cria o novo usuário no mongodb
+            User usuario = new User();
+            usuario.setLogin(comando.getEmail());
+            usuario.setPassword(passwordEncoder.encode(comando.getSenha()));
+            usuario.setRole("CLIENTE");
+            userRepository.save(usuario);
+
+            return new EventoAutenticacaoCriada(
+                    "EventoAutenticacaoCriada",
+                    comando.getCpf(),
+                    comando.getSenha(),
+                    comando.getEmail(),
+                    true,
+                    null,
+                    comando
+            );
+        } catch (Exception e) {
+            return new EventoAutenticacaoCriada(
+                    "EventoAutenticacaoCriada",
+                    comando.getCpf(),
+                    null,
+                    comando.getEmail(),
+                    false,
+                    e.getMessage(),
+                    comando
+            );
+        }
+    }
+
 
     // R17
     @Transactional

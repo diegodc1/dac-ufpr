@@ -1,0 +1,4 @@
+CREATE DATABASE clientes;
+CREATE DATABASE voos;
+CREATE DATABASE funcionarios;
+CREATE DATABASE reservas;

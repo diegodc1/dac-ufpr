@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+const axios = require('axios');
+
 
 const corsOptions = {
     origin: ['http://localhost:4200'],
@@ -24,11 +26,16 @@ app.use(cors(corsOptions));
 //app.options('*', cors(corsOptions));
 
 
-// PROXIES
+// PROXIES - IMPORTANTE: NÃO RETIRAR OS proccess.env!... senão não vai funcionar no docker
+const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL || 'http://localhost:8080'); 
 
-const authServiceProxy = httpProxy('http://localhost:8080');
+const voosProxy = httpProxy(process.env.VOOS_SERVICE_URL || 'http://localhost:8081');
 
-const voosProxy = httpProxy('http://localhost:8081');
+const clienteServiceProxy = httpProxy(process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082');
+
+const funcionariosServiceProxy = httpProxy(process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083');
+
+const reservasServiceProxy = httpProxy(process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084');
 
 const validateTokenProxy = (req, res, next) => {
 
@@ -73,6 +80,10 @@ app.get('/auth/validate', (req, res, next) => {
     authServiceProxy(req, res, next);
 });
 
+// R01 - Autocadastro
+app.post('/clientes', (req, res, next) => {
+    clienteServiceProxy(req, res, next);
+});
 
 // R02 - login
 app.post('/auth/login', (req, res, next) => {
@@ -88,6 +99,50 @@ app.get('/voos', validateTokenProxy, (req, res, next) => {
 app.post('/voos', validateTokenProxy, (req, res, next) => {
     voosProxy(req, res, next);
 });
+
+
+// ********************************* API COMPOSITION ************************************************
+
+// // R02 - login
+// app.post('/auth/login', async (req, res) => {
+//     try {
+//         const authRes = await axios.post('http://localhost:8080/auth/login', req.body);
+
+//         const loginData = authRes.data;
+//         const userLogin = req.body.login; 
+//         const userType = loginData.tipo;
+//         let usuarioRes = null;
+    
+
+//         if(userType === 'CLIENTE') {
+//             usuarioRes = await axios.get(`http://localhost:8082/clientes/${userLogin}`, {
+//                 headers: { 'x-access-token': loginData.access_token }
+//             });
+//         } else {
+//             usuarioRes = await axios.get(`http://localhost:8083/funcionarios/${userLogin}`, {
+//                 headers: { 'x-access-token': loginData.access_token }
+//             });
+//         }
+     
+
+//         const usuarioData = usuarioRes.data;
+
+//         const responseComposta = {
+//             ...loginData,
+//             usuario: usuarioData
+//         };
+
+
+//         return res.status(200).json(responseComposta);
+
+//     } catch (err) {
+//         if (err.response && err.response.status === 401) {
+//             return res.status(401).json({ message: 'Login inválido' });
+//         }
+//         console.error('Erro no login via gateway:', err.message);
+//         return res.status(500).json({ message: 'Erro no login', error: err.message });
+//     }
+// });
 
 
 
