@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HeaderComponent } from '../header/header.component';
+import { ActivatedRoute } from '@angular/router';
+import { ClienteService } from '../../services/cliente.service';
 
+import { HeaderComponent } from '../header/header.component';
 import { CommonModule } from '@angular/common';
 @Component({
   standalone:true,
@@ -10,18 +12,26 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./ver-reserva.component.css']
 })
 export class VerReservaComponent implements OnInit {
-  reserva: any;
+  reserva: any = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private clienteService: ClienteService
+  ) {}
 
   ngOnInit(): void {
-   
-    this.reserva = {
-      codigo: 'AB123',
-      dataHora: '2025-03-26 15:30',
-      aeroportoOrigem: ' São Paulo (GRU)',
-      aeroportoDestino: 'Rio de Janeiro (GIG)',
-      valorGasto: 500,
-      milhasGastadas: 1500,
-      estado: 'RESERVADO'
-    };
+    const codigoReserva = this.route.snapshot.paramMap.get('codigoReserva');
+    if (codigoReserva) {
+      this.carregarDetalhesReserva(codigoReserva);
+    }
+  }
+
+  carregarDetalhesReserva(codigoReserva: string): void {
+    this.clienteService.getDetalhesReserva(codigoReserva).subscribe({
+      next: (reserva) => {
+        this.reserva = reserva;
+      },
+      error: (err) => console.error('Erro ao carregar detalhes da reserva:', err),
+    });
   }
 }

@@ -1,9 +1,7 @@
 <div class="client-dashboard">
   <app-header></app-header>
 
- 
   <div class="start">
-
     <h1 class="text-overlay">
       Transforming Travel,<br />One Trip at a Time.
     </h1>
@@ -41,8 +39,9 @@
     </div>
   </div>
 
- 
   <div class="container">
+    <h2 class="main-title">Saldo de Milhas: {{ saldoMilhas }}</h2>
+
     <h2 class="main-title">Suas Passagens</h2>
 
     <div *ngFor="let reserva of reservasFiltradas" class="reserva-card">
@@ -65,18 +64,15 @@
       <div class="reserva-conteudo">
         <div class="reserva-detalhes">
           <p class="reserva-dia">
-            {{ reserva.dataHora | dataFormat:'EEEE, dd MMMM yyyy' }}
+            {{ reserva.dataHora | date:'EEEE, dd MMMM yyyy' }}
           </p>
-
           <p class="reserva-hora">
-            <strong>  {{ reserva.dataHora | dataFormat:'HH:mm' }}</strong>
+            <strong>{{ reserva.dataHora | date:'HH:mm' }}</strong>
           </p>
 
           <div class="voo-info">
             <div class="aeroporto">
-              <span class="hora">
-                {{ reserva.dataHora | dataFormat:'HH:mm' }}
-              </span>
+              <span class="hora">{{ reserva.dataHora | date:'HH:mm' }}</span>
               <span>{{ reserva.aeroportoOrigem }}</span>
             </div>
 

@@ -3,12 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ClienteService } from '../../services/cliente.service';
 
 
 interface MileageTransaction {
   date: string;
   reservationCode: string | null;
-  amountReais: string; 
+  amountReais: number; 
   miles: number;
   description: string;
   type: 'ENTRADA' | 'SAÍDA'; 
@@ -22,14 +23,14 @@ interface MileageTransaction {
   styleUrl: './buy-miles.component.css'
 })
 export class BuyMilesComponent implements OnInit {
-   milesToBuy: number | null = null;
-  totalPrice: string = 'R$0,00';
-  mileageExtract: MileageTransaction[] = [];
+   milesToBuy: number = 0; 
+  totalPrice: number = 0; 
+  mileageExtract: MileageTransaction[] = []; 
   
   private readonly API_GATEWAY_URL = ''; 
 
 
-  constructor(private http : HttpClient){}
+  constructor(private http : HttpClient, private clienteService: ClienteService){}
   ngOnInit(): void {
      this.getMileageExtract();
   }
@@ -58,22 +59,47 @@ getMileageExtract(): void {
     return 'ENTRADA'; 
   }
 
-   onMilesInputChange(): void {
-    if (this.milesToBuy !== null && this.milesToBuy > 0) {
-      const pricePerThousandMiles = 5;
-      const total = (this.milesToBuy / 1000) * pricePerThousandMiles;
-      this.totalPrice = `R$${total.toFixed(2).replace('.', ',')}`;
-    } else {
-      this.totalPrice = 'R$0,00';
-    }
+   // Atualiza o valor total com base na quantidade de milhas
+   onMilesInputChange(event: any): void {
+    const miles = event.target.value;
+    this.milesToBuy = miles ? parseInt(miles, 10) : 0;
+    this.totalPrice = this.milesToBuy * 5; 
   }
 
+  // Realiza a compra de milhas
   buyMiles(): void {
-    if (this.milesToBuy && this.milesToBuy > 0) {
-      console.log(`Comprando ${this.milesToBuy} milhas por ${this.totalPrice}`);
-       this.getMileageExtract();
-    } else {
-      alert('Por favor, insira uma quantidade de milhas válida para comprar.');
+    if (this.milesToBuy <= 0) {
+      alert('Por favor, insira uma quantidade válida de milhas para comprar.');
+      return;
     }
+
+    const clienteId = '123'; //pegar o id do cliente
+    const valorEmReais = this.totalPrice;
+
+    this.clienteService.comprarMilhas(clienteId, valorEmReais).subscribe({
+      next: (response) => {
+        alert(`Compra realizada com sucesso! Novo saldo de milhas: ${response.saldoMilhas}`);
+        this.getMileageExtract(); 
+      },
+      error: (err) => {
+        console.error('Erro ao comprar milhas:', err);
+        alert('Erro ao realizar a compra de milhas. Tente novamente mais tarde.');
+      },
+    });
+  }
+
+  // Carrega o extrato de transações de milhas
+  carregarExtratoMilhas(): void {
+    // teste para simular o extrato
+    this.mileageExtract = [
+      {
+        date: '2025-05-25',
+        reservationCode: null,
+        amountReais: 100,
+        miles: 20,
+        description: 'COMPRA DE MILHAS',
+        type: 'ENTRADA',
+      },
+    ];
   }
 }

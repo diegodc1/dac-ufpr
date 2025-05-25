@@ -1,30 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { ReservaService } from '../../services/reserva.service';
-import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '../header/header.component';
-import { Router, RouterLink } from '@angular/router';
-import { ModalCancelarReservaComponent } from '../modal-cancelar-reserva/modal-cancelar-reserva.component';
+import { ClienteService } from '../../services/cliente.service';
+import { Router } from '@angular/router';
 import { format, addMinutes } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { FormsModule } from '@angular/forms';
-import { DataFormatPipe } from '../../shared/pipes/data-format.pipe';
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    CommonModule,
-    HeaderComponent,
-    RouterLink,
-    FormsModule,
-    ModalCancelarReservaComponent,  DataFormatPipe
-  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  saldoMilhas: number = 1000;
+  saldoMilhas: number = 0;
   reservas: any[] = [];
   reservasFiltradas: any[] = [];
+  voos: any[] = [];
   mostrarAcoes: boolean = true;
 
   origem: string = '';
@@ -34,54 +23,26 @@ export class HomeComponent implements OnInit {
   reservaSelecionada: any = null;
 
   constructor(
-    private reservaService: ReservaService,
+    private clienteService: ClienteService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.carregarReservas();
+    this.carregarTelaInicial();
   }
 
-  carregarReservas() {
-    this.reservas = [
-      {
-        codigo: 'ABC123',
-        dataHora: '2025-04-10T10:00:00',
-        aeroportoOrigem: 'São Paulo (GRU)',
-        aeroportoDestino: 'Rio de Janeiro (GIG)',
-        estado: 'RESERVADO',
-        milhasGastadas: 2000,
-        valorGasto: 180.00
+  carregarTelaInicial() {
+    const clienteId = '123'; // pegar o id do cliente 
+    this.clienteService.getTelaInicialCliente(clienteId).subscribe({
+      next: (dados) => {
+        this.saldoMilhas = dados.saldoMilhas;
+        this.reservas = dados.reservas;
+        this.reservasFiltradas = dados.reservas;
+        this.voos = dados.voos;
       },
-      {
-        codigo: 'DEF456',
-        dataHora: '2025-04-12T15:30:00',
-        aeroportoOrigem: 'Aeroporto de Brasília (BSB)',
-        aeroportoDestino: 'Aeroporto de Recife (REC)',
-        estado: 'CHECK-IN',
-      },
-      {
-        codigo: 'GHI789',
-        dataHora: '2025-04-15T08:00:00',
-        aeroportoOrigem: 'Aeroporto de Salvador (SSA)',
-        aeroportoDestino: 'Aeroporto de Fortaleza (FOR)',
-        estado: 'CANCELADO',
-      },
-      {
-        codigo: 'JKL012',
-        dataHora: '2025-04-20T18:00:00',
-        aeroportoOrigem: 'Porto Alegre (POA)',
-        aeroportoDestino: 'Curitiba (CWB)',
-        estado: 'RESERVADO',
-        milhasGastadas: 1900,
-        valorGasto: 300.00
-      },
-    ];
-
-    this.reservasFiltradas = this.reservas;
+      error: (err) => console.error('Erro ao carregar tela inicial:', err),
+    });
   }
-  
-  
 
   calcularHoraChegada(dataHora: string, horas: number, minutos: number): string {
     const dataPartida = new Date(dataHora);
@@ -98,14 +59,23 @@ export class HomeComponent implements OnInit {
 
   confirmarCancelamento() {
     if (this.reservaSelecionada) {
-      this.reservaSelecionada.estado = 'CANCELADO';
-      this.reservaService.cancelarReserva(this.reservaSelecionada);
-      this.mostrarModal = false;
-  
-      const index = this.reservas.findIndex(r => r.codigo === this.reservaSelecionada.codigo);
-      if (index !== -1) {
-        this.reservas[index].estado = 'CANCELADO';
-      }
+      this.clienteService
+        .cancelarReserva(this.reservaSelecionada.codigo)
+        .subscribe({
+          next: () => {
+            this.reservaSelecionada.estado = 'CANCELADO';
+            this.mostrarModal = false;
+
+            const index = this.reservas.findIndex(
+              (r) => r.codigo === this.reservaSelecionada.codigo
+            );
+            if (index !== -1) {
+              this.reservas[index].estado = 'CANCELADO';
+            }
+          },
+          error: (err) =>
+            console.error('Erro ao cancelar reserva:', err),
+        });
     }
   }
 
@@ -125,6 +95,35 @@ export class HomeComponent implements OnInit {
         return estado;
     }
   }
+
+  mostrarDetalhesReserva(codigoReserva: string) {
+    this.clienteService.getDetalhesReserva(codigoReserva).subscribe({
+        next: (reserva) => {
+            console.log('Detalhes da Reserva:', reserva);
+            alert(`
+                Código: ${reserva.codigo}
+                Data/Hora: ${reserva.dataHora}
+                Origem: ${reserva.aeroportoOrigem}
+                Destino: ${reserva.aeroportoDestino}
+                Valor Gasto: R$ ${reserva.valorGasto}
+                Milhas Gastas: ${reserva.milhasGastas}
+                Estado: ${reserva.estado}
+            `);
+        },
+        error: (err) => console.error('Erro ao obter detalhes da reserva:', err),
+    });
+}
+
+comprarMilhas(valorEmReais: number) {
+  const clienteId = '123'; //pegar o id do cliente
+  this.clienteService.comprarMilhas(clienteId, valorEmReais).subscribe({
+      next: (response) => {
+          console.log('Milhas compradas com sucesso:', response);
+          alert(`Milhas compradas com sucesso! Novo saldo: ${response.saldoMilhas}`);
+      },
+      error: (err) => console.error('Erro ao comprar milhas:', err),
+  });
+}
 
   buscarVoos() {
     this.router.navigate(['/make-reservation'], {
