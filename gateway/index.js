@@ -52,7 +52,8 @@ const validateTokenProxy = (req, res, next) => {
         method: 'GET'
     };
 
-    const validationReq = http.request('http://localhost:8080/auth/validate', validationReqOptions, (validationRes) => {
+    const urlAuthService = process.env.AUTH_SERVICE_URL || 'http://localhost:8080'
+    const validationReq = http.request(urlAuthService + '/auth/validate', validationReqOptions, (validationRes) => {
         let data = '';
         validationRes.on('data', (chunk) => {
             data += chunk;
