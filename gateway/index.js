@@ -144,6 +144,95 @@ app.post('/voos', validateTokenProxy, (req, res, next) => {
 //     }
 // });
 
+// R03 - Tela Inicial do Cliente
+app.get('/clientes/home', validateTokenProxy, async (req, res) => {
+    try {
+        const clienteId = req.query.clienteId; // ID do cliente enviado como query param
+        if (!clienteId) {
+            return res.status(400).send({ message: 'Cliente ID não fornecido!' });
+        }
+
+        // Obtem saldo de milhas
+        const saldoMilhasResponse = await axios.get(`${process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'}/clientes/${clienteId}/saldo-milhas`, {
+            headers: { 'x-access-token': req.headers['x-access-token'] }
+        });
+
+        // Lista reservas
+        const reservasResponse = await axios.get(`${process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'}/reservas?clienteId=${clienteId}`, {
+            headers: { 'x-access-token': req.headers['x-access-token'] }
+        });
+
+        // Lista voos feitos e cancelados
+        const voosResponse = await axios.get(`${process.env.VOOS_SERVICE_URL || 'http://localhost:8081'}/voos?clienteId=${clienteId}`, {
+            headers: { 'x-access-token': req.headers['x-access-token'] }
+        });
+
+        const responseComposta = {
+            saldoMilhas: saldoMilhasResponse.data,
+            reservas: reservasResponse.data,
+            voos: voosResponse.data
+        };
+
+        return res.status(200).json(responseComposta);
+    } catch (err) {
+        console.error('Erro ao obter dados da tela inicial do cliente:', err.message);
+        return res.status(500).json({ message: 'Erro ao obter dados da tela inicial do cliente', error: err.message });
+    }
+});
+
+// R04 - Detalhes da Reserva
+app.get('/reservas/:codigoReserva', validateTokenProxy, async (req, res) => {
+    try {
+        const codigoReserva = req.params.codigoReserva; // Código da reserva enviado como parâmetro de rota
+        if (!codigoReserva) {
+            return res.status(400).send({ message: 'Código da reserva não fornecido!' });
+        }
+
+        const reservaResponse = await axios.get(`${process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'}/reservas/${codigoReserva}`, {
+            headers: { 'x-access-token': req.headers['x-access-token'] }
+        });
+
+        return res.status(200).json(reservaResponse.data);
+    } catch (err) {
+        console.error('Erro ao obter detalhes da reserva:', err.message);
+        return res.status(500).json({ message: 'Erro ao obter detalhes da reserva', error: err.message });
+    }
+});
+
+// R05 - Comprar Milhas
+app.post('/clientes/comprar-milhas', validateTokenProxy, async (req, res) => {
+    try {
+        const { clienteId, valorEmReais } = req.body;
+
+        if (!clienteId || !valorEmReais || valorEmReais <= 0) {
+            return res.status(400).send({ message: 'Cliente ID e valor em reais são obrigatórios e devem ser válidos!' });
+        }
+
+        // Calcula a quantidade de milhas compradas
+        const milhasCompradas = Math.floor(valorEmReais / 5); 
+
+        // Registra a transação no serviço de clientes
+        const transacao = {
+            dataHora: new Date().toISOString(),
+            valorEmReais,
+            milhas: milhasCompradas,
+            descricao: 'COMPRA DE MILHAS',
+        };
+
+        const response = await axios.post(
+            `${process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'}/clientes/${clienteId}/comprar-milhas`,
+            transacao,
+            {
+                headers: { 'x-access-token': req.headers['x-access-token'] },
+            }
+        );
+
+        return res.status(200).json(response.data);
+    } catch (err) {
+        console.error('Erro ao comprar milhas:', err.message);
+        return res.status(500).json({ message: 'Erro ao comprar milhas', error: err.message });
+    }
+});
 
 
 // *********************************************************************************
