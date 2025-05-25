@@ -10,6 +10,10 @@ export class ClienteService {
 
   constructor(private http: HttpClient) { }
 
+  cadastrarCliente(cadastroClienteDTO: any): Observable<any> {
+    return this.http.post<any>(`${this.API_GATEWAY_URL}/cadastrar`, cadastroClienteDTO);
+  }
+
   getSaldoMilhas(): Observable<number> {
     return this.http.get<number>(`${this.API_GATEWAY_URL}/clientes/saldo-milhas`);
   }

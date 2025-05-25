@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ClienteService } from '../../services/cliente.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { format, addMinutes } from 'date-fns';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ModalCancelarReservaComponent } from '../modal-cancelar-reserva/modal-cancelar-reserva.component';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, ModalCancelarReservaComponent, HeaderComponent], 
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
