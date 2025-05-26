@@ -234,8 +234,10 @@ app.post('/clientes/comprar-milhas', validateTokenProxy, async (req, res) => {
         return res.status(500).json({ message: 'Erro ao comprar milhas', error: err.message });
     }
 });
-
-
+// RF06 - Extrato milhas 
+app.get('/TransacaoMilhas/:email/extract', validateTokenProxy, (req, res, next) => {
+    clienteServiceProxy(req, res, next);
+});
 // *********************************************************************************
 var server = http.createServer(app);
 server.listen(3000);

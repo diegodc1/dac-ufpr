@@ -9,7 +9,7 @@ import { ClienteService } from '../../services/cliente.service';
 interface MileageTransaction {
   date: string;
   reservationCode: string | null;
-  amountReais: number; 
+  amountReais: string; 
   miles: number;
   description: string;
   type: 'ENTRADA' | 'SAÍDA'; 
@@ -27,7 +27,7 @@ export class BuyMilesComponent implements OnInit {
   totalPrice: number = 0; 
   mileageExtract: MileageTransaction[] = []; 
   
-  private readonly API_GATEWAY_URL = ''; 
+  private readonly API_GATEWAY_URL = 'http://localhost:3000'; 
 
 
   constructor(private http : HttpClient, private clienteService: ClienteService){}
@@ -95,7 +95,7 @@ getMileageExtract(): void {
       {
         date: '2025-05-25',
         reservationCode: null,
-        amountReais: 100,
+        amountReais: '100',
         miles: 20,
         description: 'COMPRA DE MILHAS',
         type: 'ENTRADA',
