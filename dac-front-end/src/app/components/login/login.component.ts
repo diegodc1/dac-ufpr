@@ -30,120 +30,109 @@ interface Login {
 })
 export class LoginComponent {
 
-  loginData: LoginData = new LoginData();
-
-  constructor(
-    private router: Router,
-    private loginService: LoginService
-  ) { }
-
+  constructor(private router: Router, private authService: AuthService, private http: HttpClient) {}
   showLoginError = false;
   loginErrorMessage: string = '';
 
-  fazerLogin(form: NgForm) {
+  loginData = {
+    login: '',
+    senha: ''
+  };
 
+  login(form: NgForm) {
     this.loginErrorMessage = '';
 
     if (form.invalid) {
-      this.loginErrorMessage = "Preencha todos os campos corretamente.";
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos obrigatórios',
+        text: 'Preencha todos os campos corretamente.'
+      });
       return;
     }
 
-    let observable = this.loginService.login(this.loginData);
+    Swal.fire({
+      title: 'Entrando...',
+      text: 'Verificando suas credenciais.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
-    observable.subscribe(
+    this.http.post('http://localhost:3000/auth/login', {
+      login: this.loginData.login,
+      senha: this.loginData.senha
+    }).subscribe({
+      next: (response: any) => {
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('usuario', JSON.stringify(response.usuario));
 
-      (usuario) => {
-
-        if (usuario != null) {
-          console.log(usuario);
-          this.loginService.usuarioLogado = usuario; //alocando usuario (logado) na LS
-
-          if (usuario.tipo == "FUNCIONARIO") {
-            this.router.navigate(["/home-employee/" + usuario.userId]);
+        Swal.fire({
+          icon: 'success',
+          title: 'Login realizado!',
+          text: `Bem-vindo(a), ${response.usuario.nome}!`,
+          confirmButtonText: 'Continuar'
+        }).then(() => {
+          const tipoUsuario = response.usuario.tipo;
+          if (tipoUsuario === 'FUNCIONARIO') {
+            this.router.navigate(['/home-employee']);
+          } else {
+            this.router.navigate(['/home']);
           }
-
+        });
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Login inválido',
+            text: 'Email ou senha incorretos.'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao fazer login',
+            text: err.error?.message || 'Tente novamente mais tarde.'
+          });
         }
-        else {
-          this.loginErrorMessage = "Email ou senha incorretos.";
-        }
-      });
+      }
+    });
   }
 
-  // constructor(private router: Router, private authService: AuthService, private http: HttpClient) {}
-  // showLoginError = false;
-  // loginErrorMessage: string = '';
 
-  // loginData = {
-  //   email: '',
-  //   senha: ''
-  // };
 
-  // logins: Login[] = [
-  //   { email: "funcionario@gmail.com", senha: '123', tipo: 'FUNCIONARIO'},
-  //   { email: "cliente@gmail.com", senha: '123', tipo: 'CLIENTE'},
-  // ];
+  // fazerLogin(form: NgForm) {
 
-  // login(form: NgForm) {
   //   this.loginErrorMessage = '';
 
   //   if (form.invalid) {
-  //     Swal.fire({
-  //       icon: 'warning',
-  //       title: 'Campos obrigatórios',
-  //       text: 'Preencha todos os campos corretamente.'
-  //     });
+  //     this.loginErrorMessage = "Preencha todos os campos corretamente.";
   //     return;
   //   }
 
-  //   Swal.fire({
-  //     title: 'Entrando...',
-  //     text: 'Verificando suas credenciais.',
-  //     allowOutsideClick: false,
-  //     didOpen: () => {
-  //       Swal.showLoading();
-  //     }
-  //   });
+  //   let observable = this.loginService.login(this.loginData);
 
-  //   this.http.post('http://localhost:3000/auth/login', {
-  //     login: this.loginData.email,
-  //     senha: this.loginData.senha
-  //   }).subscribe({
-  //     next: (response: any) => {
-  //       localStorage.setItem('token', response.access_token);
-  //       localStorage.setItem('usuario', JSON.stringify(response.usuario));
+  //   observable.subscribe(
 
-  //       Swal.fire({
-  //         icon: 'success',
-  //         title: 'Login realizado!',
-  //         text: `Bem-vindo(a), ${response.usuario.nome}!`,
-  //         confirmButtonText: 'Continuar'
-  //       }).then(() => {
-  //         const tipoUsuario = response.usuario.tipo;
-  //         if (tipoUsuario === 'FUNCIONARIO') {
-  //           this.router.navigate(['/home-employee']);
-  //         } else {
-  //           this.router.navigate(['/home']);
+  //     (usuario) => {
+
+  //       if (usuario != null) {
+  //         console.log(usuario);
+  //         this.loginService.usuarioLogado = usuario; //alocando usuario (logado) na LS
+
+  //         if (usuario.tipo == "FUNCIONARIO") {
+  //           this.router.navigate(["/home-employee/" + usuario.userId]);
   //         }
-  //       });
-  //     },
-  //     error: (err) => {
-  //       if (err.status === 401) {
-  //         Swal.fire({
-  //           icon: 'error',
-  //           title: 'Login inválido',
-  //           text: 'Email ou senha incorretos.'
-  //         });
-  //       } else {
-  //         Swal.fire({
-  //           icon: 'error',
-  //           title: 'Erro ao fazer login',
-  //           text: err.error?.message || 'Tente novamente mais tarde.'
-  //         });
+
   //       }
-  //     }
-  //   });
-  // }
+  //       else {
+  //         this.loginErrorMessage = "Email ou senha incorretos.";
+  //       }
+  //     });
+  //   }
+
+
 
   goToRegister() {
     this.router.navigate(['/register']);

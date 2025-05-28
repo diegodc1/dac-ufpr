@@ -86,10 +86,10 @@ app.post('/clientes', (req, res, next) => {
     clienteServiceProxy(req, res, next);
 });
 
-// R02 - login
-app.post('/auth/login', (req, res, next) => {
-    authServiceProxy(req, res, next);
-});
+// // R02 - login
+// app.post('/auth/login', (req, res, next) => {
+//     authServiceProxy(req, res, next);
+// });
 
 // R11 - tela inicial funcionario
 app.get('/voos', validateTokenProxy, (req, res, next) => {
@@ -104,46 +104,49 @@ app.post('/voos', validateTokenProxy, (req, res, next) => {
 
 // ********************************* API COMPOSITION ************************************************
 
-// // R02 - login
-// app.post('/auth/login', async (req, res) => {
-//     try {
-//         const authRes = await axios.post('http://localhost:8080/auth/login', req.body);
+// R02 - login
+app.post('/auth/login', async (req, res) => {
+    try {
+        const urlAuthService = process.env.AUTH_SERVICE_URL || 'http://localhost:8080'
+        const authRes = await axios.post(`${urlAuthService}/auth/login`, req.body);
 
-//         const loginData = authRes.data;
-//         const userLogin = req.body.login; 
-//         const userType = loginData.tipo;
-//         let usuarioRes = null;
+        const loginData = authRes.data;
+        const userLogin = req.body.login; 
+        const userType = loginData.tipo;
+        let usuarioRes = null;
     
 
-//         if(userType === 'CLIENTE') {
-//             usuarioRes = await axios.get(`http://localhost:8082/clientes/${userLogin}`, {
-//                 headers: { 'x-access-token': loginData.access_token }
-//             });
-//         } else {
-//             usuarioRes = await axios.get(`http://localhost:8083/funcionarios/${userLogin}`, {
-//                 headers: { 'x-access-token': loginData.access_token }
-//             });
-//         }
+        if(userType === 'CLIENTE') {
+            const urlClienteService = process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'
+            usuarioRes = await axios.get(`${urlClienteService}/clientes/${userLogin}`, {
+                headers: { 'x-access-token': loginData.access_token }
+            });
+        } else {
+            const urlFuncionarioService = process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083'
+            usuarioRes = await axios.get(`${urlFuncionarioService}/funcionarios/${userLogin}`, {
+                headers: { 'x-access-token': loginData.access_token }
+            });
+        }
      
 
-//         const usuarioData = usuarioRes.data;
+        const usuarioData = usuarioRes.data;
 
-//         const responseComposta = {
-//             ...loginData,
-//             usuario: usuarioData
-//         };
+        const responseComposta = {
+            ...loginData,
+            usuario: usuarioData
+        };
 
 
-//         return res.status(200).json(responseComposta);
+        return res.status(200).json(responseComposta);
 
-//     } catch (err) {
-//         if (err.response && err.response.status === 401) {
-//             return res.status(401).json({ message: 'Login inválido' });
-//         }
-//         console.error('Erro no login via gateway:', err.message);
-//         return res.status(500).json({ message: 'Erro no login', error: err.message });
-//     }
-// });
+    } catch (err) {
+        if (err.response && err.response.status === 401) {
+            return res.status(401).json({ message: 'Login inválido' });
+        }
+        console.error('Erro no login via gateway:', err.message);
+        return res.status(500).json({ message: 'Erro no login', error: err.message });
+    }
+});
 
 // R03 - Tela Inicial do Cliente
 app.get('/clientes/home', validateTokenProxy, async (req, res) => {

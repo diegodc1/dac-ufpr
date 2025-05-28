@@ -42,6 +42,20 @@ public class SerFuncImpl implements ServicoFuncionario {
 
     }
 
+    @Override
+    public R16ResDTO findByEmail(String email){
+       Funcionario funcionario = funcionarioRepositorio.findByEmail(email);
+
+        return R16ResDTO.builder()
+                .id(funcionario.getIdFuncionario())
+                .idUsuario(funcionario.getIdUsuario())
+                .nome(funcionario.getNome())
+                .cpf(funcionario.getCpf())
+                .email(funcionario.getEmail())
+                .numeroTelefone(this.formatarTelefone(funcionario.getNumeroTelefone()))
+                .build();
+    };
+
     public String formatarTelefone(String numeroTelefone) {
 
         // 41991932059
