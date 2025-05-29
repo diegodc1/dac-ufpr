@@ -67,6 +67,7 @@ export class LoginComponent {
       next: (response: any) => {
         localStorage.setItem('token', response.access_token);
         localStorage.setItem('usuario', JSON.stringify(response.usuario));
+        localStorage.setItem('user_email', response.usuario.email);
 
         Swal.fire({
           icon: 'success',

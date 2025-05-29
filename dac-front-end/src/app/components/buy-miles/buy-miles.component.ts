@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { ClienteService } from '../../services/cliente.service';
 
 
@@ -35,12 +35,37 @@ export class BuyMilesComponent implements OnInit {
      this.getMileageExtract();
   }
 
+// getMileageExtract(): void {
+//     this.http.get<MileageTransaction[]>(this.API_GATEWAY_URL).subscribe({
+//       next: (data) => {
+//         this.mileageExtract = data.map(item => ({
+//           ...item,
+//           type: this.determineTransactionType(item.description) 
+//         }));
+//       },
+//       error: (error) => {
+//         console.error('Erro ao buscar extrato de milhas:', error);
+//       }
+//     });
+//   }
 getMileageExtract(): void {
-    this.http.get<MileageTransaction[]>(this.API_GATEWAY_URL).subscribe({
+const userEmail = localStorage.getItem('user_email');
+    const token = localStorage.getItem('access_token');
+
+    if (!userEmail || !token) {
+      console.error('Email do usuário ou token não disponível.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'x-access-token': token
+    });
+
+    this.http.get<MileageTransaction[]>(`${this.API_GATEWAY_URL}/TransacaoMilhas/${userEmail}/extract`, { headers }).subscribe({
       next: (data) => {
         this.mileageExtract = data.map(item => ({
           ...item,
-          type: this.determineTransactionType(item.description) 
+          type: this.determineTransactionType(item.description)
         }));
       },
       error: (error) => {
@@ -48,7 +73,6 @@ getMileageExtract(): void {
       }
     });
   }
-
   private determineTransactionType(description: string): 'ENTRADA' | 'SAÍDA' {
     if (description.includes('COMPRA DE MILHAS')) {
       return 'ENTRADA';
