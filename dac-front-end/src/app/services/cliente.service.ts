@@ -47,4 +47,8 @@ comprarMilhas(clienteId: string, valorEmReais: number): Observable<any> {
       valorEmReais,
   });
 }
+
+  getExtratoMilhas(userEmail: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_GATEWAY_URL}/TransacaoMilhas/${userEmail}/extract`);
+  }
 }
