@@ -58,7 +58,7 @@ const userEmail = localStorage.getItem('user_email');
     }
 
     const headers = new HttpHeaders({
-      'x-access-token': token
+      'Authorization': `Bearer ${token}`
     });
 
     this.http.get<MileageTransaction[]>(`${this.API_GATEWAY_URL}/TransacaoMilhas/${userEmail}/extract`, { headers }).subscribe({
