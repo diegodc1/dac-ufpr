@@ -1,25 +1,12 @@
 package com.example.reservas.model;
 
-
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Data
@@ -35,30 +22,36 @@ public class Reserva implements Serializable {
     private UUID idReserva;
 
     @Column(name = "cod_reserva", nullable = false, unique = true, updatable = false)
-    private String codReserva;
+    private String codigoReserva;
 
-    @Column(name = "cod_voo", nullable = false)
-    private String codVoo;
+    @Column(name = "codigo_voo", nullable = false)
+    private String codigoVoo;
 
     @Column(name = "data_reserva", nullable = false)
     private ZonedDateTime dataReserva;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "status_reserva", referencedColumnName = "id_status", nullable = false)
-    private StatusReserva statusReserva;
+    @JoinColumn(name = "estado_reserva", referencedColumnName = "id_estado", nullable = false)
+    private StatusReserva estadoReserva;
 
-    @Column(name = "valor_gasto", nullable = false)
-    private BigDecimal valorGasto;
+    @Column(name = "valor", nullable = false)
+    private BigDecimal valor;
 
-    @Column(name = "milhas_gastadas", nullable = false)
-    private Integer milhasGastadas;
+    @Column(name = "milhas_utilizadas", nullable = false)
+    private Integer milhasUtilizadas;
 
-    @Column(name = "num_assento", nullable = false)
-    private Integer numeroAssento;
+    @Column(name = "quantidade_poltronas", nullable = false)
+    private Integer quantidadePoltronas;
 
-    @Column(name = "id_usuario", nullable = false)
-    private String idUsuario;
+    @Column(name = "codigo_cliente", nullable = false)
+    private String codigoCliente;
 
     @Column(name = "id_transacao", nullable = false, unique = true)
     private UUID idTransacao;
+
+    @Column(name = "cod_aeroporto_origem", nullable = false)
+    private String codigoAeroportoOrigem;
+
+    @Column(name = "cod_aeroporto_destino", nullable = false)
+    private String codigoAeroportoDestino;
 }

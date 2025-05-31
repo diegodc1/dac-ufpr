@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CompletaReserva{
-    private String codVoo;
+    private String codigoVoo;
     private String messageType;
 }

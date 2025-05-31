@@ -1,42 +1,51 @@
 package com.example.reservas.controllers;
 
-
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.reservas.dto.CheckinDTO;
+import com.example.reservas.dto.EstadoReservaDTO;
+import com.example.reservas.sagas.commands.CriarReserva;
 import com.example.reservas.services.CommandService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
 @RestController
+@RequestMapping("/")
 @CrossOrigin
-@RequestMapping("reserva-command")
 public class CommandController {
 
     @Autowired
     private CommandService commandService;
 
-   
+    
+     /* Cria uma nova reserva.
+     */
+    @PostMapping("reservas")
+    public ResponseEntity<String> criarReserva(@RequestBody CriarReserva command) {
+        String codigoReserva = commandService.criarReserva(command);
+        return ResponseEntity.ok(codigoReserva);
+    }
 
-  
-    @PutMapping("/check-in/{id}")
-    public ResponseEntity<CheckinDTO> doCheckIn(@PathVariable(value = "id") UUID bookingId) throws JsonProcessingException {
-        CheckinDTO dto = commandService.updateStatusReserva(bookingId.toString(), 2); // 2 é o código para check-in
-        return ResponseEntity.ok().body(dto);
+    /* Cancela uma reserva existente.
+     */
+    @DeleteMapping("reservas/{codigoReserva}")
+    public ResponseEntity<Void> cancelarReserva(@PathVariable UUID codigoReserva) {
+        commandService.cancelarReserva(codigoReserva.toString());
+        return ResponseEntity.noContent().build();
     }
 
     
-    @PutMapping("/embarque-passageiro/{cod}")
-    public ResponseEntity<CheckinDTO> embarquePassageiro(@PathVariable(value = "cod") String codReserva)
-            throws JsonProcessingException {
-        CheckinDTO dto =  commandService.updateStatusReserva(codReserva, 4); 
-        return ResponseEntity.ok().body(dto);
-    }
+    /* Atualiza o estado da reserva (ex: CHECK-IN, EMBARCADA, CANCELADA).
+ */
+@PatchMapping("reservas/{codigoReserva}/estado")
+public ResponseEntity<Void> atualizarEstadoReserva(
+        @PathVariable UUID codigoReserva,
+        @RequestBody EstadoReservaDTO dto) throws JsonProcessingException {
+
+    commandService.atualizarEstadoReserva(codigoReserva.toString(), dto.getEstado());
+    return ResponseEntity.noContent().build();
+}
+
 }

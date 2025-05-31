@@ -8,11 +8,11 @@
 		<version>3.3.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.airline</groupId>
-	<artifactId>booking-command-service</artifactId>
+	<groupId>com.topus</groupId>
+	<artifactId>reservas-command-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>booking-command-service</name>
-	<description>booking command cqrs service</description>
+	<name>reservas-command-service</name>
+	<description>reservas command cqrs service</description>
 	<url/>
 	<licenses>
 		<license/>

@@ -20,37 +20,37 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReservaCommand {
     private UUID idReservaCommand;
-    private String codReserva;
-    private String codVoo;
+    private String codigoReserva;
+    private String codigoVoo;
     private ZonedDateTime dataReserva;
 
     //status da reserva
-    private UUID idStatusCommand;
-    private Integer codStatus;
-    private String acronimoStatus;
-    private String descricaoStatus;
+    private UUID idEstadoCommand;
+    private Integer codigoEstado;
+    private String acronimoEstado;
+    private String descricaoEstado;
 
     // *****
-    private BigDecimal valorGasto;
-    private Integer milhasGastadas;
-    private Integer numeroAssento;
-    private String idUsuario;
+    private BigDecimal valor;
+    private Integer milhasUtilizadas;
+    private Integer quantidadePoltronas;
+    private String codigoCliente;
     private UUID idTransacao;
     private String messageType;
 
     public ReservaCommand(Reserva reserva) {
         idReservaCommand = reserva.getIdReserva();
-        codReserva = reserva.getCodReserva();
-        codVoo = reserva.getCodVoo();
+        codigoReserva = reserva.getCodigoReserva();
+        codigoVoo = reserva.getCodigoVoo();
         dataReserva = reserva.getDataReserva();
-        idStatusCommand= reserva.getStatusReserva().getIdStatus();
-        codStatus = reserva.getStatusReserva().getCodStatus();
-        acronimoStatus = reserva.getStatusReserva().getAcronimoStatus();
-        descricaoStatus = reserva.getStatusReserva().getDescricaoStatus();
-        valorGasto = reserva.getValorGasto();
-        milhasGastadas = reserva.getMilhasGastadas();
-        numeroAssento= reserva.getNumeroAssento();
-        idUsuario = reserva.getIdUsuario();
+        idEstadoCommand= reserva.getEstadoReserva().getIdEstado();
+        codigoEstado = reserva.getEstadoReserva().getCodigoEstado();
+        acronimoEstado = reserva.getEstadoReserva().getAcronimoEstado();
+        descricaoEstado = reserva.getEstadoReserva().getDescricaoEstado();
+        valor = reserva.getValor();
+        milhasUtilizadas = reserva.getMilhasUtilizadas();
+        quantidadePoltronas= reserva.getQuantidadePoltronas();
+        codigoCliente = reserva.getCodigoCliente();
         idTransacao = reserva.getIdTransacao();
         messageType = "ReservaCommand";
     }

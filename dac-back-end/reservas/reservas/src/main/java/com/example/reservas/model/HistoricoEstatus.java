@@ -24,28 +24,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tb_alt_estatus")
+@Table(name = "tb_alt_estado")
 public class HistoricoEstatus  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_alt_status", nullable = false, updatable = false)
+    @Column(name = "id_alt_estado", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "data_alt_status", nullable = false)
-    private ZonedDateTime dataAltStatus;
+    @Column(name = "data_alt_estado", nullable = false)
+    private ZonedDateTime dataAltEstado;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reserva", referencedColumnName = "id_reserva", nullable = false)
     private Reserva reserva;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "status_inicial", referencedColumnName = "id_status", nullable = false)
-    private StatusReserva statusInicial;
+    @JoinColumn(name = "estado_inicial", referencedColumnName = "id_estado", nullable = false)
+    private StatusReserva estadoInicial;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "status_final", referencedColumnName = "id_status", nullable = false)
-    private StatusReserva statusFinal;
+    @JoinColumn(name = "estado_final", referencedColumnName = "id_estado", nullable = false)
+    private StatusReserva estadoFinal;
 
 }
 

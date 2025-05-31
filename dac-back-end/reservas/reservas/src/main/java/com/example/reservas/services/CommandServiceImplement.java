@@ -8,16 +8,17 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.reservas.repositorys.StatusReservaRepository;
+
 import com.example.reservas.cqrs.Command;
 import com.example.reservas.dto.CheckinDTO;
-
 import com.example.reservas.exceptions.ReservaNaoEncontradoException;
+import com.example.reservas.model.HistoricoEstatus;
 import com.example.reservas.model.Reserva;
 import com.example.reservas.model.StatusReserva;
-import com.example.reservas.model.HistoricoEstatus;
-import com.example.reservas.repositorys.ReservaRepository;
 import com.example.reservas.repositorys.HistoricoStatusRepository;
+import com.example.reservas.repositorys.ReservaRepository;
+import com.example.reservas.repositorys.StatusReservaRepository;
+import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,55 +35,95 @@ public class CommandServiceImplement implements CommandService {
     private ReservaRepository reservaRepository;
 
     @Autowired
-    private StatusReservaRepository StatusReservaRepository;
+    private StatusReservaRepository statusReservaRepository;
 
     @Autowired
     private HistoricoStatusRepository historicoStatusRepository;
 
     @Override
     @Transactional
-    public CheckinDTO updateStatusReserva(String identifier, int codStatus) throws JsonProcessingException {
+    public String criarReserva(CriarReserva command) {
+        Reserva reserva = new Reserva();
+        reserva.setIdReserva(UUID.randomUUID());
+        reserva.setCodigoReserva(UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        reserva.setCodigoCliente(command.getCodigoCliente());
+        reserva.setValor(command.getValor());
+        reserva.setMilhasUtilizadas(command.getMilhasUtilizadas());
+        reserva.setQuantidadePoltronas(command.getQuantidadePoltronas());
+        reserva.setCodigoVoo(command.getCodigoVoo());
+        reserva.setCodigoAeroportoOrigem(command.getCodigoAeroportoOrigem());
+        reserva.setCodigoAeroportoDestino(command.getCodigoAeroportoDestino());
 
-        // encontrar uma reserva
-        Reserva reserva= identifier.length() == 35
-                ? reservaRepository.findById(UUID.fromString(identifier)).orElseThrow(
-                        () -> new ReservaNaoEncontradoException("Reserva não encontrado  para esse ID: " + identifier))
-                : reservaRepository.getRervaByCod(identifier).orElseThrow(
-                        () -> new ReservaNaoEncontradoException("Reserva não encontra para esse código: " + identifier));
+        StatusReserva estadoCriada = statusReservaRepository.findByCodigoEstado(1); // CRIADA = 1
+        reserva.setEstadoReserva(estadoCriada);
 
-        StatusReserva initialStatus = reserva.getStatusReserva();
-
-        // atulizar uma reserva
-        reserva.setStatusReserva(StatusReservaRepository.findByCodStatus(codStatus));
-        reserva = reservaRepository.save(reserva);
-
-        StatusReserva statusFinal = reserva.getStatusReserva();
-
-        // Criar registro de histórico
-        HistoricoEstatus novoHistorico = HistoricoEstatus.builder()
-                .dataAltStatus(ZonedDateTime.now(ZoneId.of("UTC")))
-                .reserva(reserva)
-                .statusInicial(initialStatus)
-                .statusFinal(statusFinal)
-                .build();
-
-        novoHistorico = historicoStatusRepository.save(novoHistorico);
-
-        // Prepara a mensagem para o serviço de consulta e envia
-        Command commandMessage = new Command(novoHistorico);
-
-        String message = objectMapper.writeValueAsString(commandMessage);
-        rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
-
-        // dto de resposta para o cliente
-        CheckinDTO dto = CheckinDTO.builder()
-                .idReserva(novoHistorico.getReserva().getIdReserva())
-                .codReserva(novoHistorico.getReserva().getCodReserva())
-                .statusInicial(novoHistorico.getStatusInicial().getDescricaoStatus())
-                .statusAtual(novoHistorico.getStatusFinal().getDescricaoStatus())
-                .build();
-
-        return dto;
+        reservaRepository.save(reserva);
+        return reserva.getCodigoReserva();
     }
 
+    @Override
+    @Transactional
+    public void cancelarReserva(String codigoReserva) {
+        Reserva reserva = reservaRepository.getByCodigoReserva(codigoReserva)
+            .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
+
+        StatusReserva estadoCancelada = statusReservaRepository.findByCodigoEstado(4); // CANCELADA = 4
+        reserva.setEstadoReserva(estadoCancelada);
+        reservaRepository.save(reserva);
+
+        // Opcional: histórico e envio por RabbitMQ
+    }
+
+    @Override
+    @Transactional
+    public CheckinDTO atualizarEstadoReserva(String identifier, String estado) throws JsonProcessingException {
+        int codigoEstado = mapearEstadoParaCodigo(estado);
+
+        Reserva reserva = identifier.length() == 36
+            ? reservaRepository.findById(UUID.fromString(identifier))
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para ID: " + identifier))
+            : reservaRepository.getByCodigoReserva(identifier)
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
+
+        StatusReserva estadoInicial = reserva.getEstadoReserva();
+        StatusReserva estadoFinal = statusReservaRepository.findByCodigoEstado(codigoEstado);
+
+        reserva.setEstadoReserva(estadoFinal);
+        reservaRepository.save(reserva);
+
+        HistoricoEstatus historico = HistoricoEstatus.builder()
+            .dataAltEstado(ZonedDateTime.now(ZoneId.of("UTC")))
+            .reserva(reserva)
+            .estadoInicial(estadoInicial)
+            .estadoFinal(estadoFinal)
+            .build();
+
+        historicoStatusRepository.save(historico);
+
+        Command commandMessage = new Command(historico);
+        String message = objectMapper.writeValueAsString(commandMessage);
+        rabbitTemplate.convertAndSend("ReservaQueryRequestChannel", message);
+
+        return CheckinDTO.builder()
+            .idReserva(reserva.getIdReserva())
+            .codigoReserva(reserva.getCodigoReserva())
+            .estadoInicial(estadoInicial.getDescricaoEstado())
+            .estadoAtual(estadoFinal.getDescricaoEstado())
+            .build();
+    }
+
+    private int mapearEstadoParaCodigo(String estado) {
+        switch (estado.toUpperCase()) {
+            case "CRIADA":
+                return 1;
+            case "CHECK-IN":
+                return 2;
+            case "EMBARCADA":
+                return 3;
+            case "CANCELADA":
+                return 4;
+            default:
+                throw new IllegalArgumentException("Estado inválido: " + estado);
+        }
+    }
 }

@@ -19,21 +19,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tb_status")
+@Table(name = "tb_estado_reserva")
 public class StatusReserva implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_status", nullable = false, updatable = false)
-    private UUID idStatus;
+    @Column(name = "id_estado", nullable = false, updatable = false)
+    private UUID idEstado;
 
-    @Column(name = "code_status", nullable = false, unique = true)
-    private Integer codStatus;
+    @Column(name = "codigo_estado", nullable = false, unique = true)
+    private Integer codigoEstado;
 
-    @Column(name = "acronimo_status", nullable = false, unique = true)
-    private String acronimoStatus;
+    @Column(name = "acronimo_estado", nullable = false, unique = true)
+    private String acronimoEstado;
 
-    @Column(name = "desc_status", nullable = false, unique = true)
-    private String DescricaoStatus; 
+    @Column(name = "desc_estado", nullable = false, unique = true)
+    private String DescricaoEstado; 
 }
  

@@ -41,7 +41,7 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
-    public void deletar(String cpf) {
+    public void deletar(Long cpf) {
         clienteRepository.deleteById(cpf);
     }
 
@@ -75,7 +75,7 @@ public class ClienteService {
 
     public Cliente salvarCliente(ComandoCadastroCliente comando) {
         Cliente cliente = new Cliente();
-        cliente.setCodigo(comando.getCodigo());
+        cliente.setCodigoCliente(comando.getCodigoCliente());
         cliente.setCpf(comando.getCpf());
         cliente.setNome(comando.getNome());
         cliente.setEmail(comando.getEmail());

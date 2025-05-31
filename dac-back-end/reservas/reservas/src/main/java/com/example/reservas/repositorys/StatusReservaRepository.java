@@ -9,6 +9,6 @@ import java.util.UUID;
 @Repository
 public interface StatusReservaRepository extends JpaRepository<StatusReserva, UUID> {
 
-    // Corrigido: o nome do campo é "codStatus", não "statusCode"
-    StatusReserva findByCodStatus(Integer codStatus);
+    
+    StatusReserva findByCodigoEstado(Integer codigoEstado);
 }
