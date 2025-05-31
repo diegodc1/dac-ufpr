@@ -60,7 +60,7 @@ export class LoginComponent {
       }
     });
 
-    this.http.post('http://localhost:3000/auth/login', {
+    this.http.post('http://localhost:3000/login', {
       login: this.loginData.login,
       senha: this.loginData.senha
     }).subscribe({

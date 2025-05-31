@@ -32,6 +32,9 @@ public class ClienteService {
     public Cliente findByEmail(String email){
         return clienteRepository.findByEmail(email);
     };
+    public Cliente findByCodigo(Long codigo){
+        return clienteRepository.findByCodigo(codigo);
+    };
 
     public List<Cliente> listarTodos() {
         return clienteRepository.findAll();

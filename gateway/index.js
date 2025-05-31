@@ -39,7 +39,15 @@ const reservasServiceProxy = httpProxy(process.env.RESERVAS_SERVICE_URL || 'http
 
 const validateTokenProxy = (req, res, next) => {
 
-    const token = req.headers['x-access-token'];
+    let token = req.headers['x-access-token'];
+
+    if (!token && req.headers['authorization']) {
+        const authHeader = req.headers['authorization'];
+        if (authHeader.startsWith('Bearer ')) {
+            token = authHeader.substring(7); 
+        }
+    }
+
     if (!token) {
         return res.status(401).send({ message: 'Token not provided!' });
     }
@@ -53,7 +61,7 @@ const validateTokenProxy = (req, res, next) => {
     };
 
     const urlAuthService = process.env.AUTH_SERVICE_URL || 'http://localhost:8080'
-    const validationReq = http.request(urlAuthService + '/auth/validate', validationReqOptions, (validationRes) => {
+    const validationReq = http.request(urlAuthService + '/validate', validationReqOptions, (validationRes) => {
         let data = '';
         validationRes.on('data', (chunk) => {
             data += chunk;
@@ -77,7 +85,7 @@ const validateTokenProxy = (req, res, next) => {
 
 
 // teste validacao token
-app.get('/auth/validate', (req, res, next) => {
+app.get('/validate', (req, res, next) => {
     authServiceProxy(req, res, next);
 });
 
@@ -86,10 +94,20 @@ app.post('/clientes', (req, res, next) => {
     clienteServiceProxy(req, res, next);
 });
 
-// // R02 - login
-// app.post('/auth/login', (req, res, next) => {
-//     authServiceProxy(req, res, next);
-// });
+// para o teste de buscar todos os clientes
+app.get('/clientes', (req, res, next) => {
+    clienteServiceProxy(req, res, next);
+});
+
+// Para o teste de token incorreto e sem logar
+app.get('/clientes/:codigoCliente', validateTokenProxy, (req, res, next) => {
+    clienteServiceProxy(req, res, next);
+});
+
+// R02 - logout
+app.post('/logout', (req, res, next) => {
+    authServiceProxy(req, res, next);
+});
 
 // R11 - tela inicial funcionario
 app.get('/voos', validateTokenProxy, (req, res, next) => {
@@ -105,10 +123,10 @@ app.post('/voos', validateTokenProxy, (req, res, next) => {
 // ********************************* API COMPOSITION ************************************************
 
 // R02 - login
-app.post('/auth/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     try {
         const urlAuthService = process.env.AUTH_SERVICE_URL || 'http://localhost:8080'
-        const authRes = await axios.post(`${urlAuthService}/auth/login`, req.body);
+        const authRes = await axios.post(`${urlAuthService}/login`, req.body);
 
         const loginData = authRes.data;
         const userLogin = req.body.login; 
@@ -118,7 +136,7 @@ app.post('/auth/login', async (req, res) => {
 
         if(userType === 'CLIENTE') {
             const urlClienteService = process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'
-            usuarioRes = await axios.get(`${urlClienteService}/clientes/${userLogin}`, {
+            usuarioRes = await axios.get(`${urlClienteService}/clientes/login/${userLogin}`, {
                 headers: { 'x-access-token': loginData.access_token }
             });
         } else {

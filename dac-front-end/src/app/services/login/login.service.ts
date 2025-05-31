@@ -32,7 +32,7 @@ export class LoginService {
 
   login(login: LoginData): Observable<Usuario> {
 
-    let usuarioLogado = this.httpClient.post<Usuario>(this.BASE_URL + '/auth/login', JSON.stringify(login), this.httpOptions);
+    let usuarioLogado = this.httpClient.post<Usuario>(this.BASE_URL + '/login', JSON.stringify(login), this.httpOptions);
     return usuarioLogado;
   }
 
