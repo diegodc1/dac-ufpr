@@ -27,7 +27,7 @@ app.use(cors(corsOptions));
 
 
 // PROXIES - IMPORTANTE: NÃO RETIRAR OS proccess.env!... senão não vai funcionar no docker
-const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL || 'http://localhost:8080'); 
+const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL || 'http://localhost:8080');
 
 const voosProxy = httpProxy(process.env.VOOS_SERVICE_URL || 'http://localhost:8081');
 
@@ -44,7 +44,7 @@ const validateTokenProxy = (req, res, next) => {
     if (!token && req.headers['authorization']) {
         const authHeader = req.headers['authorization'];
         if (authHeader.startsWith('Bearer ')) {
-            token = authHeader.substring(7); 
+            token = authHeader.substring(7);
         }
     }
 
@@ -129,23 +129,20 @@ app.post('/login', async (req, res) => {
         const authRes = await axios.post(`${urlAuthService}/login`, req.body);
 
         const loginData = authRes.data;
-        const userLogin = req.body.login; 
+        const userLogin = req.body.login;
         const userType = loginData.tipo;
         let usuarioRes = null;
-    
 
-        if(userType === 'CLIENTE') {
+
+        if (userType === 'CLIENTE') {
             const urlClienteService = process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'
             usuarioRes = await axios.get(`${urlClienteService}/clientes/login/${userLogin}`, {
                 headers: { 'x-access-token': loginData.access_token }
             });
-        } else {
-            const urlFuncionarioService = process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083'
-            usuarioRes = await axios.get(`${urlFuncionarioService}/funcionarios/${userLogin}`, {
-                headers: { 'x-access-token': loginData.access_token }
-            });
+        } else if (userType === 'FUNCIONARIO') {
+            return res.status(200).json(loginData);
         }
-     
+
 
         const usuarioData = usuarioRes.data;
 
@@ -231,7 +228,7 @@ app.post('/clientes/comprar-milhas', validateTokenProxy, async (req, res) => {
         }
 
         // Calcula a quantidade de milhas compradas
-        const milhasCompradas = Math.floor(valorEmReais / 5); 
+        const milhasCompradas = Math.floor(valorEmReais / 5);
 
         // Registra a transação no serviço de clientes
         const transacao = {

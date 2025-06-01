@@ -30,7 +30,12 @@ interface Login {
 })
 export class LoginComponent {
 
-  constructor(private router: Router, private authService: AuthService, private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private loginService: LoginService,
+    private authService: AuthService,
+    private http: HttpClient
+  ) { }
   showLoginError = false;
   loginErrorMessage: string = '';
 
@@ -65,23 +70,38 @@ export class LoginComponent {
       senha: this.loginData.senha
     }).subscribe({
       next: (response: any) => {
-        localStorage.setItem('token', response.access_token);
-        localStorage.setItem('usuario', JSON.stringify(response.usuario));
-        localStorage.setItem('user_email', response.usuario.email);
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Login realizado!',
-          text: `Bem-vindo(a), ${response.usuario.nome}!`,
-          confirmButtonText: 'Continuar'
-        }).then(() => {
-          const tipoUsuario = response.usuario.tipo;
-          if (tipoUsuario === 'FUNCIONARIO') {
-            this.router.navigate(['/home-employee']);
-          } else {
+        if (response.tipo == 'CLIENTE') {
+          localStorage.setItem('token', response.access_token);
+          localStorage.setItem('usuario', JSON.stringify(response.usuario));
+          localStorage.setItem('user_email', response.usuario.email);
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Login realizado!',
+            text: `Bem-vindo(a), ${response.usuario.nome}!`,
+            confirmButtonText: 'Continuar'
+          }).then(() => {
             this.router.navigate(['/home']);
-          }
-        });
+            // const tipoUsuario = response.usuario.tipo;
+            // if (tipoUsuario === 'FUNCIONARIO') {
+
+            // } else {
+            //   this.router.navigate(['/home']);
+            // }
+          });
+        } else if (response.tipo == 'FUNCIONARIO') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Login realizado!',
+            text: `Bem-vindo(a), ${response.name}!`,
+            confirmButtonText: 'Continuar'
+          }).then(() => {
+            this.loginService.usuarioLogado = response;
+            this.router.navigate(['/home-employee/' + response.userId]);
+          });
+        }
+
       },
       error: (err) => {
         if (err.status === 401) {

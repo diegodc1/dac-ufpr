@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NovoFuncDTO {
-    private String nome;
     private String cpf;
     private String email;
-    private String numeroTelefone;
+    private String nome;
+    private String telefone;
 }
