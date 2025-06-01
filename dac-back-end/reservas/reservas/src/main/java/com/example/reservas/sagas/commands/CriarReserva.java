@@ -18,7 +18,7 @@ import java.util.UUID;
 @Builder
 public class CriarReserva {
 
-    // O código da reserva será gerado no backend (não precisa ser enviado pelo cliente)
+    // O código da reserva será gerado no backend
     private UUID codigoReserva;
 
     // Código do voo relacionado à reserva

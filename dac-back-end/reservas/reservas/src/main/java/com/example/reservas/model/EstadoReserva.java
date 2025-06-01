@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Table(name = "tb_estado_reserva")
-public class StatusReserva implements Serializable {
+public class EstadoReserva implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

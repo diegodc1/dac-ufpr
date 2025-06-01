@@ -41,11 +41,11 @@ public class HistoricoEstatus  implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "estado_inicial", referencedColumnName = "id_estado", nullable = false)
-    private StatusReserva estadoInicial;
+    private EstadoReserva estadoInicial;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "estado_final", referencedColumnName = "id_estado", nullable = false)
-    private StatusReserva estadoFinal;
+    private EstadoReserva estadoFinal;
 
 }
 

@@ -22,7 +22,7 @@ public class ReservaCommand {
     private UUID idReservaCommand;
     private String codigoReserva;
     private String codigoVoo;
-    private ZonedDateTime dataReserva;
+    private ZonedDateTime data;
 
     //status da reserva
     private UUID idEstadoCommand;
@@ -40,13 +40,13 @@ public class ReservaCommand {
 
     public ReservaCommand(Reserva reserva) {
         idReservaCommand = reserva.getIdReserva();
-        codigoReserva = reserva.getCodigoReserva();
+        codigoReserva = reserva.getCodigo();
         codigoVoo = reserva.getCodigoVoo();
-        dataReserva = reserva.getDataReserva();
-        idEstadoCommand= reserva.getEstadoReserva().getIdEstado();
-        codigoEstado = reserva.getEstadoReserva().getCodigoEstado();
-        acronimoEstado = reserva.getEstadoReserva().getAcronimoEstado();
-        descricaoEstado = reserva.getEstadoReserva().getDescricaoEstado();
+        data = reserva.getData();
+        idEstadoCommand= reserva.getEstado().getIdEstado();
+        codigoEstado = reserva.getEstado().getCodigoEstado();
+        acronimoEstado = reserva.getEstado().getAcronimoEstado();
+        descricaoEstado = reserva.getEstado().getDescricaoEstado();
         valor = reserva.getValor();
         milhasUtilizadas = reserva.getMilhasUtilizadas();
         quantidadePoltronas= reserva.getQuantidadePoltronas();

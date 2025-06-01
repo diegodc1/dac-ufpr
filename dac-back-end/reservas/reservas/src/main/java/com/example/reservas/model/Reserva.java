@@ -1,12 +1,12 @@
 package com.example.reservas.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-
-import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Data
@@ -21,18 +21,18 @@ public class Reserva implements Serializable {
     @Column(name = "id_reserva", nullable = false, updatable = false)
     private UUID idReserva;
 
-    @Column(name = "cod_reserva", nullable = false, unique = true, updatable = false)
-    private String codigoReserva;
+    @Column(name = "codigo", nullable = false, unique = true, updatable = false)
+    private String codigo;
 
     @Column(name = "codigo_voo", nullable = false)
     private String codigoVoo;
 
-    @Column(name = "data_reserva", nullable = false)
-    private ZonedDateTime dataReserva;
+    @Column(name = "data", nullable = false)
+    private ZonedDateTime data;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "estado_reserva", referencedColumnName = "id_estado", nullable = false)
-    private StatusReserva estadoReserva;
+    @JoinColumn(name = "estado", referencedColumnName = "id_estado", nullable = false)
+    private EstadoReserva estado;
 
     @Column(name = "valor", nullable = false)
     private BigDecimal valor;
@@ -49,9 +49,11 @@ public class Reserva implements Serializable {
     @Column(name = "id_transacao", nullable = false, unique = true)
     private UUID idTransacao;
 
-    @Column(name = "cod_aeroporto_origem", nullable = false)
-    private String codigoAeroportoOrigem;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "aeroporto_origem", referencedColumnName = "codigo", nullable = false)
+    private Aeroporto aeroportoOrigem;
 
-    @Column(name = "cod_aeroporto_destino", nullable = false)
-    private String codigoAeroportoDestino;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "aeroporto_destino", referencedColumnName = "codigo", nullable = false)
+    private Aeroporto aeroportoDestino;
 }

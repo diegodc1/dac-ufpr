@@ -14,8 +14,8 @@ import com.example.reservas.model.Reserva;
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, UUID> {
 
-    @Query("select r from Reserva r where r.codigoReserva = ?1")
-    Optional<Reserva> getByCodigoReserva(String codigoReserva);
+    @Query("select r from Reserva r where r.codigo = ?1")
+    Optional<Reserva> getByCodigo(String codigo);
 
     
     List<Reserva> findByCodigoVoo(String codigoVoo);

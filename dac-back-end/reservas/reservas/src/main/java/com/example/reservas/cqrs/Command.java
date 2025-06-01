@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Command {
     private UUID idReserva;
-    private UUID idAltStatus;
+    private UUID idAltEstado;
     private ZonedDateTime dataAltEstado;
     private UUID iIdCommandEstado;
     private Integer iCodigoEstado;
@@ -32,7 +32,7 @@ public class Command {
 
     public Command(HistoricoEstatus  novoHistorico) {
         idReserva = novoHistorico.getReserva().getIdReserva();
-        idAltStatus = novoHistorico.getId();
+        idAltEstado = novoHistorico.getId();
         dataAltEstado = novoHistorico.getDataAltEstado();
         iIdCommandEstado = novoHistorico.getEstadoInicial().getIdEstado();
         iCodigoEstado = novoHistorico.getEstadoInicial().getCodigoEstado();
