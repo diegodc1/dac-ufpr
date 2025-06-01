@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 public record VooDTO(
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'XXX")
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime data,
         Double valor_passagem,
         Integer quantidade_poltronas_total,

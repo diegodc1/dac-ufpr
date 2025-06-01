@@ -29,6 +29,7 @@ public class AeroportoController {
         );
         return ResponseEntity.ok("Criado aeroporto");
     }
+
     @GetMapping
     public  ResponseEntity<List<Aeroporto>> todosAeroportos(){
         List<Aeroporto> aeroportos = aeroportoService.listAeroporto();
