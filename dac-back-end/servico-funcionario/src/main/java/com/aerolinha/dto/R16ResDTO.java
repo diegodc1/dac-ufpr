@@ -1,7 +1,5 @@
 package com.aerolinha.dto;
 
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class R16ResDTO {
-    private UUID id;
-    private String idUsuario;
-    private String nome;
+    private Long codigo;
     private String cpf;
     private String email;
-    private String numeroTelefone;
+    private String nome;
+    private String telefone;
+    private String tipo;
 }

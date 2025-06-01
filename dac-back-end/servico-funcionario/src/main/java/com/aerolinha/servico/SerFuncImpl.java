@@ -27,12 +27,12 @@ public class SerFuncImpl implements ServicoFuncionario {
         for (Funcionario funcionario : listaFuncionarios) {
 
             R16ResDTO empDto = R16ResDTO.builder()
-                    .id(funcionario.getIdFuncionario())
-                    .idUsuario(funcionario.getIdUsuario())
-                    .nome(funcionario.getNome())
+                    .codigo(funcionario.getIdFuncionario())
                     .cpf(funcionario.getCpf())
                     .email(funcionario.getEmail())
-                    .numeroTelefone(this.formatarTelefone(funcionario.getNumeroTelefone()))
+                    .nome(funcionario.getNome())
+                    .telefone(funcionario.getNumeroTelefone())
+                    .tipo("FUNCIONARIO")
                     .build();
 
             dto.add(empDto);
@@ -43,16 +43,16 @@ public class SerFuncImpl implements ServicoFuncionario {
     }
 
     @Override
-    public R16ResDTO findByEmail(String email){
-       Funcionario funcionario = funcionarioRepositorio.findByEmail(email);
+    public R16ResDTO findByEmail(String email) {
+        Funcionario funcionario = funcionarioRepositorio.findByEmail(email);
 
         return R16ResDTO.builder()
-                .id(funcionario.getIdFuncionario())
-                .idUsuario(funcionario.getIdUsuario())
-                .nome(funcionario.getNome())
+                .codigo(funcionario.getIdFuncionario())
                 .cpf(funcionario.getCpf())
                 .email(funcionario.getEmail())
-                .numeroTelefone(this.formatarTelefone(funcionario.getNumeroTelefone()))
+                .nome(funcionario.getNome())
+                .telefone(funcionario.getNumeroTelefone())
+                .tipo("FUNCIONARIO")
                 .build();
     };
 

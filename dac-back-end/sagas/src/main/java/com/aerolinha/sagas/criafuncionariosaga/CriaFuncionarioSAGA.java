@@ -52,7 +52,7 @@ public class CriaFuncionarioSAGA {
                 .nome(novoFuncDTO.getNome())
                 .cpf(novoFuncDTO.getCpf())
                 .email(novoFuncDTO.getEmail())
-                .numeroTelefone(novoFuncDTO.getNumeroTelefone())
+                .numeroTelefone(novoFuncDTO.getTelefone())
                 .mensagem("ComandoCriarFunc")
                 .build();
 
