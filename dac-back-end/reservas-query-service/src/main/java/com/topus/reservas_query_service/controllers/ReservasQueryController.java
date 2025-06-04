@@ -22,36 +22,36 @@ import com.topus.reservas_query_service.services.ReservaQueryService;
 
 @RestController
 @CrossOrigin
-@RequestMapping("reserva-query")
+@RequestMapping("/")
 public class ReservasQueryController {
 
     @Autowired
     private ReservaQueryService reservaQueryService;
 
-    // R03 - 2
-    @GetMapping("/reserva-cliente/{id}")
-    public ResponseEntity<List<R03ResDTO>> getClientBookings(@PathVariable(value = "id") String idUsuario) {
+    // 
+    @GetMapping("reservas/{codigoReserva}")
+    public ResponseEntity<List<R03ResDTO>> getClientBookings(@PathVariable(value = "codiReserva") String idUsuario) {
         System.out.println("CHEGOU" + idUsuario);
         List<R03ResDTO> dto = reservaQueryService.findReservasCliente(idUsuario);
         return ResponseEntity.ok().body(dto);
     }
 
     // R04
-    @GetMapping("/reserva/{id}")
-    public ResponseEntity<R04ResDTO> getReserva(@PathVariable(value = "id") String idReserva) {
+    @GetMapping("/reservas/{codigoReserva}")
+    public ResponseEntity<R04ResDTO> getReserva(@PathVariable(value = "codigoReserva") String idReserva) {
         R04ResDTO dto = reservaQueryService.getReserva(idReserva);
         return ResponseEntity.ok().body(dto);
     }
 
-    // R06 - 2
-    @GetMapping("/cods-voo")
+    // R06 - 
+    @GetMapping("voo/codigoVoo")
     public ResponseEntity<List<String>> getFlightCodes(@RequestParam List<UUID> idsTransacao) {
         List<String> dto = reservaQueryService.getCodsVoo(idsTransacao);
         return ResponseEntity.ok().body(dto);
     }
 
-    // R09 - 1
-    @GetMapping("/busca-reserva/{cod}")
+    // R09 
+    @GetMapping("reservas/{codigoReserva}")
     public ResponseEntity<R09ResDTO> searchReserva(@PathVariable(value = "cod") String codReserva) {
         R09ResDTO dto = reservaQueryService.searchReserva(codReserva);
         return ResponseEntity.ok().body(dto);
