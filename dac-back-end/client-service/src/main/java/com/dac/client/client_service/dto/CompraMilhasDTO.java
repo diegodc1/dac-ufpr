@@ -4,11 +4,23 @@ public class CompraMilhasDTO {
     private int quantidade;
     private double valorPago;
 
+    public CompraMilhasDTO(){
+
+    }
+
     public int getQuantidade() {
-        return 0;
+        return this.quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
     }
 
     public double getValorPago() {
-        return 0;
+        return this.valorPago;
+    }
+
+    public void setValorPago(double valorPago) {
+        this.valorPago = valorPago;
     }
 }

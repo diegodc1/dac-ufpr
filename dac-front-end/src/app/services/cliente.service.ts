@@ -6,37 +6,49 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ClienteService {
-  private API_URL = 'http://localhost:8091/client';
   private API_GATEWAY_URL = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
 
-  cadastrarCliente(dados: any): Observable<any> {
-    return this.http.post(`${this.API_GATEWAY_URL}/clientes`, dados);
+  cadastrarCliente(cadastroClienteDTO: any): Observable<any> {
+    return this.http.post<any>(`${this.API_GATEWAY_URL}/clientes`, cadastroClienteDTO);
   }
 
   getSaldoMilhas(): Observable<number> {
-    return this.http.get<number>(`${this.API_URL}/saldo-milhas`);
+    return this.http.get<number>(`${this.API_GATEWAY_URL}/clientes/saldo-milhas`);
   }
 
-  getPerfilCliente(): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/perfil`);
+  listarReservas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_GATEWAY_URL}/reservas`);
   }
 
-  atualizarPerfil(perfil: any): Observable<any> {
-    return this.http.put<any>(`${this.API_URL}/perfil`, perfil);
+  listarVoos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_GATEWAY_URL}/voos`);
   }
 
-  comprarMilhas(quantidade: number, valorPago: number): Observable<any> {
-    const authToken = localStorage.getItem('auth_token');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-access-token': authToken || ''
-    });
+  cancelarReserva(codigoReserva: string): Observable<any> {
+    return this.http.delete(`${this.API_GATEWAY_URL}/reservas/${codigoReserva}`);
+  }
 
-    return this.http.post<any>(`${this.API_URL}/comprar-milhas`,
-      { quantidade, valorPago },
-      { headers }
-    );
+  // R03 - Tela Inicial do Cliente
+  getTelaInicialCliente(clienteId: string): Observable<any> {
+    return this.http.get<any>(`${this.API_GATEWAY_URL}/clientes/home?clienteId=${clienteId}`);
+  }
+
+  // R04 - Tela de Detalhes da Reserva
+  getDetalhesReserva(codigoReserva: string): Observable<any> {
+    return this.http.get<any>(`${this.API_GATEWAY_URL}/reservas/${codigoReserva}`);
+}
+
+ // R05 - comprar milhas
+comprarMilhas(clienteId: string, valorEmReais: number): Observable<any> {
+  return this.http.post<any>(`${this.API_GATEWAY_URL}/clientes/comprar-milhas`, {
+      clienteId,
+      valorEmReais,
+  });
+}
+
+  getExtratoMilhas(userEmail: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_GATEWAY_URL}/TransacaoMilhas/${userEmail}/extract`);
   }
 }

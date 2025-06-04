@@ -32,6 +32,9 @@ public class ClienteService {
     public Cliente findByEmail(String email){
         return clienteRepository.findByEmail(email);
     };
+    public Cliente findByCodigo(Long codigo){
+        return clienteRepository.findByCodigo(codigo);
+    };
 
     public List<Cliente> listarTodos() {
         return clienteRepository.findAll();
@@ -88,6 +91,53 @@ public class ClienteService {
         cliente.setNumero(comando.getNumero());
         cliente.setSaldoMilhas(comando.getSaldo_milhas() != null ? comando.getSaldo_milhas() : 0);
 
+        return clienteRepository.save(cliente);
+    }
+
+    public Cliente atualizarPerfil(String email, CadastroClienteDTO perfilDTO) {
+        Cliente cliente = findByEmail(email);
+        if (cliente == null) {
+            throw new RuntimeException("Cliente não encontrado");
+        }
+        
+        cliente.setNome(perfilDTO.getNome());
+        
+        if (perfilDTO.getEndereco() != null) {
+            cliente.setCep(perfilDTO.getEndereco().getCep());
+            cliente.setRua(perfilDTO.getEndereco().getRua());
+            cliente.setNumero(perfilDTO.getEndereco().getNumero());
+            cliente.setComplemento(perfilDTO.getEndereco().getComplemento());
+            cliente.setCidade(perfilDTO.getEndereco().getCidade());
+            cliente.setUf(perfilDTO.getEndereco().getUf());
+            if (perfilDTO.getEndereco().getBairro() != null) {
+                cliente.setBairro(perfilDTO.getEndereco().getBairro());
+            }
+        }
+        
+        return clienteRepository.save(cliente);
+    }
+
+    public Cliente comprarMilhas(String email, int quantidade, double valorPago) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("A quantidade de milhas deve ser maior que zero");
+        }
+        
+        if (valorPago <= 0) {
+            throw new IllegalArgumentException("O valor pago deve ser maior que zero");
+        }
+        
+        double valorMinimo = quantidade * 0.02;
+        if (valorPago < valorMinimo) {
+            throw new IllegalArgumentException("Valor insuficiente para a quantidade de milhas solicitada");
+        }
+        
+        Cliente cliente = findByEmail(email);
+        if (cliente == null) {
+            throw new RuntimeException("Cliente não encontrado");
+        }
+        
+        cliente.setSaldoMilhas(cliente.getSaldoMilhas() + quantidade);
+        
         return clienteRepository.save(cliente);
     }
 }

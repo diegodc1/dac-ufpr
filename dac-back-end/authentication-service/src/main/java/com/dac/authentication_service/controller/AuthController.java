@@ -22,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("/auth")
+@RequestMapping("/")
 public class AuthController {
 
     @Autowired

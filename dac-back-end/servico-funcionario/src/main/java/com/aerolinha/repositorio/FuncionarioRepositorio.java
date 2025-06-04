@@ -25,4 +25,5 @@ public interface FuncionarioRepositorio extends JpaRepository<Funcionario, UUID>
 
     Funcionario findByIdUsuario(String idUsuario);
 
+    Funcionario findByEmail(String email);
 }

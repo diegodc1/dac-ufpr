@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ComandoCriarFunc {
-
     private String idUsuario;
     private String nome;
     private String cpf;
