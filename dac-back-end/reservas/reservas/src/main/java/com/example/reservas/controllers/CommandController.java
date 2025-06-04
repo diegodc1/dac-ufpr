@@ -1,42 +1,75 @@
 package com.example.reservas.controllers;
 
-
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.reservas.dto.CheckinDTO;
+import com.example.reservas.dto.EstadoReservaDTO;
+import com.example.reservas.sagas.commands.CriarReserva;
 import com.example.reservas.services.CommandService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
 @RestController
+@RequestMapping("/")
 @CrossOrigin
-@RequestMapping("reserva-command")
 public class CommandController {
 
     @Autowired
     private CommandService commandService;
 
    
-
-  
-    @PutMapping("/check-in/{id}")
-    public ResponseEntity<CheckinDTO> doCheckIn(@PathVariable(value = "id") UUID bookingId) throws JsonProcessingException {
-        CheckinDTO dto = commandService.updateStatusReserva(bookingId.toString(), 2); // 2 é o código para check-in
-        return ResponseEntity.ok().body(dto);
+     // Cria uma nova reserva.
+     
+    @PostMapping("reservas")
+    public ResponseEntity<?> criarReserva(@RequestBody CriarReserva command) {
+        try {
+            String codigoReserva = commandService.criarReserva(command);
+            return ResponseEntity.status(HttpStatus.CREATED).body(codigoReserva);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Erro de conflito: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + e.getMessage());
+        }
     }
 
     
-    @PutMapping("/embarque-passageiro/{cod}")
-    public ResponseEntity<CheckinDTO> embarquePassageiro(@PathVariable(value = "cod") String codReserva)
-            throws JsonProcessingException {
-        CheckinDTO dto =  commandService.updateStatusReserva(codReserva, 4); 
-        return ResponseEntity.ok().body(dto);
+    //Cancela uma reserva existente.
+     
+
+    @DeleteMapping("reservas/{codigoReserva}")
+    public ResponseEntity<?> cancelarReserva(@PathVariable UUID codigoReserva) {
+        try {
+            commandService.cancelarReserva(codigoReserva.toString());
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID de reserva inválido.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cancelar reserva.");
+        }
+    }
+
+
+     // Atualiza o estado da reserva.
+     
+    @PatchMapping("reservas/{codigoReserva}/estado")
+    public ResponseEntity<?> atualizarEstadoReserva(
+            @PathVariable UUID codigoReserva,
+            @RequestBody EstadoReservaDTO dto) {
+
+        try {
+            commandService.atualizarEstado(codigoReserva.toString(), dto.getEstado());
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro no processamento do JSON.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar estado.");
+        }
     }
 }

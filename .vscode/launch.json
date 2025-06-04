@@ -50,6 +50,16 @@
             "projectName": "reservas",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ReservasQueryServiceApplication<reservas-query-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.topus.reservas_query_service.ReservasQueryServiceApplication",
+            "projectName": "reservas-query-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

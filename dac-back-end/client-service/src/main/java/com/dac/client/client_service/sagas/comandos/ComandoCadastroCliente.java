@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ComandoCadastroCliente {
     private String mensagem = "ComandoCadastroCliente";
-    private Long codigo;
+    private Long codigoCliente;
     private String cpf;
     private String nome;
     private String email;

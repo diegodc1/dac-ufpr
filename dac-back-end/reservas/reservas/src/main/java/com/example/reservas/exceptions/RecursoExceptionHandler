@@ -14,16 +14,16 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RecursoExceptionHandler {
 
     @ExceptionHandler(ReservaNaoEncontradaException.class)
-    public ResponseEntity<StandardError> flightNotFound(BookingNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<StandardError> vooNaoEncontrado(ReservaNaoEncontradaException e, HttpServletRequest request) {
 
         StandardError error = StandardError.builder()
                 .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
-                .status(HttpStatus.NOT_FOUND.value())
+                .estado(HttpStatus.NOT_FOUND.value())
                 .error("Reserva não encontrada")
                 .message(e.getMessage())
                 .path(request.getRequestURI())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity.estado(HttpStatus.NOT_FOUND).body(error);
     }
 }

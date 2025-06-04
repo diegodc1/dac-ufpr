@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CancelarReservaCommand {
-    private String flightCode;
+    private String codigoVoo;
     private String messageType;
 }

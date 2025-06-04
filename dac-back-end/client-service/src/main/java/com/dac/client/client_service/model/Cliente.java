@@ -10,7 +10,7 @@ import lombok.*;
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long codigo;
+    private Long codigoCliente;
 
     @Column(length = 11, nullable = false, unique = true)
     private String cpf;
