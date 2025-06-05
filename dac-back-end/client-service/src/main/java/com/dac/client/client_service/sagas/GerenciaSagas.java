@@ -7,6 +7,9 @@ import com.dac.client.client_service.components.EsperaResposta;
 import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.sagas.comandos.ComandoCadastroCliente;
 import com.dac.client.client_service.sagas.eventos.EventoAutenticacaoCriada;
+import com.dac.client.client_service.sagas.eventos.EventoCompraMilhasConfirmada;
+import com.dac.client.client_service.sagas.eventos.EventoCompraMilhasFalha;
+import com.dac.client.client_service.sagas.eventos.EventoCompraMilhasIniciada;
 import com.dac.client.client_service.service.ClienteService;
 import com.dac.client.client_service.service.EmailService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,6 +36,9 @@ public class GerenciaSagas {
     @Autowired
     private EsperaResposta esperaResposta;
 
+    @Autowired
+    private CompraMilhasSagaOrquestrador compraMilhasSagaOrquestrador;
+
     @RabbitListener(queues = "CanalClienteRes")
     public void gerenciaMensagem(String mensagem) throws JsonMappingException, JsonProcessingException {
 
@@ -58,7 +64,29 @@ public class GerenciaSagas {
                 }
                 break;
             }
-        }
 
+            case "EventoCompraMilhasIniciada" -> {
+                EventoCompraMilhasIniciada evento = objectMapper.convertValue(map, EventoCompraMilhasIniciada.class);
+                compraMilhasSagaOrquestrador.iniciarSaga(evento);
+                break;
+            }
+
+            case "EventoCompraMilhasConfirmada" -> {
+                EventoCompraMilhasConfirmada evento = objectMapper.convertValue(map, EventoCompraMilhasConfirmada.class);
+                if (evento.isSucesso()) {
+                    System.out.println("Compra de milhas confirmada para o cliente: " + evento.getEmailCliente());
+                } else {
+                    System.out.println("Falha na confirmação da compra de milhas: " + evento.getMensagem());
+                }
+                break;
+            }
+
+            case "EventoCompraMilhasFalha" -> {
+                EventoCompraMilhasFalha evento = objectMapper.convertValue(map, EventoCompraMilhasFalha.class);
+                System.out.println("Falha na compra de milhas: " + evento.getMotivoFalha());
+                break;
+            }
+        }
     }
 }
+
