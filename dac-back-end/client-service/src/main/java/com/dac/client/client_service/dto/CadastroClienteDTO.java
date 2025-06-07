@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CadastroClienteDTO {
-    private Long codigoCliente;
+    private Long codigo;
     private String cpf;
     private String email;
     private String nome;
@@ -17,7 +17,7 @@ public class CadastroClienteDTO {
     private EnderecoDTO endereco;
 
     public CadastroClienteDTO(Cliente cliente) {
-        this.codigoCliente = cliente.getCodigoCliente();
+        this.codigo = cliente.getCodigo();
         this.cpf = cliente.getCpf();
         this.email = cliente.getEmail();
         this.nome = cliente.getNome();
