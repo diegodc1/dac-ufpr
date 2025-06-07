@@ -6,9 +6,7 @@ import com.dac.client.client_service.dto.ClienteRequestDTO;
 import com.dac.client.client_service.dto.ClienteResponseDTO;
 import com.dac.client.client_service.exception.ClientAlreadyExistsException;
 import com.dac.client.client_service.model.Cliente;
-import com.dac.client.client_service.model.TransacaoMilhas;
 import com.dac.client.client_service.service.ClienteService;
-import com.dac.client.client_service.service.TransacaoMilhasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -37,9 +35,6 @@ public class ClienteController {
 
     @Autowired
     private EsperaResposta esperaResposta;
-
-    @Autowired
-    private TransacaoMilhasService transacaoMilhasService;
 
     @PostMapping
     public ResponseEntity<?> cadastrarCliente(@RequestBody CadastroClienteDTO cadastroDTO) {
@@ -166,38 +161,6 @@ public class ClienteController {
             response.put("success", false);
             response.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(response);
-        }
-    }
-
-    @GetMapping("/{codigo}/extrato")
-    public ResponseEntity<?> getExtratoCliente(@PathVariable Long codigo) {
-        try {
-            Cliente cliente = clienteService.findByCodigo(codigo);
-            if (cliente == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado.");
-            }
-
-            List<TransacaoMilhas> transacoes = transacaoMilhasService.getExtratoMilhas(cliente.getEmail());
-            List<Map<String, Object>> transacoesDTO = transacoes.stream()
-                    .map(transacao -> Map.of(
-                            "data", transacao.getDataHora(),
-                            "valor_reais", transacao.getValorEmReais(),
-                            "quantidade_milhas", transacao.getQuantidade(),
-                            "descricao", transacao.getDescricao(),
-                            "codigo_reserva", transacao.getCodigoReserva() != null ? transacao.getCodigoReserva() : "",
-                            "tipo", transacao.getTipo()
-                    ))
-                    .collect(Collectors.toList());
-
-            Map<String, Object> response = Map.of(
-                    "codigo", cliente.getCodigo(),
-                    "saldo_milhas", cliente.getSaldoMilhas(),
-                    "transacoes", transacoesDTO
-            );
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao buscar extrato: " + e.getMessage());
         }
     }
 
