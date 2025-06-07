@@ -138,26 +138,30 @@ public class ClienteController {
         return ResponseEntity.ok(new CadastroClienteDTO(clienteAtualizado));
     }
 
-    @Autowired
-    private CompraMilhasSagaOrquestrador compraMilhasSagaOrquestrador;
-
     @PostMapping("/comprar-milhas")
-    public ResponseEntity<?> comprarMilhas(@RequestHeader(value = "x-access-token", required = false) String token,
-                                           @RequestBody Map<String, Object> dados) {
+    public ResponseEntity<?> comprarMilhas(
+            @RequestHeader(value = "x-access-token", required = false) String token,
+            @RequestBody Map<String, Object> dados) {
         String email = getUserEmailFromToken(token);
         if (email == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        EventoCompraMilhasIniciada evento = new EventoCompraMilhasIniciada(
-            "EventoCompraMilhasIniciada",
-            email,
-            (int) dados.get("quantidadeMilhas"),
-            (double) dados.get("valorPago")
-        );
-
-        compraMilhasSagaOrquestrador.iniciarSaga(evento);
-        return ResponseEntity.ok("Compra de milhas iniciada!");
+        
+        Integer quantidade = (Integer) dados.get("quantidade");
+        Double valorPago = Double.valueOf(dados.get("valorPago").toString());
+        
+        try {
+            Cliente cliente = clienteService.comprarMilhas(email, quantidade, valorPago);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("saldoAtual", cliente.getSaldoMilhas());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     private String getUserEmailFromToken(String token) {
