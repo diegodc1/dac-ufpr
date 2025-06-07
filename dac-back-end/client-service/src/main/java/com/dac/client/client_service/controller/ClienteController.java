@@ -7,6 +7,8 @@ import com.dac.client.client_service.dto.ClienteResponseDTO;
 import com.dac.client.client_service.exception.ClientAlreadyExistsException;
 import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.service.ClienteService;
+import com.dac.client.client_service.sagas.CompraMilhasSagaOrquestrador;
+import com.dac.client.client_service.sagas.eventos.EventoCompraMilhasIniciada;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
