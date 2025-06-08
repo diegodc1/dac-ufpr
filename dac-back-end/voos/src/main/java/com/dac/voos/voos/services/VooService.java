@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +48,7 @@ public class VooService {
         newVoo.setEstadoVoo(estadoConfirmado);
         newVoo.setAeroportoDestino(destino);
         newVoo.setAeroportoOrigem(origem);
-        newVoo.setData_hora(vooDTO.data().toLocalDateTime());
+        newVoo.setData_hora(vooDTO.data().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
         newVoo.setQuantidadePoltronasOculpadas(vooDTO.quantidade_poltronas_ocupadas());
         newVoo.setQuantidadePoltronasTotal(vooDTO.quantidade_poltronas_total());
         newVoo.setValorPassagem(BigDecimal.valueOf(vooDTO.valor_passagem()));

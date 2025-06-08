@@ -114,8 +114,16 @@ app.get('/voos', validateTokenProxy, (req, res, next) => {
     console.log('Query params recebidos:', req.query);
     voosProxy(req, res, next);
 });
+
+// Buscar Voo
+app.get('/voos/:codigoVoo', validateTokenProxy, (req, res, next) => {
+    console.log('Query params recebidos:', req.query);
+    voosProxy(req, res, next);
+});
+
 //R15-Cadastra voo
 app.post('/voos', validateTokenProxy, (req, res, next) => {
+    console.log('Query params recebidos:', req);
     voosProxy(req, res, next);
 });
 
@@ -140,7 +148,10 @@ app.post('/login', async (req, res) => {
                 headers: { 'x-access-token': loginData.access_token }
             });
         } else if (userType === 'FUNCIONARIO') {
-            return res.status(200).json(loginData);
+            const urlFuncionarioService = process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083'
+            usuarioRes = await axios.get(`${urlFuncionarioService}/funcionario/${userLogin}`, {
+                headers: { 'x-access-token': loginData.access_token }
+            });
         }
 
 
