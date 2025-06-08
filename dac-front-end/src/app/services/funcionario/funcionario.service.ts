@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LoginService } from '../login/login.service';
+import { Funcionario } from '../../models/funcionario/funcionario';
+import { NovoFuncionario } from '../../models/novo-funcionario/novo-funcionario';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +33,18 @@ export class FuncionarioService {
     const dataInicio = '2025-05-10';
     const dataFim = '2025-05-15';
     return this.httpClient.get<T>(`${this.BASE_URL}/voos?data=${dataInicio}&data-fim=${dataFim}`, this.httpOptions);
+  }
+
+  listarTodos(): Observable<Funcionario[]> {
+    this.setarToken();
+    return this.httpClient.get<Funcionario[]>(this.BASE_URL + '/funcionarios', this.httpOptions);
+  }
+
+  novoFuncionario(novo: NovoFuncionario): Observable<any> {
+    console.log('chegou no servico: ' + novo);
+    this.setarToken();
+    return this.httpClient.post<NovoFuncionario>(this.BASE_URL + '/funcionarios', JSON.stringify(novo), this.httpOptions
+    );
   }
 
 }
