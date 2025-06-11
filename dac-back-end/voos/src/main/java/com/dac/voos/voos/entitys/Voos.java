@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @Entity
@@ -17,7 +18,7 @@ public class Voos {
     private Long codigo;
 
     @Column(name = "data_hora", nullable = false)
-    private LocalDateTime data_hora;
+    private OffsetDateTime data_hora;
 
     @ManyToOne
     @JoinColumn(name = "cod_aero_origem")
