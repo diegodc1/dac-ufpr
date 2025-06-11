@@ -48,7 +48,8 @@ public class VooService {
         newVoo.setEstadoVoo(estadoConfirmado);
         newVoo.setAeroportoDestino(destino);
         newVoo.setAeroportoOrigem(origem);
-        newVoo.setData_hora(vooDTO.data().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
+        OffsetDateTime dataHoraUTC = vooDTO.data().withOffsetSameInstant(ZoneOffset.UTC);
+        newVoo.setData_hora(dataHoraUTC);
         newVoo.setQuantidadePoltronasOculpadas(vooDTO.quantidade_poltronas_ocupadas());
         newVoo.setQuantidadePoltronasTotal(vooDTO.quantidade_poltronas_total());
         newVoo.setValorPassagem(BigDecimal.valueOf(vooDTO.valor_passagem()));
@@ -59,7 +60,7 @@ public class VooService {
     public Map<String, Object> converterVooParaJsonCriado(Voos voo) {
         Map<String, Object> jsonResponse = new HashMap<>();
         jsonResponse.put("codigo", voo.getCodigo());
-        jsonResponse.put("data", voo.getData_hora().atOffset(ZoneOffset.UTC).toString());
+        jsonResponse.put("data", voo.getData_hora());
         jsonResponse.put("valor_passagem", voo.getValorPassagem());
         jsonResponse.put("quantidade_poltronas_total", voo.getQuantidadePoltronasTotal());
         jsonResponse.put("quantidade_poltronas_ocupadas", voo.getQuantidadePoltronasOculpadas());
@@ -88,11 +89,14 @@ public class VooService {
     }
 
     public List<Voos> buscarVoosPorDataOrigemDestino(LocalDate data, Aeroporto origem, Aeroporto destino) {
-        LocalDateTime dataInicio = data.atStartOfDay();
-        LocalDateTime dataFim = data.atTime(LocalTime.MAX);
+        OffsetDateTime dataInicio = data.atStartOfDay().atOffset(ZoneOffset.of("-03:00"));
+        OffsetDateTime dataFim = data.plusYears(100).atTime(LocalTime.MAX).atOffset(ZoneOffset.of("-03:00"));
         return vooRepository.buscarPorDataHoraOrigemDestino(dataInicio, dataFim, origem, destino);
     }
-    public List<Voos> buscarVoosPorIntervaloDeDatas(LocalDateTime dataInicio, LocalDateTime dataFim) {
+
+    public List<Voos> buscarVoosPorIntervaloDeDatas(LocalDateTime dataInicioParam, LocalDateTime dataFimParam) {
+        OffsetDateTime dataInicio = dataInicioParam.atOffset(ZoneOffset.of("-03:00"));
+        OffsetDateTime dataFim = dataFimParam.atOffset(ZoneOffset.of("-03:00"));
         return vooRepository.buscarVoosPorIntervaloDeDatas(dataInicio, dataFim);
     }
 
@@ -145,7 +149,7 @@ public class VooService {
 
         Map<String, Object> retornoVooCancelado = new HashMap<>();
         retornoVooCancelado.put("Codigo", vooAtualizado.getCodigo());
-        retornoVooCancelado.put("data", vooAtualizado.getData_hora().atOffset(ZoneOffset.of("-03:00")).toString());
+        retornoVooCancelado.put("data", vooAtualizado.getData_hora().toString());
         retornoVooCancelado.put("valor_passagem", vooAtualizado.getValorPassagem());
         retornoVooCancelado.put("quantidade_poltronas_total", vooAtualizado.getQuantidadePoltronasTotal());
         retornoVooCancelado.put("quantidade_poltronas_ocupadas", vooAtualizado.getQuantidadePoltronasOculpadas());
@@ -205,8 +209,7 @@ public class VooService {
     private Map<String, Object> converterVooParaJsonRespostaComAeroportosCompletos(Voos voo) {
         Map<String, Object> jsonResponse = new HashMap<>();
         jsonResponse.put("codigo", voo.getCodigo());
-        jsonResponse.put("data", voo.getData_hora().atOffset(ZoneOffset.of("-03:00")).toString());
-        jsonResponse.put("valor_passagem", voo.getValorPassagem());
+        jsonResponse.put("data", voo.getData_hora().withOffsetSameInstant(ZoneOffset.of("-03:00")).toString());         jsonResponse.put("valor_passagem", voo.getValorPassagem());
         jsonResponse.put("quantidade_poltronas_total", voo.getQuantidadePoltronasTotal());
         jsonResponse.put("quantidade_poltronas_ocupadas", voo.getQuantidadePoltronasOculpadas());
         jsonResponse.put("estado", voo.getEstadoVoo().getSigla());

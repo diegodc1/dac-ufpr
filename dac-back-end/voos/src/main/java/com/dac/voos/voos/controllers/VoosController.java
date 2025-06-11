@@ -47,7 +47,7 @@ public class VoosController {
     }
 
 
-   @GetMapping("/todosVoos")
+   @GetMapping
    public ResponseEntity<List<Map<String, Object>>> todosVoos(){
         List<Voos> voos = vooService.listVoos();
         List<Map<String, Object>> voosFormados = voos.stream().
@@ -78,13 +78,12 @@ public class VoosController {
    }
     @GetMapping(params = {"data", "origem", "destino"})
     public ResponseEntity<?> buscarVoosPorAeroportos(
-            @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataConsulta,
+            @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dataConsulta,
             @RequestParam("origem") String codigoAeroportoOrigem,
             @RequestParam("destino") String codigoAeroportoDestino) {
 
         Optional<Aeroporto> aeroportoOrigemOptional = aeroportoRepository.findByCodigo(codigoAeroportoOrigem);
         Optional<Aeroporto> aeroportoDestinoOptional = aeroportoRepository.findByCodigo(codigoAeroportoDestino);
-
 
         if (aeroportoOrigemOptional.isEmpty() || aeroportoDestinoOptional.isEmpty()) {
             Map<String, String> erroResponce = new HashMap<>();
@@ -95,7 +94,7 @@ public class VoosController {
         Aeroporto aeroportoOrigem = aeroportoOrigemOptional.get();
         Aeroporto aeroportoDestino = aeroportoDestinoOptional.get();
 
-        List<Voos> voosEncontrados = vooService.buscarVoosPorDataOrigemDestino(dataConsulta, aeroportoOrigem, aeroportoDestino);
+        List<Voos> voosEncontrados = vooService.buscarVoosPorDataOrigemDestino(dataConsulta.toLocalDate(), aeroportoOrigem, aeroportoDestino);
 
         OffsetDateTime dataHoraAtualConsulta = OffsetDateTime.now(ZoneOffset.of("-03:00"));
         List<Object> listaVoosResposta = voosEncontrados.stream().
@@ -123,7 +122,7 @@ public class VoosController {
     private Map<String, Object> converterVooParaJsonRespostaPadrao(Voos voo) {
         Map<String, Object> jsonResponse = new HashMap<>();
         jsonResponse.put("codigo", voo.getCodigo());
-        jsonResponse.put("data", voo.getData_hora().atOffset(ZoneOffset.of("-03:00")).toString());
+        jsonResponse.put("data", voo.getData_hora().withOffsetSameInstant(ZoneOffset.of("-03:00")).toString());
         jsonResponse.put("valor_passagem", voo.getValorPassagem());
         jsonResponse.put("quantidade_poltronas_total", voo.getQuantidadePoltronasTotal());
         jsonResponse.put("quantidade_poltronas_ocupadas", voo.getQuantidadePoltronasOculpadas());
