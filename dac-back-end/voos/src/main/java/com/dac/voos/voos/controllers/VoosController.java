@@ -6,12 +6,10 @@ import com.dac.voos.voos.entitys.EstadoVoo;
 import com.dac.voos.voos.entitys.Voos;
 import com.dac.voos.voos.repositorys.AeroportoRepository;
 import com.dac.voos.voos.repositorys.EstadoVooRepository;
-import com.dac.voos.voos.repositorys.VooRepository;
 import com.dac.voos.voos.services.VooService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.OpAnd;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -185,6 +183,37 @@ public class VoosController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
         return vooService.atualizarEstadoVoo(codigoVoo, novoEstadoSigla);
+    }
+
+    @GetMapping("/admin/db-status")
+    public ResponseEntity<Map<String, Object>> getDbStatus() {
+        Map<String, Object> dbStatus = new HashMap<>();
+        try {
+            List<Aeroporto> aeroportos = aeroportoRepository.findAll();
+            List<EstadoVoo> estadosVoo = estadoVooRepository.findAll();
+            List<Voos> voos = vooService.listVoos();
+
+            dbStatus.put("aeroportos", aeroportos.stream()
+                    .map(this::converterAeroportoParaJson)
+                    .collect(Collectors.toList()));
+            dbStatus.put("estados_voo", estadosVoo.stream()
+                    .map(estado -> new HashMap<String, String>() {{
+                        put("sigla", estado.getSigla());
+                        put("descricao", estado.getDescricao());
+                    }})
+                    .collect(Collectors.toList()));
+            dbStatus.put("voos", voos.stream()
+                    .map(this::converterVooParaJsonRespostaPadrao)
+                    .collect(Collectors.toList()));
+
+            return ResponseEntity.ok(dbStatus);
+
+        } catch (Exception e) {
+            logger.error("Erro ao obter status do banco de dados: {}", e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("mensagem", "Erro ao acessar o banco de dados: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }
