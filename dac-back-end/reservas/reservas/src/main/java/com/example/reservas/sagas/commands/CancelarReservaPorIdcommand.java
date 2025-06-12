@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CancelarReservaPorIdcommand  {
-    private UUID bookingId;
+    private UUID codigoVoo;
     private String messageType;
 }

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CheckinDTO {
     private UUID idReserva;
-    private String codReserva;
-    private String statusInicial;
-    private String statusAtual;
+    private String codigoReserva;
+    private String estadoInicial;
+    private String estadoAtual;
 }

@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS tabela_funcionario (
-        id_funcionario UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+        id_funcionario BIGSERIAL PRIMARY KEY,
         id_usuario VARCHAR(24) NOT NULL UNIQUE,
         nome VARCHAR(50) NOT NULL,
         cpf VARCHAR(11) NOT NULL UNIQUE,

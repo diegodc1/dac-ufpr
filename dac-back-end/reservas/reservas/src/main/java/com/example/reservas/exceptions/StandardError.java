@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StandardError implements Serializable {
     private Instant timestamp;
-    private Integer status;
+    private Integer estado;
     private String error;
     private String message;
     private String path;

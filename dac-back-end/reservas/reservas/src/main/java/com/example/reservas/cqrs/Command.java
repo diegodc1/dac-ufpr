@@ -18,30 +18,30 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Command {
     private UUID idReserva;
-    private UUID idAltStatus;
-    private ZonedDateTime dataAltStatus;
-    private UUID iIdCommandStatus;
-    private Integer iStatusCode;
-    private String iAcronimoStatus;
-    private String iDescricaoStatus;
-    private UUID fIdCommandStatus;
-    private Integer fStatusCode;
-    private String fAcronimoStatus;
-    private String fDescricaoStatus;
+    private UUID idAltEstado;
+    private ZonedDateTime dataAltEstado;
+    private UUID iIdCommandEstado;
+    private Integer iCodigoEstado;
+    private String iAcronimoEstado;
+    private String iDescricaoEstado;
+    private UUID fIdCommandEstado;
+    private Integer fCodigoEstado;
+    private String fAcronimoEstado;
+    private String fDescricaoEstado;
     private String messageType;
 
     public Command(HistoricoEstatus  novoHistorico) {
         idReserva = novoHistorico.getReserva().getIdReserva();
-        idAltStatus = novoHistorico.getId();
-        dataAltStatus = novoHistorico.getDataAltStatus();
-        iIdCommandStatus = novoHistorico.getStatusInicial().getIdStatus();
-        iStatusCode = novoHistorico.getStatusInicial().getCodStatus();
-        iAcronimoStatus= novoHistorico.getStatusInicial().getAcronimoStatus();
-        iDescricaoStatus = novoHistorico.getStatusInicial().getDescricaoStatus();
-        fIdCommandStatus = novoHistorico.getStatusFinal().getIdStatus();
-        fStatusCode = novoHistorico.getStatusFinal().getCodStatus();
-        fAcronimoStatus= novoHistorico.getStatusFinal().getAcronimoStatus();
-        fDescricaoStatus = novoHistorico.getStatusFinal().getDescricaoStatus();
-        messageType = "SynCommand";
+        idAltEstado = novoHistorico.getId();
+        dataAltEstado = novoHistorico.getDataAltEstado();
+        iIdCommandEstado = novoHistorico.getEstadoInicial().getIdEstado();
+        iCodigoEstado = novoHistorico.getEstadoInicial().getCodigoEstado();
+        iAcronimoEstado= novoHistorico.getEstadoInicial().getAcronimoEstado();
+        iDescricaoEstado = novoHistorico.getEstadoInicial().getDescricaoEstado();
+        fIdCommandEstado = novoHistorico.getEstadoFinal().getIdEstado();
+        fCodigoEstado = novoHistorico.getEstadoFinal().getCodigoEstado();
+        fAcronimoEstado= novoHistorico.getEstadoFinal().getAcronimoEstado();
+        fDescricaoEstado = novoHistorico.getEstadoFinal().getDescricaoEstado();
+        messageType = "Command sincro...";
     }
 }

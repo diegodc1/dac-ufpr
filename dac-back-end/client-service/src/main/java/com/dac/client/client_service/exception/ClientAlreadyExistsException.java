@@ -4,4 +4,3 @@ public class ClientAlreadyExistsException extends RuntimeException {
         super("O cliente já existe!");
     }
 }
-

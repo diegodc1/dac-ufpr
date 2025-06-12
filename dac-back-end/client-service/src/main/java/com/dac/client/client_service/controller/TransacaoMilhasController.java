@@ -27,10 +27,10 @@ public class TransacaoMilhasController {
                     .collect(Collectors.toList());
             return ResponseEntity.ok(extratoDTOs);
         } catch (RuntimeException e) {
-            System.err.println("Erro ao buscar extrato de milhas para email " + email + ": " + e.getMessage());
+            System.err.println("Erro ao buscar extrato de milhas para codigo " + email + ": " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
-            System.err.println("Erro inesperado ao buscar extrato de milhas para email " + email + ": " + e.getMessage());
+            System.err.println("Erro inesperado ao buscar extrato de milhas para o codigo :  " + email + ": " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }

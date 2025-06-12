@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mongodb:
-    image: mongo:6.0
+    image: mongo:latest
     container_name: mongo
     ports:
       - "27017:27017"
@@ -143,6 +143,19 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       RABBITMQ_HOST: rabbitmq
+
+
+  sagas-service:
+    build: ./dac-back-end/sagas
+    container_name: sagas-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+       SPRING_PROFILES_ACTIVE: docker
+       RABBITMQ_HOST: rabbitmq
 
 volumes:
   mongo-data:

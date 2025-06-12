@@ -60,7 +60,18 @@ public class ClienteController {
         }
     }
 
-    @GetMapping("/{login}")
+    @GetMapping("/{codigoCliente}")
+    public ResponseEntity<?> getByCodigoCliente(@PathVariable Long codigoCliente) {
+        Cliente cliente = clienteService.findByCodigo(codigoCliente);
+
+        if (cliente != null) {
+            return ResponseEntity.ok().body(new CadastroClienteDTO(cliente));
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+    @GetMapping("/login/{login}")
     public CadastroClienteDTO getByLogin(@PathVariable String login) {
         return new CadastroClienteDTO(clienteService.findByEmail(login));
     }

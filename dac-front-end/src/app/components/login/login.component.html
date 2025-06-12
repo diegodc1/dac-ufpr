@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <form #loginForm="ngForm" (ngSubmit)="fazerLogin(loginForm)">
+        <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
           <a class="a">Email</a>
           <input class="input" placeholder="Insira seu e-mail" name="email" [(ngModel)]="loginData.login" required email
             style="margin-bottom: 15px;" />

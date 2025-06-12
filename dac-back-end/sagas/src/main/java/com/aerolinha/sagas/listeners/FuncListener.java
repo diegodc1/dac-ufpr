@@ -6,6 +6,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.aerolinha.sagas.atualizafuncionariosaga.AtuFuncSaga;
+import com.aerolinha.sagas.atualizafuncionariosaga.eventos.EventoFuncAtu;
 import com.aerolinha.sagas.criafuncionariosaga.CriaFuncionarioSAGA;
 import com.aerolinha.sagas.criafuncionariosaga.eventos.EventoFuncCriado;
 import com.aerolinha.sagas.deletarfuncionariosaga.DelFuncSaga;
@@ -24,6 +26,9 @@ public class FuncListener {
 
     @Autowired
     private DelFuncSaga delFuncSaga;
+
+    @Autowired
+    private AtuFuncSaga atuFuncSaga;
 
     @RabbitListener(queues = "CanalFuncRes")
     public void handleAuthResponses(String mensagem) throws JsonMappingException, JsonProcessingException {
@@ -44,6 +49,17 @@ public class FuncListener {
                     EventoFuncCriado evento = objectMapper.convertValue(map, EventoFuncCriado.class);
 
                     criaFuncionarioSAGA.manipularFuncCriado(evento);
+
+                    break;
+
+                }
+
+                // R18
+                case "EventoFuncAtu" -> {
+
+                    EventoFuncAtu evento = objectMapper.convertValue(map, EventoFuncAtu.class);
+
+                    atuFuncSaga.manipularFuncionarioAtualizado(evento);
 
                     break;
 

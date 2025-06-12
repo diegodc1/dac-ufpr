@@ -11,15 +11,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { FlightService } from '../../../services/flight.service';
 import { Voo } from '../../../models/voo/voo.model';
 import { FuncionarioService } from '../../../services/funcionario/funcionario.service';
+import { catchError, Observable } from 'rxjs';
 
 
-// interface Voo {
-//   id: number;
-//   origem: string;
-//   destino: string;
-//   dataHora: string;
-//   estado: string
-// }
+
+interface ModalData {
+    codigo?: number; 
+  }
 
 @Component({
   selector: 'app-home-employee',
@@ -42,6 +40,8 @@ export class HomeEmployeeComponent implements OnInit {
 
   idFuncionario!: string; // esta variável armazena o id que vem do mongo db no authentication service!
   voos: Voo[] = [];
+   private baseUrl = ""; 
+  http: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -66,8 +66,13 @@ export class HomeEmployeeComponent implements OnInit {
         console.error('Erro ao buscar voos', err);
         this.voos = [];
       }
-    })
+    }
+  
+  )
+
+
   }
+  
 
   // voos: Voo[] = [
   //   { id: 1, origem: 'Guarulhos - GRU', destino: 'Guarulhos - GRU', dataHora: '29 Jan 2026, 14:50', estado: 'CONFIRMADO'},
@@ -77,10 +82,10 @@ export class HomeEmployeeComponent implements OnInit {
   // ];
 
   modals = {
-    boarding: { isOpen: false, data: null },
-    cancelFlight: { isOpen: false, data: null },
-    flightCompletion: { isOpen: false, data: null },
-    createFlight: { isOpen: false, data: null }
+    boarding: { isOpen: false, data: null as Voo | null },
+    cancelFlight: { isOpen: false, data: null as Voo | null }, 
+    flightCompletion: { isOpen: false, data: null as Voo | null }, 
+    createFlight: { isOpen: false, data: null as any }
   };
 
   openModal(modalName: keyof typeof this.modals, data: any = null) {
@@ -98,21 +103,70 @@ export class HomeEmployeeComponent implements OnInit {
     this.closeModal('boarding');
   }
 
-  handleCancelFlight() {
-    console.log('Cancelando voo:', this.modals.cancelFlight.data);
-    this.closeModal('cancelFlight');
-  }
+  // handleCancelFlight() {
+  //   console.log('Cancelando voo:', this.modals.cancelFlight.data);
+  //   this.closeModal('cancelFlight');
+  // }
 
-  handleFlightCompletion() {
-    console.log('Voo marcado como realizado:', this.modals.flightCompletion.data);
-    this.closeModal('flightCompletion');
-  }
+  // handleFlightCompletion() {
+  //   console.log('Voo marcado como realizado:', this.modals.flightCompletion.data);
+  //   this.closeModal('flightCompletion');
+  // }
 
   handleCreateFlight(flightData: any) {
     console.log('Novo voo cadastrado:', flightData);
     this.closeModal('createFlight');
   }
 
+ handleCancelFlight() {
+    const vooToCancel: Voo | null = this.modals.cancelFlight.data; 
+    if (vooToCancel && vooToCancel.codigo) { 
+      console.log('Solicitando cancelamento para o voo:', vooToCancel.codigo);
+      this.servicoFuncionario.patchFlightState(vooToCancel.codigo, 'CANCELADO').subscribe({
+        next: (updatedVoo: Voo) => {
+          console.log('Voo cancelado com sucesso:', updatedVoo);
+          const index = this.voos.findIndex(v => v.codigo === updatedVoo.codigo);
+          if (index > -1) {
+            this.voos[index].estado = updatedVoo.estado;
+          }
+          this.closeModal('cancelFlight');
+        },
+        error: (err) => {
+          console.error('Erro ao cancelar voo:', err);
+          alert(`Erro ao cancelar voo: ${err.message}`);
+          this.closeModal('cancelFlight');
+        }
+      });
+    } else {
+      console.warn('Nenhum voo selecionado para cancelar ou código ausente.');
+      this.closeModal('cancelFlight');
+    }
+  }
+
+  handleFlightCompletion() {
+    const vooToComplete: Voo | null = this.modals.flightCompletion.data; 
+    if (vooToComplete && vooToComplete.codigo) { 
+      console.log('Solicitando realização do voo:', vooToComplete.codigo);
+      this.servicoFuncionario.patchFlightState(vooToComplete.codigo, 'REALIZADO').subscribe({
+        next: (updatedVoo: Voo) => {
+          console.log('Voo marcado como realizado com sucesso:', updatedVoo);
+          const index = this.voos.findIndex(v => v.codigo === updatedVoo.codigo);
+          if (index > -1) {
+            this.voos[index].estado = updatedVoo.estado;
+          }
+          this.closeModal('flightCompletion');
+        },
+        error: (err) => {
+          console.error('Erro ao marcar voo como realizado:', err);
+          alert(`Erro ao marcar voo como realizado: ${err.message}`);
+          this.closeModal('flightCompletion');
+        }
+      });
+    } else {
+      console.warn('Nenhum voo selecionado para realizar ou código ausente.');
+      this.closeModal('flightCompletion');
+    }
+  }
 }
 
 

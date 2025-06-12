@@ -43,6 +43,37 @@
             "projectName": "reservas",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-UsuarioApplication<booking-command-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.exemplo.usuario.UsuarioApplication",
+            "projectName": "booking-command-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ReservasApplication<reservas-command-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.reservas.ReservasApplication",
+            "projectName": "reservas-command-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=64561 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=reservas-command-service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ClientServiceApplication<client-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.dac.client.client_service.ClientServiceApplication",
+            "projectName": "client-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
