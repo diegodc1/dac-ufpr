@@ -1,23 +1,19 @@
 package com.example.reservas.repositorys;
 
+import com.example.reservas.entity.ReservaEntity;
+//import com.example.reservas.model.Reserva;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-
-import com.example.reservas.model.Reserva;
-
 @Repository
-public interface ReservaRepository extends JpaRepository<Reserva, UUID> {
+public interface ReservaRepository extends JpaRepository<ReservaEntity, UUID> {
 
-    @Query("select r from Reserva r where r.codigo = ?1")
-    Optional<Reserva> getByCodigo(String codigo);
+    Optional<ReservaEntity> findByCodigo(String codigo);
 
-    
-    List<Reserva> findByCodigoVoo(String codigoVoo);
+    List<ReservaEntity> findByCodigoVoo(String codigoVoo);
 
 }

@@ -1,4 +1,4 @@
-package com.example.reservas.services;
+/* package com.example.reservas.services;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -136,7 +136,7 @@ public class CommandServiceImplement implements CommandService {
         }
     }
 
-    // ✅ Gera código de reserva com 3 letras aleatórias + 3 números (ex: ABC123)
+      Gera código de reserva com 3 letras aleatórias + 3 números (ex: ABC123)
     private String gerarCodigoReserva() {
         Random random = new Random();
 
@@ -150,3 +150,4 @@ public class CommandServiceImplement implements CommandService {
         return letras.toString() + numeros;
     }
 }
+*/
