@@ -127,6 +127,11 @@ app.post('/voos', validateTokenProxy, (req, res, next) => {
     voosProxy(req, res, next);
 });
 
+// R16 - Listar Funcionarios
+app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
+    funcionariosServiceProxy(req, res, next);
+});
+
 
 // ********************************* API COMPOSITION ************************************************
 

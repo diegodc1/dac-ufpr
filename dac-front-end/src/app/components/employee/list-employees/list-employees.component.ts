@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
-import {BoardingConfirmationModalComponent} from "../boarding-confirmation-modal/boarding-confirmation-modal.component";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {HeaderEmployeeComponent} from "../header-employee/header-employee.component";
-import {FormsModule} from "@angular/forms";
-import { NgxMaskDirective,NgxMaskPipe, provideNgxMask  } from 'ngx-mask';
+import { Component, OnInit } from '@angular/core';
+import { BoardingConfirmationModalComponent } from "../boarding-confirmation-modal/boarding-confirmation-modal.component";
+import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { HeaderEmployeeComponent } from "../header-employee/header-employee.component";
+import { FormsModule } from "@angular/forms";
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NgForm } from '@angular/forms';
-
+import { FuncionarioService } from '../../../services/funcionario/funcionario.service';
+import { Funcionario } from '../../../models/funcionario/funcionario';
+import { NovoFuncionario } from '../../../models/novo-funcionario/novo-funcionario';
+import { FuncCriado } from '../../../models/func-criado/func-criado';
 
 
 interface Employee {
@@ -33,7 +36,35 @@ interface Employee {
   styleUrl: './list-employees.component.css',
   providers: [provideNgxMask()],
 })
-export class ListEmployeesComponent {
+export class ListEmployeesComponent implements OnInit {
+
+  novoFuncionario!: NovoFuncionario;
+  funcCriado!: FuncCriado;
+  funcionarios: Funcionario[] = []
+
+  constructor(
+    private servicoFuncionario: FuncionarioService
+  ) { }
+
+  ngOnInit(): void {
+    this.listarFuncionarios();
+    this.novoFuncionario = new NovoFuncionario();
+  }
+
+  listarFuncionarios(): Funcionario[] {
+    this.servicoFuncionario.listarTodos().subscribe({
+      next: (listaFuncionarios: Funcionario[]) => {
+        if (listaFuncionarios == null) {
+          this.funcionarios = [];
+        }
+        else {
+          this.funcionarios = listaFuncionarios;
+        }
+      }
+    });
+    return this.funcionarios;
+  }
+
   showModal = false;
   showEditModal = false;
   showConfirmModal: boolean = false;
@@ -42,14 +73,6 @@ export class ListEmployeesComponent {
   selectedEmployeeToRemove: any = null;
 
   phoneMask: string = '(00) 00000-0000';
-
-
-  employees: Employee[] = [
-    { id: 1, nome: 'João', cpf: '11111111111', email: 'joao@gmail.com', telefone: '41999999999'},
-    { id: 2, nome: 'Maria', cpf: '22222222222', email: 'maria@gmail.com', telefone: '41999999999'},
-    { id: 3, nome: 'Pedrinho', cpf: '33333333333', email: 'pedrinho@gmail.com', telefone: '41999999999' },
-    { id: 4, nome: 'Joana', cpf: '44444444444U', email: 'joana@gmail.com', telefone: '41999999999' }
-  ];
 
   newEmployee: Employee = {
     id: 0,
@@ -65,18 +88,18 @@ export class ListEmployeesComponent {
       return;
     }
 
-    this.employees.push({ ...this.newEmployee });
-    this.newEmployee = { id: 0, nome: '', cpf: '', email: '', telefone: '' };
-    this.closeModal();
+    // this.employees.push({ ...this.newEmployee });
+    // this.newEmployee = { id: 0, nome: '', cpf: '', email: '', telefone: '' };
+    // this.closeModal();
   }
 
   updateEmployee(form: NgForm) {
     if (form.invalid) return;
 
-    const index = this.employees.findIndex(e => e.id === this.selectedEmployee.id);
-    if (index !== -1) {
-      this.employees[index] = { ...this.selectedEmployee };
-    }
+    // const index = this.employees.findIndex(e => e.id === this.selectedEmployee.id);
+    // if (index !== -1) {
+    //   this.employees[index] = { ...this.selectedEmployee };
+    // }
 
     this.closeEditModal();
   }
@@ -94,10 +117,10 @@ export class ListEmployeesComponent {
   }
 
   removeEmployeeConfirmed() {
-    const index = this.employees.indexOf(this.selectedEmployeeToRemove);
-    if (index > -1) {
-      this.employees.splice(index, 1);
-    }
+    // const index = this.employees.indexOf(this.selectedEmployeeToRemove);
+    // if (index > -1) {
+    //   this.employees.splice(index, 1);
+    // }
     this.selectedEmployeeToRemove = null;
     this.showConfirmModal = false;
   }
