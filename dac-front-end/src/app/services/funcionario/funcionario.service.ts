@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { LoginService } from '../login/login.service';
 import { Funcionario } from '../../models/funcionario/funcionario';
 import { NovoFuncionario } from '../../models/novo-funcionario/novo-funcionario';
+import { Voo } from '../../models/voo/voo.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FuncionarioService {
+  http: any;
 
   constructor(
     private httpClient: HttpClient,
@@ -34,6 +36,14 @@ export class FuncionarioService {
     const dataFim = '2025-05-15';
     return this.httpClient.get<T>(`${this.BASE_URL}/voos?data=${dataInicio}&data-fim=${dataFim}`, this.httpOptions);
   }
+  patchFlightState(codigoVoo: number, estado: 'CANCELADO' | 'REALIZADO'): Observable<Voo> {
+    const payload = { estado: estado };
+    const headers = this.getHeaders(); 
+    return this.httpClient.patch<Voo>(`${this.BASE_URL}/voos/${codigoVoo}/estado`, payload, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
 
   listarTodos(): Observable<Funcionario[]> {
     this.setarToken();
@@ -47,4 +57,33 @@ export class FuncionarioService {
     );
   }
 
+    
+
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('funcionarioToken');
+    if (!token) {
+      console.error('Token de autenticação não encontrado!');
+      return new HttpHeaders({ 'Content-Type': 'application/json' });
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error('Um erro ocorreu:', error);
+    let errorMessage = 'Ocorreu um erro desconhecido.';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Erro: ${error.error.message}`;
+    } else {
+      errorMessage = `Código do erro: ${error.status}\nMensagem: ${error.message || error.error.mensagem || error.error.message}`;
+      if (error.status === 401 || error.status === 403) {
+        errorMessage = 'Não autorizado ou acesso negado. Verifique suas permissões.';
+      } else if (error.status === 404) {
+        errorMessage = 'Recurso não encontrado.';
+      }
+    }
+    return throwError(() => new Error(errorMessage));
+  }
 }

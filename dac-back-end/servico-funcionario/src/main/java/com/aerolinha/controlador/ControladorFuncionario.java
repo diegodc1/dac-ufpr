@@ -24,7 +24,7 @@ public class ControladorFuncionario {
         return ResponseEntity.ok().body(dto);
     }
 
-    @GetMapping("/funcionarios/{login}")
+    @GetMapping("/{login}")
     public R16ResDTO getByLogin(@PathVariable String login) {
         return servicoFuncionario.findByEmail(login);
     }

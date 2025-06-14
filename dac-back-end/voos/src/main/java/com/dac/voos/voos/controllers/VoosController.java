@@ -6,12 +6,10 @@ import com.dac.voos.voos.entitys.EstadoVoo;
 import com.dac.voos.voos.entitys.Voos;
 import com.dac.voos.voos.repositorys.AeroportoRepository;
 import com.dac.voos.voos.repositorys.EstadoVooRepository;
-import com.dac.voos.voos.repositorys.VooRepository;
 import com.dac.voos.voos.services.VooService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.OpAnd;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -47,7 +45,7 @@ public class VoosController {
     }
 
 
-   @GetMapping("/todosVoos")
+   @GetMapping
    public ResponseEntity<List<Map<String, Object>>> todosVoos(){
         List<Voos> voos = vooService.listVoos();
         List<Map<String, Object>> voosFormados = voos.stream().
@@ -78,13 +76,12 @@ public class VoosController {
    }
     @GetMapping(params = {"data", "origem", "destino"})
     public ResponseEntity<?> buscarVoosPorAeroportos(
-            @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataConsulta,
+            @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dataConsulta,
             @RequestParam("origem") String codigoAeroportoOrigem,
             @RequestParam("destino") String codigoAeroportoDestino) {
 
         Optional<Aeroporto> aeroportoOrigemOptional = aeroportoRepository.findByCodigo(codigoAeroportoOrigem);
         Optional<Aeroporto> aeroportoDestinoOptional = aeroportoRepository.findByCodigo(codigoAeroportoDestino);
-
 
         if (aeroportoOrigemOptional.isEmpty() || aeroportoDestinoOptional.isEmpty()) {
             Map<String, String> erroResponce = new HashMap<>();
@@ -95,7 +92,7 @@ public class VoosController {
         Aeroporto aeroportoOrigem = aeroportoOrigemOptional.get();
         Aeroporto aeroportoDestino = aeroportoDestinoOptional.get();
 
-        List<Voos> voosEncontrados = vooService.buscarVoosPorDataOrigemDestino(dataConsulta, aeroportoOrigem, aeroportoDestino);
+        List<Voos> voosEncontrados = vooService.buscarVoosPorDataOrigemDestino(dataConsulta.toLocalDate(), aeroportoOrigem, aeroportoDestino);
 
         OffsetDateTime dataHoraAtualConsulta = OffsetDateTime.now(ZoneOffset.of("-03:00"));
         List<Object> listaVoosResposta = voosEncontrados.stream().
@@ -123,7 +120,7 @@ public class VoosController {
     private Map<String, Object> converterVooParaJsonRespostaPadrao(Voos voo) {
         Map<String, Object> jsonResponse = new HashMap<>();
         jsonResponse.put("codigo", voo.getCodigo());
-        jsonResponse.put("data", voo.getData_hora().atOffset(ZoneOffset.of("-03:00")).toString());
+        jsonResponse.put("data", voo.getData_hora().withOffsetSameInstant(ZoneOffset.of("-03:00")).toString());
         jsonResponse.put("valor_passagem", voo.getValorPassagem());
         jsonResponse.put("quantidade_poltronas_total", voo.getQuantidadePoltronasTotal());
         jsonResponse.put("quantidade_poltronas_ocupadas", voo.getQuantidadePoltronasOculpadas());
@@ -186,6 +183,37 @@ public class VoosController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
         return vooService.atualizarEstadoVoo(codigoVoo, novoEstadoSigla);
+    }
+
+    @GetMapping("/admin/db-status")
+    public ResponseEntity<Map<String, Object>> getDbStatus() {
+        Map<String, Object> dbStatus = new HashMap<>();
+        try {
+            List<Aeroporto> aeroportos = aeroportoRepository.findAll();
+            List<EstadoVoo> estadosVoo = estadoVooRepository.findAll();
+            List<Voos> voos = vooService.listVoos();
+
+            dbStatus.put("aeroportos", aeroportos.stream()
+                    .map(this::converterAeroportoParaJson)
+                    .collect(Collectors.toList()));
+            dbStatus.put("estados_voo", estadosVoo.stream()
+                    .map(estado -> new HashMap<String, String>() {{
+                        put("sigla", estado.getSigla());
+                        put("descricao", estado.getDescricao());
+                    }})
+                    .collect(Collectors.toList()));
+            dbStatus.put("voos", voos.stream()
+                    .map(this::converterVooParaJsonRespostaPadrao)
+                    .collect(Collectors.toList()));
+
+            return ResponseEntity.ok(dbStatus);
+
+        } catch (Exception e) {
+            logger.error("Erro ao obter status do banco de dados: {}", e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("mensagem", "Erro ao acessar o banco de dados: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }
