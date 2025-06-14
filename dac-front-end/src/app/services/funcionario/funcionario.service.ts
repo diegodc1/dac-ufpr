@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 import { LoginService } from '../login/login.service';
+import { Funcionario } from '../../models/funcionario/funcionario';
+import { NovoFuncionario } from '../../models/novo-funcionario/novo-funcionario';
 import { Voo } from '../../models/voo/voo.model';
 
 @Injectable({
@@ -36,12 +38,26 @@ export class FuncionarioService {
   }
   patchFlightState(codigoVoo: number, estado: 'CANCELADO' | 'REALIZADO'): Observable<Voo> {
     const payload = { estado: estado };
-    const headers = this.getHeaders(); // Obtém o token
-
+    const headers = this.getHeaders(); 
     return this.httpClient.patch<Voo>(`${this.BASE_URL}/voos/${codigoVoo}/estado`, payload, { headers }).pipe(
       catchError(this.handleError)
     );
   }
+
+
+  listarTodos(): Observable<Funcionario[]> {
+    this.setarToken();
+    return this.httpClient.get<Funcionario[]>(this.BASE_URL + '/funcionarios', this.httpOptions);
+  }
+
+  novoFuncionario(novo: NovoFuncionario): Observable<any> {
+    console.log('chegou no servico: ' + novo);
+    this.setarToken();
+    return this.httpClient.post<NovoFuncionario>(this.BASE_URL + '/funcionarios', JSON.stringify(novo), this.httpOptions
+    );
+  }
+
+    
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('funcionarioToken');

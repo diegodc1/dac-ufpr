@@ -104,6 +104,16 @@ app.get('/clientes/:codigoCliente', validateTokenProxy, (req, res, next) => {
     clienteServiceProxy(req, res, next);
 });
 
+// comprar milhas
+app.put('/clientes/:codigoCliente/milhas', validateTokenProxy, (req, res, next) => {
+    clienteServiceProxy(req, res, next);
+})
+
+// saldo milhas com as transações de milhas
+app.get('/clientes/:codigoCliente/milhas', validateTokenProxy, (req, res, next) => {
+    clienteServiceProxy(req, res, next);
+})
+
 // R02 - logout
 app.post('/logout', (req, res, next) => {
     authServiceProxy(req, res, next);
@@ -111,20 +121,22 @@ app.post('/logout', (req, res, next) => {
 
 // R11 - tela inicial funcionario
 app.get('/voos', validateTokenProxy, (req, res, next) => {
-    console.log('Query params recebidos:', req.query);
     voosProxy(req, res, next);
 });
 
 // Buscar Voo
 app.get('/voos/:codigoVoo', validateTokenProxy, (req, res, next) => {
-    console.log('Query params recebidos:', req.query);
     voosProxy(req, res, next);
 });
 
 //R15-Cadastra voo
 app.post('/voos', validateTokenProxy, (req, res, next) => {
-    console.log('Query params recebidos:', req);
     voosProxy(req, res, next);
+});
+
+// R16 - Listar Funcionarios
+app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
+    funcionariosServiceProxy(req, res, next);
 });
 
 
