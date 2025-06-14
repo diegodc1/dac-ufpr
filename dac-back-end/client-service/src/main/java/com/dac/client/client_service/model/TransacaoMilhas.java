@@ -42,6 +42,9 @@ public class TransacaoMilhas {
     @Column(name = "descricao", nullable = false, length = 200)
     private String descricao;
 
+    @Column(name = "valor_reais")
+    private Double valor_reais;
+
     public void setCodigoReserva(Object o) {
     }
 
