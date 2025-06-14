@@ -24,7 +24,7 @@ public class MapperConfig {
         mapper.addMappings(new PropertyMap<ReservaEntity, ReservaModel>() {
             @Override
             protected void configure() {
-                map().setEstado(source.getEstado().getDescricao());
+                map().setEstado(source.getEstado().getDescricaoEstado());
                 map().setAeroportoOrigemCodigo(source.getAeroportoOrigem().getCodigo());
                 map().setAeroportoDestinoCodigo(source.getAeroportoDestino().getCodigo());
             }
@@ -36,7 +36,7 @@ public class MapperConfig {
             public EstadoReservaEntity convert(MappingContext<String, EstadoReservaEntity> context) {
                 if (context.getSource() == null) return null;
                 EstadoReservaEntity estado = new EstadoReservaEntity();
-                estado.setDescricao(context.getSource());
+                estado.setDescricaoEstado(context.getSource());
                 // IMPORTANTE: preencher o ID do estado se possível, ou buscar no DB no Service
                 return estado;
             }

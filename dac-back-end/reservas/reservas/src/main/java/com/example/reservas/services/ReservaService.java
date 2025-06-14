@@ -37,7 +37,7 @@ public class ReservaService {
 
     public ReservaDTO criar(ReservaDTO dto) {
         // Buscar dados relacionados
-        EstadoReservaEntity estado = estadoReservaRepository.findByDescricao("CONFIRMADA")
+        EstadoReservaEntity estado = estadoReservaRepository.findByDescricaoEstado("CONFIRMADA")
                 .orElseThrow(() -> new RuntimeException("Estado 'CONFIRMADA' não encontrado"));
 
         AeroportoEntity origem = aeroportoRepository.findById(dto.getCodigoAeroportoOrigem())
@@ -71,7 +71,7 @@ public class ReservaService {
         ReservaEntity reserva = reservaRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
 
-        EstadoReservaEntity estado = estadoReservaRepository.findByDescricao(estadoNovo)
+        EstadoReservaEntity estado = estadoReservaRepository.findByDescricaoEstado(estadoNovo)
                 .orElseThrow(() -> new RuntimeException("Estado '" + estadoNovo + "' não encontrado"));
 
         reserva.setEstado(estado);

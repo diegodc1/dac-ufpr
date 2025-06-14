@@ -13,5 +13,5 @@ public interface EstadoReservaRepository extends JpaRepository<EstadoReservaEnti
     Optional<EstadoReservaEntity> findByCodigoEstado(int codigoEstado);
 
    
-    Optional<EstadoReservaEntity> findByDescricao(String descricao);
+    Optional<EstadoReservaEntity> findByDescricaoEstado(String descricaoEstado);
 }

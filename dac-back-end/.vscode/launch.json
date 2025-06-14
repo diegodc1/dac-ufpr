@@ -32,7 +32,8 @@
             "mainClass": "com.dac.authentication_service.AuthenticationServiceApplication",
             "projectName": "authentication-service",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote"
         },
         {
             "type": "java",
@@ -52,7 +53,8 @@
             "mainClass": "com.exemplo.usuario.UsuarioApplication",
             "projectName": "booking-command-service",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote"
         },
         {
             "type": "java",
@@ -72,6 +74,37 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "com.dac.client.client_service.ClientServiceApplication",
             "projectName": "client-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ReservasQueryServiceApplication<reservas-query-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.topus.reservas_query_service.ReservasQueryServiceApplication",
+            "projectName": "reservas-query-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SagasApplication<sagas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.aerolinha.SagasApplication",
+            "projectName": "sagas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ServicoFuncionarioApplication<servico-funcionario>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.aerolinha.ServicoFuncionarioApplication",
+            "projectName": "servico-funcionario",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }

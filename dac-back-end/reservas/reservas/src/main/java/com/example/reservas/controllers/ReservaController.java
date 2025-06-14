@@ -1,4 +1,4 @@
-package com.example.reservas.controllers;
+/*package com.example.reservas.controllers;
 
 import com.example.reservas.dto.ReservaDTO;
 import com.example.reservas.services.ReservaService;
@@ -49,3 +49,4 @@ public class ReservaController {
         return ResponseEntity.ok(dto);
     }
 }
+*/
