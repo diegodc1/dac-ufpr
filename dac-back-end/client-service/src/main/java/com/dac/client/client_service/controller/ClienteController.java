@@ -1,15 +1,13 @@
 package com.dac.client.client_service.controller;
 
 import com.dac.client.client_service.components.EsperaResposta;
-import com.dac.client.client_service.dto.CadastroClienteDTO;
-import com.dac.client.client_service.dto.ClienteRequestDTO;
-import com.dac.client.client_service.dto.ClienteResponseDTO;
+import com.dac.client.client_service.dto.*;
 import com.dac.client.client_service.exception.ClientAlreadyExistsException;
 import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.service.ClienteService;
+import com.dac.client.client_service.service.TransacaoMilhasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -29,6 +27,9 @@ public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private TransacaoMilhasService transacaoMilhasService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -94,6 +95,7 @@ public class ClienteController {
     public void deletar(@PathVariable String cpf) {
         clienteService.deletar(cpf);
     }
+
 
     @GetMapping("/saldo-milhas")
     public ResponseEntity<Integer> getSaldoMilhas(@RequestHeader(value = "x-access-token", required = false) String token) {
@@ -162,6 +164,30 @@ public class ClienteController {
             response.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @PutMapping("/{codigoCliente}/milhas")
+    public ResponseEntity<?> comprarMilhasByCodCliente(@PathVariable Long codigoCliente, @RequestBody CompraMilhasDTO milhas) {
+        Map<String, Object> response = new HashMap<>();
+        Cliente cliente = clienteService.comprarMilhasAndRegistraOper(codigoCliente, milhas.getQuantidade(), milhas.getValorPago());
+
+        if (cliente != null) {
+            response.put("codigo", cliente.getCodigo());
+            response.put("saldo_milhas", cliente.getSaldoMilhas());
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.internalServerError().build();
+    }
+
+    // Retorna a lista de transações de milhas do cliente
+    @GetMapping("/{codigoCliente}/milhas")
+    public ResponseEntity<?> getListaTransacoesMilhas(@PathVariable Long codigoCliente) {
+        ResponseTransacoesMilhasDTO response = clienteService.getListTransacoesMilhasByCodigoCliente(codigoCliente);
+        if (response != null) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.internalServerError().build();
     }
 
     private String getUserEmailFromToken(String token) {

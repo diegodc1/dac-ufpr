@@ -1,8 +1,11 @@
 package com.dac.client.client_service.service;
 
 import com.dac.client.client_service.dto.CadastroClienteDTO;
+import com.dac.client.client_service.dto.ResponseTransacoesMilhasDTO;
+import com.dac.client.client_service.dto.TransacoesMilhasPTDTO;
 import com.dac.client.client_service.exception.ClientAlreadyExistsException;
 import com.dac.client.client_service.model.Cliente;
+import com.dac.client.client_service.model.TransacaoMilhas;
 import com.dac.client.client_service.repository.ClienteRepository;
 import com.dac.client.client_service.sagas.comandos.ComandoCadastroCliente;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,13 +14,18 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+
+    private final TransacaoMilhasService transacaoMilhasService;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -25,8 +33,9 @@ public class ClienteService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository, TransacaoMilhasService transacaoMilhasService) {
         this.clienteRepository = clienteRepository;
+        this.transacaoMilhasService = transacaoMilhasService;
     }
 
     public Cliente findByEmail(String email){
@@ -139,5 +148,37 @@ public class ClienteService {
         cliente.setSaldoMilhas(cliente.getSaldoMilhas() + quantidade);
         
         return clienteRepository.save(cliente);
+    }
+
+    public Cliente comprarMilhasAndRegistraOper(Long codigoUser, int quantidade, double valorPago) {
+        Cliente cliente = clienteRepository.findByCodigo(codigoUser);
+
+        if (cliente != null) {
+            transacaoMilhasService.registrarEntradaMilhas(cliente.getEmail(), quantidade, valorPago, "COMPRA DE MILHAS");
+            return cliente;
+        }
+
+        return null;
+    }
+
+    public ResponseTransacoesMilhasDTO getListTransacoesMilhasByCodigoCliente(Long codigoCliente) {
+        Cliente cliente = clienteRepository.findByCodigo(codigoCliente);
+
+        if (cliente != null) {
+            List<TransacaoMilhas> transacaoMilhas = transacaoMilhasService.getExtratoMilhas(cliente.getEmail())
+                    .stream()
+                    .sorted(Comparator.comparing(TransacaoMilhas::getDataHora))
+                    .toList();
+            List<TransacoesMilhasPTDTO> list = new ArrayList<>();
+
+            transacaoMilhas.forEach(a -> {
+                list.add(new TransacoesMilhasPTDTO(a));
+            });
+
+
+            return new ResponseTransacoesMilhasDTO(cliente.getCodigo(), cliente.getSaldoMilhas(), list);
+        }
+
+        return null;
     }
 }
