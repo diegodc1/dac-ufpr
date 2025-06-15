@@ -1,5 +1,6 @@
 package com.example.reservas.sagas.commands;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,41 +9,53 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-/**
- * Comando para criação de uma nova reserva.
- * Utilizado no contexto de CQRS e SAGA para iniciar o processo de reserva.
- */
+
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class CriarReserva {
 
-    // O código da reserva será gerado no backend
+  
+    @JsonProperty("codigo_reserva")
     private UUID codigoReserva;
 
-    // Código do voo relacionado à reserva
+   
+    @JsonProperty("codigo_voo")
     private String codigoVoo;
 
-    // Valor total da reserva
+  
+    @JsonProperty("valor")
     private BigDecimal valor;
 
-    // Quantidade de milhas utilizadas na reserva
+    
+    @JsonProperty("milhas_utilizadas")
     private Integer milhasUtilizadas;
 
-    // Total de assentos reservados (ou poltronas)
+    @JsonProperty("quantidade_poltronas")
     private Integer quantidadePoltronas;
 
-    // Identificador do cliente que está fazendo a reserva
-    private String codigoCliente;
-    private String codigoAeroportoOrigem;
     
+    @JsonProperty("codigo_cliente")
+    private Integer codigoCliente;
+
+    @JsonProperty("codigo_aeroporto_origem")
+    private String codigoAeroportoOrigem;
+
+    @JsonProperty("codigo_aeroporto_destino")
     private String codigoAeroportoDestino;
 
-
     // ID da transação (usado para rastreamento em sagas)
+    @JsonProperty("id_transacao")
     private UUID idTransacao;
 
     // Tipo da mensagem (ex: "CriarReserva") - útil para identificação em brokers como RabbitMQ
+    @JsonProperty("message_type")
     private String messageType;
+
+   
+    @JsonProperty("estado")
+    private String estado;
+
 }

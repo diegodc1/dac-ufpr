@@ -1,4 +1,4 @@
-package com.example.reservas.services;
+/*package com.example.reservas.services;
 
 import com.example.reservas.dto.ReservaDTO;
 import com.example.reservas.entity.AeroportoEntity;
@@ -82,3 +82,4 @@ public class ReservaService {
         return atualizarEstado(codigo, "CANCELADA");
     }
 }
+*/

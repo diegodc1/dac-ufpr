@@ -39,12 +39,12 @@ public class Command {
         this.iIdCommandEstado = novoHistorico.getEstadoInicial().getIdEstado();
         this.iCodigoEstado = novoHistorico.getEstadoInicial().getCodigoEstado();
         this.iAcronimoEstado = novoHistorico.getEstadoInicial().getAcronimoEstado();
-        this.iDescricaoEstado = novoHistorico.getEstadoInicial().getDescricaoEstado();
+        this.iDescricaoEstado = novoHistorico.getEstadoInicial().getDescricao();
 
         this.fIdCommandEstado = novoHistorico.getEstadoFinal().getIdEstado();
         this.fCodigoEstado = novoHistorico.getEstadoFinal().getCodigoEstado();
         this.fAcronimoEstado = novoHistorico.getEstadoFinal().getAcronimoEstado();
-        this.fDescricaoEstado = novoHistorico.getEstadoFinal().getDescricaoEstado();
+        this.fDescricaoEstado = novoHistorico.getEstadoFinal().getDescricao();
 
         this.messageType = "Command sincro...";
     }

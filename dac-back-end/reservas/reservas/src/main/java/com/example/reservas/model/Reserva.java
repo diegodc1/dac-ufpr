@@ -44,7 +44,7 @@ public class Reserva implements Serializable {
     private Integer quantidadePoltronas;
 
     @Column(name = "codigo_cliente", nullable = false)
-    private String codigoCliente;
+    private Integer codigoCliente;
 
     @Column(name = "id_transacao", nullable = false, unique = true)
     private UUID idTransacao;

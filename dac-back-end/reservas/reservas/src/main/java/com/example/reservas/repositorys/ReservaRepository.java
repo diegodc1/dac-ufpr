@@ -1,5 +1,5 @@
 package com.example.reservas.repositorys;
-
+import com.example.reservas.entity.EstadoReservaEntity;
 import com.example.reservas.entity.ReservaEntity;
 //import com.example.reservas.model.Reserva;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +15,7 @@ public interface ReservaRepository extends JpaRepository<ReservaEntity, UUID> {
     Optional<ReservaEntity> findByCodigo(String codigo);
 
     List<ReservaEntity> findByCodigoVoo(String codigoVoo);
+
+Optional<EstadoReservaEntity> findByDescricao_Descricao(String descricao);
 
 }

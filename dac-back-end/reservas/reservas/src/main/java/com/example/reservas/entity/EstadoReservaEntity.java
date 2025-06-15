@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_estado")
+@Table(name = "tb_estado_reserva")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +25,6 @@ public class EstadoReservaEntity implements Serializable {
     @Column(name = "acronim_estado", nullable = false, unique = true, length = 3)
     private String acronimoEstado;
 
-    @Column(name = "descricao_estado", nullable = false, unique = true, length = 15)
-    private String descricaoEstado;
+    @Column(name = "descricao", nullable = false, unique = true, length = 15)
+    private String descricao;
 }

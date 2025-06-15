@@ -34,7 +34,7 @@ public class ReservaCommand {
     private BigDecimal valor;
     private Integer milhasUtilizadas;
     private Integer quantidadePoltronas;
-    private String codigoCliente;
+    private Integer codigoCliente;
     private UUID idTransacao;
     private String messageType;
 

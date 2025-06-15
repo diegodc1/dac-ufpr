@@ -1,6 +1,7 @@
 package com.example.reservas.controllers;
 
 import com.example.reservas.dto.EstadoReservaDTO;
+import com.example.reservas.exceptions.ReservaNaoEncontradoException;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.example.reservas.services.CommandService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/reservas")
@@ -50,29 +51,22 @@ public ResponseEntity<?> criarReserva(@RequestBody CriarReserva command) {
      * @param codigoReserva UUID da reserva a cancelar
      * @return 204 No Content ou erro
      */
-    @DeleteMapping("/{codigoReserva}")
-    public ResponseEntity<?> cancelarReserva(@PathVariable UUID codigoReserva) {
+     @DeleteMapping("/{codigoReserva}")
+    public ResponseEntity<Void> cancelarReserva(@PathVariable String codigoReserva) {
         try {
-            commandService.cancelarReserva(codigoReserva.toString());
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("ID de reserva inválido: " + e.getMessage());
+            commandService.cancelarReserva(codigoReserva);
+            return ResponseEntity.ok().build();
+        } catch (ReservaNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao cancelar reserva.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    /**
-     * Atualiza o estado da reserva.
-     * @param codigoReserva UUID da reserva a atualizar
-     * @param dto objeto com o novo estado da reserva
-     * @return 204 No Content ou erro
-     */
+    
     @PatchMapping("/{codigoReserva}/estado")
     public ResponseEntity<?> atualizarEstadoReserva(
-            @PathVariable UUID codigoReserva,
+            @PathVariable String codigoReserva,
             @RequestBody EstadoReservaDTO dto) {
 
         try {
@@ -88,5 +82,10 @@ public ResponseEntity<?> criarReserva(@RequestBody CriarReserva command) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao atualizar estado.");
         }
+
+        
     }
+
+    
 }
+

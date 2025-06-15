@@ -30,9 +30,9 @@ public class ReservaEntity implements Serializable {
     @Column(name = "data", nullable = false)
     private ZonedDateTime data;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "estado", referencedColumnName = "id_estado", nullable = false)
-    private EstadoReservaEntity estado;
+@ManyToOne(fetch = FetchType.LAZY, optional = false)
+@JoinColumn(name = "estado", referencedColumnName = "id_estado", nullable = false)
+private EstadoReservaEntity descricao;
 
     @Column(name = "valor", nullable = false)
     private BigDecimal valor;
@@ -44,7 +44,7 @@ public class ReservaEntity implements Serializable {
     private Integer quantidadePoltronas;
 
     @Column(name = "codigo_cliente", nullable = false)
-    private String codigoCliente;
+    private Integer codigoCliente;
 
     @Column(name = "id_transacao", nullable = false, unique = true)
     private UUID idTransacao;

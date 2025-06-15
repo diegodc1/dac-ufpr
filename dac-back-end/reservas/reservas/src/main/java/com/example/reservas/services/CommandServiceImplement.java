@@ -11,14 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.reservas.cqrs.Command;
-
 import com.example.reservas.dto.CheckinDTO;
 import com.example.reservas.entity.AeroportoEntity;
 import com.example.reservas.entity.EstadoReservaEntity;
 import com.example.reservas.entity.HistoricoEstatusEntity;
 import com.example.reservas.entity.ReservaEntity;
 import com.example.reservas.exceptions.ReservaNaoEncontradoException;
-import com.example.reservas.repositorys.AeroportoRepository;
 import com.example.reservas.repositorys.EstadoReservaRepository;
 import com.example.reservas.repositorys.HistoricoStatusRepository;
 import com.example.reservas.repositorys.ReservaRepository;
@@ -42,10 +40,10 @@ public class CommandServiceImplement implements CommandService {
     private EstadoReservaRepository estadoReservaRepository;
 
     @Autowired
-    private AeroportoRepository aeroportoRepository;
+    private HistoricoStatusRepository historicoStatusRepository;
 
     @Autowired
-    private HistoricoStatusRepository historicoStatusRepository;
+    private AeroportoService aeroportoService;
 
     @Override
     @Transactional
@@ -61,21 +59,40 @@ public class CommandServiceImplement implements CommandService {
         reserva.setData(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")));
         reserva.setIdTransacao(UUID.randomUUID());
 
-        AeroportoEntity origem = aeroportoRepository.findById(command.getCodigoAeroportoOrigem())
-                .orElseThrow(() -> new RuntimeException("Aeroporto de origem não encontrado"));
+        AeroportoEntity origem = aeroportoService.buscarPorCodigo(command.getCodigoAeroportoOrigem());
+        AeroportoEntity destino = aeroportoService.buscarPorCodigo(command.getCodigoAeroportoDestino());
 
-        AeroportoEntity destino = aeroportoRepository.findById(command.getCodigoAeroportoDestino())
-                .orElseThrow(() -> new RuntimeException("Aeroporto de destino não encontrado"));
-
-        EstadoReservaEntity estado = estadoReservaRepository.findByCodigoEstado(1)
+        EstadoReservaEntity estadoConfirmada = estadoReservaRepository.findByCodigoEstado(1)
                 .orElseThrow(() -> new RuntimeException("Estado CONFIRMADA não encontrado"));
 
         reserva.setAeroportoOrigem(origem);
         reserva.setAeroportoDestino(destino);
-        reserva.setEstado(estado);
+        reserva.setDescricao(estadoConfirmada);  // ⬅️ Ajustado aqui
 
         reservaRepository.save(reserva);
         return reserva.getCodigo();
+    }
+
+    @Transactional
+    public void atualizarEstadoReserva(String codigoReserva, String novoEstado) {
+        ReservaEntity reserva = reservaRepository.findByCodigo(codigoReserva)
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada"));
+
+        EstadoReservaEntity estadoAtual = reserva.getDescricao();  // ⬅️ getEstado → getDescricao
+        EstadoReservaEntity estadoNovo = estadoReservaRepository.findByDescricao(novoEstado.toUpperCase())
+                .orElseThrow(() -> new RuntimeException("Estado " + novoEstado + " não encontrado"));
+
+        reserva.setDescricao(estadoNovo);  // ⬅️ setEstado → setDescricao
+        reservaRepository.save(reserva);
+
+        HistoricoEstatusEntity historico = HistoricoEstatusEntity.builder()
+                .dataAltEstado(ZonedDateTime.now(ZoneId.of("UTC")))
+                .reserva(reserva)
+                .estadoInicial(estadoAtual)
+                .estadoFinal(estadoNovo)
+                .build();
+
+        historicoStatusRepository.save(historico);
     }
 
     @Override
@@ -87,7 +104,7 @@ public class CommandServiceImplement implements CommandService {
         EstadoReservaEntity estadoCancelado = estadoReservaRepository.findByCodigoEstado(3)
                 .orElseThrow(() -> new RuntimeException("Estado CANCELADO não encontrado"));
 
-        reserva.setEstado(estadoCancelado);
+        reserva.setDescricao(estadoCancelado);  // ⬅️ setEstado → setDescricao
         reservaRepository.save(reserva);
     }
 
@@ -98,15 +115,15 @@ public class CommandServiceImplement implements CommandService {
 
         ReservaEntity reserva = identifier.length() == 36
                 ? reservaRepository.findById(UUID.fromString(identifier))
-                        .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para ID: " + identifier))
+                    .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para ID: " + identifier))
                 : reservaRepository.findByCodigo(identifier)
-                        .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
+                    .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
 
-        EstadoReservaEntity estadoInicial = reserva.getEstado();
+        EstadoReservaEntity estadoInicial = reserva.getDescricao();  // ⬅️ getEstado → getDescricao
         EstadoReservaEntity estadoFinal = estadoReservaRepository.findByCodigoEstado(codigoEstado)
                 .orElseThrow(() -> new RuntimeException("Estado não encontrado: " + estado));
 
-        reserva.setEstado(estadoFinal);
+        reserva.setDescricao(estadoFinal);  // ⬅️ setEstado → setDescricao
         reservaRepository.save(reserva);
 
         HistoricoEstatusEntity historico = HistoricoEstatusEntity.builder()
@@ -125,17 +142,17 @@ public class CommandServiceImplement implements CommandService {
         return CheckinDTO.builder()
                 .idReserva(reserva.getIdReserva())
                 .codigoReserva(reserva.getCodigo())
-                .estadoInicial(estadoInicial.getDescricaoEstado())
-                .estadoAtual(estadoFinal.getDescricaoEstado())
+                .estadoInicial(estadoInicial.getDescricao())
+                .estadoAtual(estadoFinal.getDescricao())
                 .build();
     }
 
     private int mapearEstadoParaCodigo(String estado) {
         return switch (estado.toUpperCase()) {
             case "CONFIRMADA" -> 1;
-            case "CHECK-IN"   -> 2;
+            case "CHECK-IN" -> 2;
             case "CANCELADA", "CANCELADO" -> 3;
-            case "EMBARCADA"  -> 4;
+            case "EMBARCADA" -> 4;
             case "REALIZADA", "REALIZADO" -> 5;
             default -> throw new IllegalArgumentException("Estado inválido: " + estado);
         };
