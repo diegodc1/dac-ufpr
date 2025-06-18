@@ -36,7 +36,13 @@
       <tbody class="tbody-style">
         <tr *ngFor="let voo of voos">
           <td>{{voo.codigo}}</td>
-          <td>{{voo.estado}}</td>
+          <td [ngClass]="{
+              'estado-realizado': voo.estado === 'REALIZADO',
+              'estado-cancelado': voo.estado === 'CANCELADO',
+              'estado-confirmado': voo.estado === 'CONFIRMADO'
+          }">
+              {{voo.estado}}
+          </td>        
           <td>{{ voo.data | date: 'dd/MM/yyyy' }}</td>
           <td>{{ voo.data | date: 'HH:mm' }}</td>
           <td>{{voo.aeroporto_origem?.nome}}</td>

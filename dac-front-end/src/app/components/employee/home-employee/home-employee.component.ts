@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HeaderEmployeeComponent } from "../header-employee/header-employee.component";
-import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { CommonModule, DatePipe, NgForOf, NgIf } from "@angular/common";
 import { BoardingConfirmationModalComponent } from "../boarding-confirmation-modal/boarding-confirmation-modal.component";
 import { ca, th } from 'date-fns/locale';
 import { CancelFlightModalComponent } from "../cancel-flight-modal/cancel-flight-modal.component";
@@ -26,6 +26,7 @@ interface ModalData {
     HeaderEmployeeComponent,
     NgForOf,
     NgIf,
+    CommonModule,
     DatePipe,
     HttpClientModule,
     BoardingConfirmationModalComponent,
