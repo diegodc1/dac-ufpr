@@ -12,8 +12,8 @@ const axios = require('axios');
 
 const corsOptions = {
     origin: ['http://localhost:4200'],
-    allowedHeaders: ['Content-Type', 'x-access-token'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    allowedHeaders: ['Content-Type', 'x-access-token', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH']
 };
 
 app.use(express.json());
@@ -138,8 +138,10 @@ app.post('/voos', validateTokenProxy, (req, res, next) => {
 app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
     funcionariosServiceProxy(req, res, next);
 });
-
-
+//R14- Realizar Voo
+app.patch('/voos/:codigoVoo/estado', validateTokenProxy, (req, res, next) => {
+    voosProxy(req, res, next);
+});
 // ********************************* API COMPOSITION ************************************************
 
 // R02 - login
