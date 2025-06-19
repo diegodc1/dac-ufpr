@@ -50,12 +50,14 @@ services:
       CLIENTE_SERVICE_URL: http://cliente-service:8082
       FUNCIONARIOS_SERVICE_URL: http://funcionarios-service:8083
       RESERVAS_SERVICE_URL: http://reservas-service:8084
+      SAGA_SERVICE_URL: http://sagas-service:8087
     depends_on: 
       - auth-service
       - voos-service
       - cliente-service
       - funcionarios-service
       - reservas-service
+      - sagas-service
 
 
   auth-service:
