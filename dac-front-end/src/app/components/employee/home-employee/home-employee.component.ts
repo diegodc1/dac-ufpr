@@ -117,6 +117,7 @@ export class HomeEmployeeComponent implements OnInit {
   handleCreateFlight(flightData: any) {
     console.log('Novo voo cadastrado:', flightData);
     this.closeModal('createFlight');
+    this.listarVoosProx48h(); 
   }
 
  handleCancelFlight() {
