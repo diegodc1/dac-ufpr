@@ -34,5 +34,5 @@ public interface CommandService {
      * @return DTO contendo as informações do estado anterior e atual.
      * @throws JsonProcessingException Caso ocorra falha ao serializar a mensagem.
      */
-    CheckinDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException;
+    CheckinDTO atualizarEstado(String identifier, String descricao) throws JsonProcessingException;
 }

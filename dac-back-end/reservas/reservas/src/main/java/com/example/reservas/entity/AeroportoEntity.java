@@ -9,11 +9,13 @@ import java.io.Serializable;
 @Table(name = "tb_aeroporto")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AeroportoEntity implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_aeroporto")
+    private Long idAeroporto;  // Primary key
+
     @Column(name = "codigo", length = 10, nullable = false, updatable = false)
     private String codigo;  // Código IATA do aeroporto, exemplo: "GRU", "CWB"
 
@@ -25,4 +27,12 @@ public class AeroportoEntity implements Serializable {
 
     @Column(name = "uf", length = 2, nullable = false)
     private String uf;  // Estado abreviado, ex: "SP", "RJ"
+
+    // Construtor personalizado
+    public AeroportoEntity(String codigo, String nome, String cidade, String uf) {
+        this.codigo = codigo;
+        this.nome = nome;
+        this.cidade = cidade;
+        this.uf = uf;
+    }
 }

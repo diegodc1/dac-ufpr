@@ -9,7 +9,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS tb_estado (
     id_estado UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     codigo_estado INTEGER NOT NULL UNIQUE,
-    acronim_estado VARCHAR(3) NOT NULL UNIQUE,
+    acronimo_estado VARCHAR(3) NOT NULL UNIQUE,
     descricao_estado VARCHAR(15) NOT NULL UNIQUE
 );
 
@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS tb_estado (
 -- 3. Criar tabela de aeroportos
 -- =========================================
 CREATE TABLE IF NOT EXISTS tb_aeroporto (
-    codigo VARCHAR(3) PRIMARY KEY,
+    codigo CHAR(3) PRIMARY KEY,  -- Alterado para CHAR(3) para códigos de 3 caracteres
     nome VARCHAR(100) NOT NULL,
     cidade VARCHAR(50) NOT NULL,
-    uf VARCHAR(20) NOT NULL
+    uf CHAR(2) NOT NULL  -- Alterado para CHAR(2) para garantir o formato correto
 );
 
 -- =========================================
@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS tb_reserva (
     quantidade_poltronas INTEGER NOT NULL,
     codigo_cliente VARCHAR(24) NOT NULL,
     id_transacao UUID NOT NULL UNIQUE,
-    aeroporto_origem VARCHAR(3) NOT NULL,
-    aeroporto_destino VARCHAR(3) NOT NULL,
+    aeroporto_origem CHAR(3) NOT NULL, -- Alterado para CHAR(3)
+    aeroporto_destino CHAR(3) NOT NULL, -- Alterado para CHAR(3)
     CONSTRAINT fk_estado_reserva FOREIGN KEY (estado) REFERENCES tb_estado (id_estado),
     CONSTRAINT fk_aeroporto_origem FOREIGN KEY (aeroporto_origem) REFERENCES tb_aeroporto (codigo),
     CONSTRAINT fk_aeroporto_destino FOREIGN KEY (aeroporto_destino) REFERENCES tb_aeroporto (codigo)
