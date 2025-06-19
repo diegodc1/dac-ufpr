@@ -84,22 +84,20 @@ aeroportos: any[] = [];
     if (usuarioString) {
         try {
             const usuario = JSON.parse(usuarioString);
-            authToken = usuario.access_token; // Acessa a propriedade
+            authToken = usuario.access_token; 
         } catch (e) {
             console.error('Erro ao fazer parse do usuário do localStorage (submitForm):', e);
         }
     }
 
-    // Se o token não for encontrado, exibe o erro e impede a submissão
     if (!authToken) {
         console.error('Token de autenticação não encontrado para cadastrar voo. Certifique-se de estar logado.');
         alert('Sessão expirada ou não autenticada. Por favor, faça login novamente.');
-        return; // Impede a submissão
+        return; 
     }
 
-    // O restante da lógica de submitForm
     const vooDtoToBackend = {
-        data: formattedDateForBackend, // Usa a data parseada
+        data: formattedDateForBackend, 
         codigo_aeroporto_origem: this.flightData.origem,
         codigo_aeroporto_destino: this.flightData.destino,
         valor_passagem: parseFloat(this.flightData.valor),
