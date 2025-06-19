@@ -32,6 +32,27 @@ createFlight(flightData : any, authToken: string): Observable<any>{
 );
  }
 
+ searchFlights(origem: string, destino: string, dataAtual: string, authToken: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-access-token': authToken 
+    });
+
+     let url = `${this.API_URL_VOOS}`;
+
+    // if (origem) {
+    //   url += `&origem=${origem}`;
+    // }
+    // if (destino) {
+    //   url += `&destino=${destino}`;
+    // }
+
+    return this.http.get<any>(url, { headers: headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
  private handleError(error: any): Observable<never> {
   console.error('Um erro ocorreu no FlightService:', error);
   let errorMessage = 'Ocorreu um erro desconhecido.';
