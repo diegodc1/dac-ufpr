@@ -27,13 +27,28 @@ app.use(cors(corsOptions));
 
 
 // PROXIES - IMPORTANTE: NÃO RETIRAR OS proccess.env!... senão não vai funcionar no docker
+
+const novoFunc = httpProxy(process.env.SAGA_SERVICE_URL || 'http://localhost:8087', {
+    proxyReqPathResolver: (req) => {
+        return '/saga/novo-funcionario';
+    },
+    preserveHostHdr: true
+});
+
 const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL || 'http://localhost:8080');
 
 const voosProxy = httpProxy(process.env.VOOS_SERVICE_URL || 'http://localhost:8081');
 
 const clienteServiceProxy = httpProxy(process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082');
 
-const funcionariosServiceProxy = httpProxy(process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083');
+const funcionariosServiceProxy = httpProxy(process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083', {
+    proxyReqPathResolver: (req) => {
+        return '/funcionario/funcionarios';
+    },
+    preserveHostHdr: true
+});
+
+//const funcionariosServiceProxy = httpProxy(process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083');
 
 const reservasServiceProxy = httpProxy(process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084');
 
@@ -83,6 +98,16 @@ const validateTokenProxy = (req, res, next) => {
 };
 
 
+
+// R17 - Inserção de funcionário
+app.post('/funcionarios', validateTokenProxy, (req, res, next) => {
+    novoFunc(req, res, next);
+});
+
+// R16 - Lista de Funcionarios
+app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
+    funcionariosServiceProxy(req, res, next);
+});
 
 // teste validacao token
 app.get('/validate', (req, res, next) => {
