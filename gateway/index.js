@@ -167,6 +167,14 @@ app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
 app.patch('/voos/:codigoVoo/estado', validateTokenProxy, (req, res, next) => {
     voosProxy(req, res, next);
 });
+
+//R--- Busca aeroporto para cadastrar Voo
+app.get('/aeroportos',  validateTokenProxy, (req, res, next) => {
+    console.log('Gateway: Recebida requisição GET /aeroportos. Encaminhando para voosProxy.');
+    voosProxy(req, res, next);
+});
+
+
 // ********************************* API COMPOSITION ************************************************
 
 // R02 - login
