@@ -13,7 +13,7 @@ const axios = require('axios');
 const corsOptions = {
     origin: ['http://localhost:4200'],
     allowedHeaders: ['Content-Type', 'x-access-token', 'Authorization'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH']
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
 };
 
 app.use(express.json());
@@ -100,7 +100,7 @@ const validateTokenProxy = (req, res, next) => {
 
 
 // R17 - Inserção de funcionário
-app.post('/funcionarios', validateTokenProxy, (req, res, next) => {
+app.post('/funcionarios', (req, res, next) => {
     novoFunc(req, res, next);
 });
 
@@ -169,7 +169,7 @@ app.patch('/voos/:codigoVoo/estado', validateTokenProxy, (req, res, next) => {
 });
 
 //R--- Busca aeroporto para cadastrar Voo
-app.get('/aeroportos',  validateTokenProxy, (req, res, next) => {
+app.get('/aeroportos', validateTokenProxy, (req, res, next) => {
     console.log('Gateway: Recebida requisição GET /aeroportos. Encaminhando para voosProxy.');
     voosProxy(req, res, next);
 });
