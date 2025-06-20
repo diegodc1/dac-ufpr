@@ -1,11 +1,16 @@
 package com.aerolinha.controlador;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aerolinha.dto.requisicao.NovoFuncDTO;
+import com.aerolinha.dto.resposta.R17ResDTO;
 import com.aerolinha.dto.resposta.ResGenDTO;
 import com.aerolinha.sagas.criafuncionariosaga.CriaFuncionarioSAGA;
+import com.aerolinha.sagas.criafuncionariosaga.eventos.EventoFuncCriado;
 import com.aerolinha.sagas.criafuncionariosaga.requisicoes.VerificarFuncionario;
 import com.aerolinha.sagas.criafuncionariosaga.respostas.VerificarFuncRes;
 import com.aerolinha.sagas.deletarfuncionariosaga.DelFuncSaga;
@@ -40,6 +47,7 @@ public class ControladorSagas {
     @Autowired
     private ValidadorCPF validadorCPF;
 
+    @Lazy
     @Autowired
     private CriaFuncionarioSAGA criaFuncionarioSAGA;
 
@@ -49,56 +57,76 @@ public class ControladorSagas {
     // Armazenamento temporário para respostas
     private final Map<String, VerificarFuncRes> respostasTemporarias = new ConcurrentHashMap<>();
 
+    private final Map<String, CompletableFuture<EventoFuncCriado>> futuresSaga = new ConcurrentHashMap<>();
+
     // R17
     @PostMapping("/novo-funcionario")
-    public ResponseEntity<ResGenDTO> registrarFunc(@RequestBody NovoFuncDTO novoFuncDTO)
-            throws JsonProcessingException, InterruptedException {
+    public ResponseEntity<?> registrarFunc(@RequestBody NovoFuncDTO novoFuncDTO)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
 
+        // 1. Validação do CPF
         if (!validadorCPF.cpfValido(novoFuncDTO.getCpf())) {
-            ResGenDTO dto = new ResGenDTO("CPF inválido!");
-            return ResponseEntity.badRequest().body(dto);
+            return ResponseEntity.badRequest().body(new ResGenDTO("CPF inválido!"));
         }
 
+        // 2. Preparação da verificação inicial (mantido igual)
         VerificarFuncionario consulta = VerificarFuncionario.builder()
                 .cpf(novoFuncDTO.getCpf())
                 .email(novoFuncDTO.getEmail())
                 .mensagem("VerificarFuncionario")
                 .build();
 
-        var mensagem = objectMapper.writeValueAsString(consulta);
-
-        // Usar CPF como chave única para identificar a resposta
         String chaveResposta = novoFuncDTO.getCpf();
 
-        // 1. primeiro verificar se os cpf e email enviados na requsição não existem no
-        // serviço de Funcionário
-        // caso os dois ou um dos dois existam no serviço de Funcionário retorna
-        // resposta ao frontend
-        // caso nenhum dos dois exista no serviço de Funcionário começa SAGA de criação
-        // de Funcionário novo
-        rabbitTemplate.convertAndSend("CanalFuncionario", mensagem);
+        // 3. Cria o Future para acompanhar a SAGA
+        CompletableFuture<EventoFuncCriado> future = new CompletableFuture<>();
+        futuresSaga.put(chaveResposta, future);
 
-        // Aguardar a resposta por um tempo limitado
+        // 4. Envia a verificação inicial (mantido igual)
+        rabbitTemplate.convertAndSend("CanalFuncionario", objectMapper.writeValueAsString(consulta));
+
+        // 5. Polling para verificação inicial (mantido igual)
         int tentativas = 0;
-        int maxTentativas = 10; // 10 tentativas com 500ms = 5 segundos no total
-        while (tentativas < maxTentativas && !respostasTemporarias.containsKey(chaveResposta)) {
-            Thread.sleep(500); // Espera 5 seg entre tentativas
+        while (tentativas < 10 && !respostasTemporarias.containsKey(chaveResposta)) {
+            Thread.sleep(500);
             tentativas++;
         }
 
-        if (respostasTemporarias.containsKey(chaveResposta)) {
-
-            VerificarFuncRes resposta = respostasTemporarias.remove(chaveResposta);
-
-            if (resposta.getComecaSaga()) {
-                this.criaFuncionarioSAGA.manipularRequisicao(novoFuncDTO);
-                return ResponseEntity.ok(new ResGenDTO(resposta.getMensagem()));
-            } else {
-                return ResponseEntity.badRequest().body(new ResGenDTO(resposta.getMensagem()));
-            }
-        } else {
+        // 6. Tratamento da resposta da verificação (modificado apenas o sucesso)
+        if (!respostasTemporarias.containsKey(chaveResposta)) {
+            futuresSaga.remove(chaveResposta);
             return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT)
                     .body(new ResGenDTO("Tempo excedido ao verificar funcionário"));
+        }
+
+        VerificarFuncRes resposta = respostasTemporarias.remove(chaveResposta);
+
+        if (!resposta.getComecaSaga()) {
+            futuresSaga.remove(chaveResposta);
+            return ResponseEntity.badRequest().body(new ResGenDTO(resposta.getMensagem()));
+        }
+
+        // 7. Inicia a SAGA (mantido igual)
+        this.criaFuncionarioSAGA.manipularRequisicao(novoFuncDTO);
+
+        // 8. Aguarda e retorna o resultado da SAGA (modificado)
+        try {
+            EventoFuncCriado resultado = future.get(30, TimeUnit.SECONDS);
+            R17ResDTO answer = new R17ResDTO(resultado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(answer);
+        } catch (TimeoutException e) {
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT)
+                    .body(new ResGenDTO("Tempo excedido ao criar funcionário"));
+        } finally {
+            futuresSaga.remove(chaveResposta);
+        }
+    }
+
+    public void completarSaga(String cpf, EventoFuncCriado evento) {
+        CompletableFuture<EventoFuncCriado> future = futuresSaga.get(cpf);
+        if (future != null) {
+            future.complete(evento);
+            futuresSaga.remove(cpf);
         }
     }
 

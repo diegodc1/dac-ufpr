@@ -82,7 +82,11 @@ public class ServicoSagas {
         funcionario = funcionarioRepositorio.save(funcionario);
 
         EventoFuncCriado evento = EventoFuncCriado.builder()
+                .codigo(funcionario.getIdFuncionario())
+                .cpf(funcionario.getCpf())
                 .email(funcionario.getEmail())
+                .nome(funcionario.getNome())
+                .telefone(funcionario.getNumeroTelefone())
                 .mensagem("EventoFuncCriado")
                 .build();
 
