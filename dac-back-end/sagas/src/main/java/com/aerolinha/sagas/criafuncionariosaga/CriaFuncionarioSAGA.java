@@ -74,6 +74,6 @@ public class CriaFuncionarioSAGA {
 
         this.emailService.sendApproveEmail(evento.getEmail(), subject, message);
 
-        controladorSagas.completarSaga(this.novoFuncDTO.getCpf(), evento);
+        controladorSagas.completarSagaR17(this.novoFuncDTO.getCpf(), evento);
     }
 }

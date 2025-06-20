@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aerolinha.dto.requisicao.NovoFuncDTO;
 import com.aerolinha.dto.resposta.R17ResDTO;
+import com.aerolinha.dto.resposta.R19ResDTO;
 import com.aerolinha.dto.resposta.ResGenDTO;
 import com.aerolinha.sagas.criafuncionariosaga.CriaFuncionarioSAGA;
 import com.aerolinha.sagas.criafuncionariosaga.eventos.EventoFuncCriado;
 import com.aerolinha.sagas.criafuncionariosaga.requisicoes.VerificarFuncionario;
 import com.aerolinha.sagas.criafuncionariosaga.respostas.VerificarFuncRes;
 import com.aerolinha.sagas.deletarfuncionariosaga.DelFuncSaga;
+import com.aerolinha.sagas.deletarfuncionariosaga.eventos.EventoFuncInativado;
 import com.aerolinha.utils.ValidadorCPF;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +53,7 @@ public class ControladorSagas {
     @Autowired
     private CriaFuncionarioSAGA criaFuncionarioSAGA;
 
+    @Lazy
     @Autowired
     private DelFuncSaga delFuncSaga;
 
@@ -58,6 +61,8 @@ public class ControladorSagas {
     private final Map<String, VerificarFuncRes> respostasTemporarias = new ConcurrentHashMap<>();
 
     private final Map<String, CompletableFuture<EventoFuncCriado>> futuresSaga = new ConcurrentHashMap<>();
+
+    private final Map<Long, CompletableFuture<EventoFuncInativado>> futuresSagaR19 = new ConcurrentHashMap<>();
 
     // R17
     @PostMapping("/novo-funcionario")
@@ -122,7 +127,7 @@ public class ControladorSagas {
         }
     }
 
-    public void completarSaga(String cpf, EventoFuncCriado evento) {
+    public void completarSagaR17(String cpf, EventoFuncCriado evento) {
         CompletableFuture<EventoFuncCriado> future = futuresSaga.get(cpf);
         if (future != null) {
             future.complete(evento);
@@ -143,13 +148,38 @@ public class ControladorSagas {
 
     // R19
     @DeleteMapping("remover/{id}")
-    public ResponseEntity<ResGenDTO> removerFuncionario(@PathVariable("id") String idUsuario)
-            throws JsonProcessingException {
+    public ResponseEntity<?> removerFuncionario(@PathVariable("id") Long idUsuario)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
 
+        Long chaveResposta = idUsuario; // Usamos o ID como chave
+
+        // Cria o Future para acompanhar a SAGA
+        CompletableFuture<EventoFuncInativado> future = new CompletableFuture<>();
+        futuresSagaR19.put(chaveResposta, future);
+
+        // Inicia a SAGA
         this.delFuncSaga.manipularRequisicao(idUsuario);
-        ResGenDTO dto = new ResGenDTO("Funcionário com id " + idUsuario + " foi removido");
 
-        return ResponseEntity.ok().body(dto);
+        // Aguarda e retorna o resultado da SAGA
+        try {
+            EventoFuncInativado resultado = future.get(30, TimeUnit.SECONDS);
+            R19ResDTO answer = new R19ResDTO(resultado);
+            return ResponseEntity.ok().body(answer);
+
+        } catch (TimeoutException e) {
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT)
+                    .body(new ResGenDTO("Tempo excedido ao remover funcionário"));
+        } finally {
+            futuresSagaR19.remove(chaveResposta);
+        }
+    }
+
+    // Método para completar a Saga R19
+    public void completarSagaR19(Long idUsuario, EventoFuncInativado evento) {
+        CompletableFuture<EventoFuncInativado> future = futuresSagaR19.get(idUsuario);
+        if (future != null) {
+            future.complete(evento);
+        }
     }
 
 }
