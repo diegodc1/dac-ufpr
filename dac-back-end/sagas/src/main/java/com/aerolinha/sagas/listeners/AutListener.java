@@ -78,7 +78,7 @@ public class AutListener {
 
                 EventoFuncUserDeletado evento = objectMapper.convertValue(map, EventoFuncUserDeletado.class);
 
-                delFuncSaga.manipularUsuarioRemovido(evento);
+                delFuncSaga.manipularFuncInativado(evento);
 
                 break;
 

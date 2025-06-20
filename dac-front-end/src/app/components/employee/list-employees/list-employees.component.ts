@@ -88,9 +88,33 @@ export class ListEmployeesComponent implements OnInit {
       return;
     }
 
-    // this.employees.push({ ...this.newEmployee });
-    // this.newEmployee = { id: 0, nome: '', cpf: '', email: '', telefone: '' };
-    // this.closeModal();
+    this.servicoFuncionario.novoFuncionario(this.novoFuncionario).subscribe({
+      next: (novofunc) => {
+        this.funcCriado = novofunc;
+        console.log("Resposta do servidor: ", novofunc);
+        console.log("Veio do back: " + JSON.stringify(this.funcCriado));
+
+        // Limpar o formulário e fechar o modal só após a resposta
+        this.novoFuncionario.cpf = null;
+        this.novoFuncionario.email = null;
+        this.novoFuncionario.nome = null;
+        this.novoFuncionario.telefone = null;
+        this.closeModal();
+
+        // Atualizar a lista de funcionários
+        this.listarFuncionarios();
+      },
+      error: (err) => {
+        console.error("Erro ao criar funcionário: ", err);
+      }
+    });
+
+    this.servicoFuncionario.novoFuncionario(this.novoFuncionario).subscribe(
+      novofunc => {
+        this.funcCriado = novofunc;
+      }
+    );
+
   }
 
   updateEmployee(form: NgForm) {

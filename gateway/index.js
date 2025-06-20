@@ -35,6 +35,15 @@ const novoFunc = httpProxy(process.env.SAGA_SERVICE_URL || 'http://localhost:808
     preserveHostHdr: true
 });
 
+const removeFuncProxy = httpProxy(process.env.SAGA_SERVICE_URL || 'http://localhost:8087', {
+    proxyReqPathResolver: (req) => {
+        // Pega o código do funcionário dos parâmetros da rota
+        const codigoFuncionario = req.params.codigoFuncionario;
+        return `/saga/remover/${codigoFuncionario}`;
+    },
+    preserveHostHdr: true
+});
+
 const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL || 'http://localhost:8080');
 
 const voosProxy = httpProxy(process.env.VOOS_SERVICE_URL || 'http://localhost:8081');
@@ -100,13 +109,18 @@ const validateTokenProxy = (req, res, next) => {
 
 
 // R17 - Inserção de funcionário
-app.post('/funcionarios', (req, res, next) => {
+app.post('/funcionarios', validateTokenProxy, (req, res, next) => {
     novoFunc(req, res, next);
 });
 
 // R16 - Lista de Funcionarios
 app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
     funcionariosServiceProxy(req, res, next);
+});
+
+// R19 - Remoção lógica do funcionário
+app.delete('/funcionarios/:codigoFuncionario', validateTokenProxy, (req, res, next) => {
+    removeFuncProxy(req, res, next);
 });
 
 // teste validacao token

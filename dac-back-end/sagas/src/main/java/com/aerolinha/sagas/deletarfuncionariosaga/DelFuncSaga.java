@@ -4,6 +4,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.aerolinha.controlador.ControladorSagas;
 import com.aerolinha.sagas.deletarfuncionariosaga.comandos.ComandoDelFunc;
 import com.aerolinha.sagas.deletarfuncionariosaga.comandos.ComandoInativarFunc;
 import com.aerolinha.sagas.deletarfuncionariosaga.eventos.EventoFuncInativado;
@@ -12,7 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class DelFuncSaga { //orquestrador
+public class DelFuncSaga { // orquestrador
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -20,26 +21,16 @@ public class DelFuncSaga { //orquestrador
     @Autowired
     private ObjectMapper objectMapper;
 
-    //1. Primeiro envia mensagem para o serviço de autenticação
-    public void manipularRequisicao(String idUsuario) throws JsonProcessingException {
+    @Autowired
+    private ControladorSagas controladorSagas;
 
-        ComandoDelFunc comando = ComandoDelFunc.builder()
-                .idUsuario(idUsuario)
-                .mensagem("ComandoDelFunc")
-                .build();
+    private EventoFuncInativado eventoFuncInativado;
 
-        var mensagem = objectMapper.writeValueAsString(comando);
-
-        rabbitTemplate.convertAndSend("CanalAut", mensagem);
-
-    }
-
-    //2. Depois vai para o serviço de funcionário
-    public void manipularUsuarioRemovido(EventoFuncUserDeletado evento) throws JsonProcessingException {
+    // 1. Primeiro envia mensagem para o serviço de funcionário
+    public void manipularRequisicao(Long idUsuario) throws JsonProcessingException {
 
         ComandoInativarFunc comando = ComandoInativarFunc.builder()
-                .usuarioId(evento.getIdUsuario())
-                .estadoUsuario(evento.getEstadoUsuario())
+                .id(idUsuario)
                 .mensagem("ComandoInativarFunc")
                 .build();
 
@@ -49,11 +40,24 @@ public class DelFuncSaga { //orquestrador
 
     }
 
-    public void manipularFuncInativado(EventoFuncInativado evento) {
-        System.out.println("Dados do funcionário inativado:");
-        System.out.println("ID funcionário: " + evento.getIdUsuario());
-        System.out.println("Nome: " + evento.getNome());
-        System.out.println("Estado:" + evento.getEstadoFuncionario());
+    // 2. Depois vai para o serviço de autenticacao
+    public void manipularFuncRemovido(EventoFuncInativado evento) throws JsonProcessingException {
+
+        this.eventoFuncInativado = evento;
+
+        ComandoDelFunc comando = ComandoDelFunc.builder()
+                .idUsuario(evento.getUserId())
+                .mensagem("ComandoDelFunc")
+                .build();
+
+        var mensagem = objectMapper.writeValueAsString(comando);
+
+        rabbitTemplate.convertAndSend("CanalAut", mensagem);
+
+    }
+
+    public void manipularFuncInativado(EventoFuncUserDeletado evento) {
+        controladorSagas.completarSagaR19(this.eventoFuncInativado.getCodigo(), this.eventoFuncInativado);
     }
 
 }

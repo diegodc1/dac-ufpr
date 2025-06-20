@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ComandoInativarFunc {
-
-    private String usuarioId;
-    private String estadoUsuario;
+    private Long id;
     private String mensagem;
-
 }
