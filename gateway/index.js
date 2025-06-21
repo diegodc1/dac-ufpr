@@ -153,6 +153,11 @@ app.get('/clientes/:codigoCliente/milhas', validateTokenProxy, (req, res, next) 
     clienteServiceProxy(req, res, next);
 })
 
+// retorna somente saldo de milhas
+app.get('/clientes/saldo-milhas/:codigoCliente', validateTokenProxy, (req, res, next) => {
+    clienteServiceProxy(req, res, next);
+})
+
 // R02 - logout
 app.post('/logout', (req, res, next) => {
     authServiceProxy(req, res, next);
@@ -236,31 +241,33 @@ app.post('/login', async (req, res) => {
 });
 
 // R03 - Tela Inicial do Cliente
-app.get('/clientes/home', validateTokenProxy, async (req, res) => {
+app.get('/clientes/home/:clienteId', validateTokenProxy, async (req, res) => {
     try {
-        const clienteId = req.query.clienteId; // ID do cliente enviado como query param
+        const clienteId = req.params.clienteId;
         if (!clienteId) {
             return res.status(400).send({ message: 'Cliente ID não fornecido!' });
         }
 
+        
         // Obtem saldo de milhas
-        const saldoMilhasResponse = await axios.get(`${process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'}/clientes/${clienteId}/saldo-milhas`, {
+        const saldoMilhasResponse = await axios.get(`${process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'}/clientes/saldo-milhas/${clienteId}`, {
             headers: { 'x-access-token': req.headers['x-access-token'] }
         });
 
         // Lista reservas
-        const reservasResponse = await axios.get(`${process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'}/reservas?clienteId=${clienteId}`, {
-            headers: { 'x-access-token': req.headers['x-access-token'] }
-        });
+        // const reservasResponse = await axios.get(`${process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'}/reservas?clienteId=${clienteId}`, {
+        //     headers: { 'x-access-token': req.headers['x-access-token'] }
+        // });
 
         // Lista voos feitos e cancelados
         const voosResponse = await axios.get(`${process.env.VOOS_SERVICE_URL || 'http://localhost:8081'}/voos?clienteId=${clienteId}`, {
             headers: { 'x-access-token': req.headers['x-access-token'] }
         });
 
+     
         const responseComposta = {
-            saldoMilhas: saldoMilhasResponse.data,
-            reservas: reservasResponse.data,
+            saldoMilhas: saldoMilhasResponse.data.saldoMilhas,
+            // reservas: reservasResponse.data,
             voos: voosResponse.data
         };
 

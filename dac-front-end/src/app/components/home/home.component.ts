@@ -38,8 +38,8 @@ export class HomeComponent implements OnInit {
 
   carregarTelaInicial() {
     const userEmail = localStorage.getItem('user_email');
-    const token = localStorage.getItem('access_token');
-      const clienteId = localStorage.getItem('cliente_id');
+    const token = localStorage.getItem('token');
+    const clienteId = localStorage.getItem('user_codigo');
 
        if (!clienteId || !token || !userEmail) {
       console.error('Dados do usuário (ID, email ou token) não disponíveis.');
@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit {
 
 
     // pegar o id do cliente
-    this.clienteService.getTelaInicialCliente(token).subscribe({
+    this.clienteService.getTelaInicialCliente(clienteId).subscribe({
       next: (dados) => {
         this.saldoMilhas = dados.saldoMilhas;
         this.reservas = dados.reservas;

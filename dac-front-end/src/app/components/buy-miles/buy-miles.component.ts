@@ -25,7 +25,7 @@ interface MileageTransaction {
   styleUrl: './buy-miles.component.css'
 })
 export class BuyMilesComponent implements OnInit {
-   milesToBuy: number = 0;
+  milesToBuy: number = 0;
   totalPrice: number = 0;
   mileageExtract: MileageTransaction[] = [];
 

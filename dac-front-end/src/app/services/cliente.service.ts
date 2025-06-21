@@ -38,8 +38,11 @@ export class ClienteService {
     return this.http.post<any>(`${this.API_GATEWAY_URL}/clientes`, cadastroClienteDTO);
   }
 
-  getSaldoMilhas(): Observable<number> {
-    return this.http.get<number>(`${this.API_GATEWAY_URL}/clientes/saldo-milhas`);
+  getSaldoMilhas(codigoCliente: string): Observable<any> {
+    const headers = this.getAuthHeaders()
+    console.log(codigoCliente)
+    if (!headers) return throwError(() => new Error('Autenticação necessária para buscar saldo.'));
+    return this.http.get<any>(`${this.API_GATEWAY_URL}/clientes/saldo-milhas/${codigoCliente}`, { headers });
   }
 
   listarReservas(): Observable<any[]> {
@@ -60,7 +63,10 @@ export class ClienteService {
 
   // R03 - Tela Inicial do Cliente
   getTelaInicialCliente(clienteId: string): Observable<any> {
-    return this.http.get<any>(`${this.API_GATEWAY_URL}/clientes/home?clienteId=${clienteId}`);
+    const headers = this.getAuthHeaders();
+    if (!headers) return throwError(() => new Error('Autenticação necessária para comprar milhas.'));
+
+    return this.http.get<any>(`${this.API_GATEWAY_URL}/clientes/home/${clienteId}`, { headers });
   }
 
   // R04 - Tela de Detalhes da Reserva
