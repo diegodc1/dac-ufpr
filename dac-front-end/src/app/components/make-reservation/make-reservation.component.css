@@ -68,24 +68,29 @@ button:hover {
 }
 
 .input-container {
-    position: relative; 
+    position: relative;
     display: flex;
     align-items: center;
 }
 
 .input-container .material-symbols-outlined {
-    position: absolute; 
-    left: 10px; 
-    color: #aaa; 
-    pointer-events: none; 
+    position: absolute;
+    left: 10px;
+    color: #aaa;
+    pointer-events: none;
 }
 
 .input-container input {
-    width: 100%; 
-    padding: 8px 8px 8px 36px; 
+    width: 100%;
+    padding: 8px 8px 8px 36px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+}
+
+.div-date {
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .voo-card {
@@ -95,7 +100,7 @@ button:hover {
     background-color: white;
     padding: 16px;
     margin: 10px auto;
-    width: 650px;
+    width: 90%;
     border-radius: 4px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
@@ -104,8 +109,7 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 618px;
-    height: 100px;
+
 }
 .voo-card .line {
     border-bottom: 1px solid #a7aeb3;
@@ -115,15 +119,13 @@ button:hover {
 }
 
 .voo-detalhes {
-    background-color: #FFF1E4;
+
     padding: 8px;
     border-radius: 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 505px;
     height: 100px;
-    gap: 8px;
 }
 
 .voo-detalhes .origem, .voo-detalhes .destino, .voo-detalhes .tempo-voo {
@@ -132,27 +134,29 @@ button:hover {
     justify-content: center;
 }
 
+.origem, .destino {
+  width: 30%;
+}
+
 .voo-detalhes .origem p {
-    margin: 2px 0; 
+    margin: 2px 0;
 }
 
 .voo-detalhes .origem p:first-child {
     margin: 2px 0;
-    font-size: 12px;
-    font-weight: 600; 
-    font-size: 18px;
+    font-weight: 600;
 }
 
 .tempo-voo {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px; 
+    gap: 8px;
 }
 
 .tempo-voo .line {
-    flex: 1; 
-    height: 1px; 
+    flex: 1;
+    height: 1px;
     background-color: #a7aeb3;
 }
 

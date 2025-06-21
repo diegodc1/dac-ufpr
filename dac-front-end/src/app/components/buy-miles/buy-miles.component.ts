@@ -4,15 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { ClienteService } from '../../services/cliente.service';
+import Swal from 'sweetalert2';
+
 
 
 interface MileageTransaction {
   date: string;
   reservationCode: string | null;
-  amountReais: string; 
+  amountReais: string;
   miles: number;
   description: string;
-  type: 'ENTRADA' | 'SAÍDA'; 
+  type: 'ENTRADA' | 'SAÍDA';
 }
 
 @Component({
@@ -23,11 +25,11 @@ interface MileageTransaction {
   styleUrl: './buy-miles.component.css'
 })
 export class BuyMilesComponent implements OnInit {
-   milesToBuy: number = 0; 
-  totalPrice: number = 0; 
-  mileageExtract: MileageTransaction[] = []; 
-  
-  private readonly API_GATEWAY_URL = 'http://localhost:3000'; 
+  milesToBuy: number = 0;
+  totalPrice: number = 0;
+  mileageExtract: MileageTransaction[] = [];
+
+  private readonly API_GATEWAY_URL = 'http://localhost:3000';
 
 
   constructor(private http : HttpClient, private clienteService: ClienteService){}
@@ -40,7 +42,7 @@ export class BuyMilesComponent implements OnInit {
 //       next: (data) => {
 //         this.mileageExtract = data.map(item => ({
 //           ...item,
-//           type: this.determineTransactionType(item.description) 
+//           type: this.determineTransactionType(item.description)
 //         }));
 //       },
 //       error: (error) => {
@@ -48,46 +50,57 @@ export class BuyMilesComponent implements OnInit {
 //       }
 //     });
 //   }
-getMileageExtract(): void {
-const userEmail = localStorage.getItem('user_email');
-    const token = localStorage.getItem('access_token');
 
-    if (!userEmail || !token) {
-      console.error('Email do usuário ou token não disponível.');
-      return;
+
+    getMileageExtract(): void {
+
+        const userCodigo = localStorage.getItem('user_codigo');
+        const token = localStorage.getItem('token');
+
+        if (!userCodigo || !token) {
+          console.error('Codigo do usuário ou token não disponível.');
+          return;
+        }
+
+        const headers = new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        });
+
+      this.http.get<any>(`${this.API_GATEWAY_URL}/clientes/${userCodigo}/milhas`, { headers }).subscribe({
+        next: (data) => {
+          const transacoes = data.transacoes;
+
+          this.mileageExtract = transacoes.map((item: any) => ({
+            date: item.data,
+            reservationCode: item.codigo_reserva,
+            amountReais: item.valor_reais,
+            miles: item.quantidade_milhas,
+            description: item.descricao,
+            type: this.determineTransactionType(item.descricao)
+          }));
+        },
+        error: (error) => {
+          console.error('Erro ao buscar extrato de milhas:', error);
+        }
+      });
     }
 
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
 
-    this.http.get<MileageTransaction[]>(`${this.API_GATEWAY_URL}/TransacaoMilhas/${userEmail}/extract`, { headers }).subscribe({
-      next: (data) => {
-        this.mileageExtract = data.map(item => ({
-          ...item,
-          type: this.determineTransactionType(item.description)
-        }));
-      },
-      error: (error) => {
-        console.error('Erro ao buscar extrato de milhas:', error);
+    private determineTransactionType(description: string): 'ENTRADA' | 'SAÍDA' {
+      if (description.includes('COMPRA DE MILHAS')) {
+        return 'ENTRADA';
       }
-    });
-  }
-  private determineTransactionType(description: string): 'ENTRADA' | 'SAÍDA' {
-    if (description.includes('COMPRA DE MILHAS')) {
+      if (description.includes('->')) {
+        return 'SAÍDA';
+      }
       return 'ENTRADA';
     }
-    if (description.includes('->')) { 
-      return 'SAÍDA';
-    }
-    return 'ENTRADA'; 
-  }
 
    // Atualiza o valor total com base na quantidade de milhas
    onMilesInputChange(event: any): void {
     const miles = event.target.value;
     this.milesToBuy = miles ? parseInt(miles, 10) : 0;
-    this.totalPrice = this.milesToBuy * 5; 
+    this.totalPrice = this.milesToBuy * 5;
   }
 
   // Realiza a compra de milhas
@@ -97,17 +110,37 @@ const userEmail = localStorage.getItem('user_email');
       return;
     }
 
-    const clienteId = '123'; //pegar o id do cliente
-    const valorEmReais = this.totalPrice;
 
-    this.clienteService.comprarMilhas(clienteId, valorEmReais).subscribe({
+    const loggedUserStr = localStorage.getItem('usuario');
+    if (!loggedUserStr) {
+      alert('Usuário não está logado.');
+      return;
+    }
+    const loggedUser = JSON.parse(loggedUserStr);
+    const clienteId = loggedUser.codigo;
+
+    const quantidade = this.milesToBuy;
+    const valorPago = this.totalPrice;
+
+    this.clienteService.comprarMilhas(clienteId, quantidade, valorPago).subscribe({
       next: (response) => {
-        alert(`Compra realizada com sucesso! Novo saldo de milhas: ${response.saldoMilhas}`);
-        this.getMileageExtract(); 
+        Swal.fire({
+          icon: 'success',
+          title: 'Compra realizada com sucesso!',
+          text: `Novo saldo de milhas: ${response.saldo_milhas}`,
+          confirmButtonColor: '#3085d6',
+        });
+
+        this.getMileageExtract();
       },
       error: (err) => {
         console.error('Erro ao comprar milhas:', err);
-        alert('Erro ao realizar a compra de milhas. Tente novamente mais tarde.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro ao comprar milhas',
+          text: 'Tente novamente mais tarde.',
+          confirmButtonColor: '#d33',
+        });
       },
     });
   }

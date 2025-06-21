@@ -159,6 +159,15 @@ services:
        SPRING_PROFILES_ACTIVE: docker
        RABBITMQ_HOST: rabbitmq
 
+
+  angular:
+    build: ./dac-front-end
+    container_name: angular
+    ports:
+      - "4200:4200"
+    depends_on:
+      - auth-service
+    
 volumes:
   mongo-data:
   postgres-data:
