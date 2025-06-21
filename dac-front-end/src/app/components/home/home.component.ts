@@ -10,7 +10,7 @@ import { HeaderComponent } from '../header/header.component';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModalCancelarReservaComponent, HeaderComponent], 
+  imports: [CommonModule, FormsModule, RouterModule, ModalCancelarReservaComponent, HeaderComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
     }
 
 
-    // pegar o id do cliente 
+    // pegar o id do cliente
     this.clienteService.getTelaInicialCliente(token).subscribe({
       next: (dados) => {
         this.saldoMilhas = dados.saldoMilhas;
@@ -129,16 +129,16 @@ export class HomeComponent implements OnInit {
     });
 }
 
-comprarMilhas(valorEmReais: number) {
-  const clienteId = '123'; //pegar o id do cliente
-  this.clienteService.comprarMilhas(clienteId, valorEmReais).subscribe({
-      next: (response) => {
-          console.log('Milhas compradas com sucesso:', response);
-          alert(`Milhas compradas com sucesso! Novo saldo: ${response.saldoMilhas}`);
-      },
-      error: (err) => console.error('Erro ao comprar milhas:', err),
-  });
-}
+// comprarMilhas(valorEmReais: number) {
+//   const clienteId = '123'; //pegar o id do cliente
+//   this.clienteService.comprarMilhas(clienteId, valorEmReais).subscribe({
+//       next: (response) => {
+//           console.log('Milhas compradas com sucesso:', response);
+//           alert(`Milhas compradas com sucesso! Novo saldo: ${response.saldoMilhas}`);
+//       },
+//       error: (err) => console.error('Erro ao comprar milhas:', err),
+//   });
+// }
 
   buscarVoos() {
     this.router.navigate(['/make-reservation'], {

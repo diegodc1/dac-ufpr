@@ -74,6 +74,7 @@ export class LoginComponent {
         if (response.tipo == 'CLIENTE') {
           localStorage.setItem('token', response.access_token);
           localStorage.setItem('usuario', JSON.stringify(response.usuario));
+          localStorage.setItem('user_codigo', response.usuario.codigo);
           localStorage.setItem('user_email', response.usuario.email);
 
           Swal.fire({

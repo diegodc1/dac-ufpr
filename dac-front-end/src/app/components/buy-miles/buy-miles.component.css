@@ -2,16 +2,16 @@
 
 .main-container{
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     min-height: 100vh;
 }
 
 .box{
-    display: flex;            
-    flex-direction: column;   
-    align-items: center;      
-    padding: 20px;           
-    border-radius: 10px;  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
 }
 .title{
     margin-left: 391px;
@@ -36,7 +36,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    height: 200px; 
+    height: 200px;
     justify-content: center;
     gap: 10px;
   }
@@ -53,9 +53,9 @@
   .input{
     height: 65px;
     width: 280px;
-    padding: 0 15px; 
+    padding: 0 15px;
     border-radius: 10px;
-    border: 1px solid #ccc; 
+    border: 1px solid #ccc;
     align-items: center;
     font-family: 'Inter', sans-serif;
     font-size: 30px;
@@ -65,7 +65,7 @@
     box-sizing: border-box;
   }
   .input::placeholder {
-    color: #454545; 
+    color: #454545;
     opacity: 1;
 }
 .p{
@@ -89,10 +89,16 @@
    font-family: 'Inter', sans-serif;
     font-weight: 800;
     color: white;
-    border: 1px solid #5D36AF; 
+    border: 1px solid #5D36AF;
     border-radius: 5px;
-
 }
+
+.btn:hover {
+  cursor: pointer;
+  background-color: #6c3fc6;
+}
+
+
 .extract{
     margin-top: 45px;
 }
@@ -101,20 +107,20 @@
     max-width: 1000px;
     padding: 20px;
   }
-  
- 
+
+
   .extrato-table {
     width: 100%;
     border-collapse: collapse;
     font-family: 'Inter', sans-serif;
   }
-  
+
   .extrato-table thead {
     text-align: left;
     border-bottom: 2px solid #ccc;
 
   }
-  
+
   .extrato-table th, .extrato-table td {
     padding: 12px 24px;
     font-size: 14px;
@@ -122,18 +128,18 @@
     font-weight: 100;
     color: #37352F
   }
-  
+
   .extrato-table tbody tr {
     border-bottom: 1px solid #eee;
 
   }
-  
+
   .extrato-table tbody tr:last-child {
     border-bottom: none;
-    
+
   }
-  .extrato-table td, 
+  .extrato-table td,
   .extrato-table th {
   text-align: center;
-  vertical-align: middle; 
+  vertical-align: middle;
 }
