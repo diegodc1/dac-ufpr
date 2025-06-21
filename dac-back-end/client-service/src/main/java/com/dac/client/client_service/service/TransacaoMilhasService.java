@@ -48,7 +48,7 @@ public class TransacaoMilhasService {
         transacao.setQuantidade((long) quantidadeMilhas);
         transacao.setTipo("ENTRADA");
         transacao.setDescricao(descricao);
-        transacao.setValorEmReais(BigDecimal.valueOf(valorPago));
+        transacao.setValor_reais(valorPago);
         transacao.setCodigoReserva(null);
 
         return transacaoMilhasRepository.save(transacao);

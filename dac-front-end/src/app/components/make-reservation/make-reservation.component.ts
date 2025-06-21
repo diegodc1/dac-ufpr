@@ -9,7 +9,7 @@ import { ClienteService } from '../../services/cliente.service';
 
 interface Voo {
   codigo: number;
-  data: string; 
+  data: string;
   valor_passagem: number;
   quantidade_poltronas_total: number;
   quantidade_poltronas_ocupadas: number;
@@ -35,9 +35,9 @@ interface Voo {
   styleUrls: ['./make-reservation.component.css']
 })
 export class MakeReservationComponent {
-  origemAeroportoCodigo: string = ''; 
-  destinoAeroportoCodigo: string = ''; 
-  aeroportos: any[] = []; 
+  origemAeroportoCodigo: string = '';
+  destinoAeroportoCodigo: string = '';
+  aeroportos: any[] = [];
 
   filteredFlights: Voo[] = [];
 
@@ -56,17 +56,7 @@ export class MakeReservationComponent {
   }
 
 private getAuthToken(): string | null {
-    const usuarioString = localStorage.getItem('usuarioLogado');
-    let authToken: string | null = null;
-
-    if (usuarioString) {
-      try {
-        const usuario = JSON.parse(usuarioString);
-        authToken = usuario.access_token;
-      } catch (e) {
-        console.error('Erro ao fazer parse do usuário do localStorage:', e);
-      }
-    }
+    const authToken = localStorage.getItem('token');
     return authToken;
   }
 
@@ -100,10 +90,12 @@ private getAuthToken(): string | null {
     const formattedDate = now.toISOString().substring(0, now.toISOString().length - 5) + '+00:00';
     console.log('Data formatada para backend (buscarVoos):', formattedDate);
 
+    console.log(this.origemAeroportoCodigo)
+
     this.flightService.searchFlights(this.origemAeroportoCodigo, this.destinoAeroportoCodigo, formattedDate, authToken).subscribe({
       next: (response: any) => {
-        if (response && response.voos) {
-          this.filteredFlights = response.voos.filter((voo: Voo) => voo.estado === 'CONFIRMADO');
+        if (response) {
+          this.filteredFlights = response.filter((voo: Voo) => voo.estado === 'CONFIRMADO');
           console.log('Voos CONFIRMADOS buscados:', this.filteredFlights);
         } else {
           this.filteredFlights = [];

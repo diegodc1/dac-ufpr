@@ -8,7 +8,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 export class FlightService {
  private API_URL_BASE = 'http://localhost:3000';
  private API_URL_VOOS = `${this.API_URL_BASE}/voos`;
- private API_URL_AEROPORTOS = `${this.API_URL_BASE}/aeroportos`; 
+ private API_URL_AEROPORTOS = `${this.API_URL_BASE}/aeroportos`;
 
 constructor(private http : HttpClient) { }
 
@@ -16,26 +16,26 @@ constructor(private http : HttpClient) { }
 createFlight(flightData : any, authToken: string): Observable<any>{
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'x-access-token': authToken 
+      'x-access-token': authToken
     });
     return this.http.post<any>(this.API_URL_VOOS, flightData, { headers });
   }
 
 
-  getAeroportos(authToken: string): Observable<any[]> { 
+  getAeroportos(authToken: string): Observable<any[]> {
    const headers = new HttpHeaders({
     'Content-Type': 'application/json',
-    'x-access-token': authToken 
+    'x-access-token': authToken
   });
    return this.http.get<any[]>(this.API_URL_AEROPORTOS, {headers}).pipe(
-    catchError(this.handleError) 
+    catchError(this.handleError)
 );
  }
 
  searchFlights(origem: string, destino: string, dataAtual: string, authToken: string): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'x-access-token': authToken 
+      'x-access-token': authToken
     });
 
      let url = `${this.API_URL_VOOS}`;
@@ -52,6 +52,13 @@ createFlight(flightData : any, authToken: string): Observable<any>{
     );
   }
 
+  buscarVooPorCodigo(codigoVoo: number, authToken: string): Observable<any>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-access-token': authToken
+    });
+    return this.http.get<any>(`${this.API_URL_VOOS}/${codigoVoo}`, { headers });
+  }
 
  private handleError(error: any): Observable<never> {
   console.error('Um erro ocorreu no FlightService:', error);
@@ -63,5 +70,5 @@ createFlight(flightData : any, authToken: string): Observable<any>{
    }
  return throwError(() => new Error(errorMessage));
  }
- 
+
 }

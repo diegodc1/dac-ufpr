@@ -43,9 +43,13 @@
         </thead>
         <tbody>
           <tr *ngFor="let transaction of mileageExtract">
-            <td>{{ transaction.date }}</td>
+            <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
             <td>{{ transaction.reservationCode || '-' }}</td>
-            <td>R$ {{ transaction.amountReais }}</td>
+            <td>
+              {{ transaction.amountReais != null
+              ? (transaction.amountReais | currency:'BRL':'symbol':'1.2-2')
+              : '-' }}
+            </td>
             <td>{{ transaction.description }}</td>
             <td>{{ transaction.miles }}</td>
           </tr>

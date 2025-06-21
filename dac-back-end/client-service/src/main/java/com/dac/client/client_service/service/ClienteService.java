@@ -176,7 +176,7 @@ public class ClienteService {
             });
 
 
-            return new ResponseTransacoesMilhasDTO(cliente.getCodigo(), cliente.getSaldoMilhas(), list);
+            return new ResponseTransacoesMilhasDTO(cliente.getCodigo(), cliente.getSaldoMilhas(), list.reversed());
         }
 
         return null;

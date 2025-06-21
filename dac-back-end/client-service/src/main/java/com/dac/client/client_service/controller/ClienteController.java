@@ -97,19 +97,19 @@ public class ClienteController {
     }
 
 
-    @GetMapping("/saldo-milhas")
-    public ResponseEntity<Integer> getSaldoMilhas(@RequestHeader(value = "x-access-token", required = false) String token) {
-        String email = getUserEmailFromToken(token);
-        if (email == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @GetMapping("/saldo-milhas/{codigoCliente}")
+    public ResponseEntity<?> getSaldoMilhas(@PathVariable Long codigoCliente) {
+        Cliente cliente = clienteService.findByCodigo(codigoCliente);
+        Map<String, Object> response = new HashMap<>();
+
+        if (cliente != null) {
+            response.put("success", true);
+            response.put("codigoCliente", cliente.getCodigo());
+            response.put("saldoMilhas", cliente.getSaldoMilhas());
+            return ResponseEntity.ok(response);
         }
-        
-        Cliente cliente = clienteService.findByEmail(email);
-        if (cliente == null) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        return ResponseEntity.ok(cliente.getSaldoMilhas());
+
+        return ResponseEntity.internalServerError().build();
     }
 
     @GetMapping("/perfil")
