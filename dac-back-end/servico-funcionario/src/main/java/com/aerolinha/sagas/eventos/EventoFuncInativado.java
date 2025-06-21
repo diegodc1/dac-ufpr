@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class EventoFuncInativado {
-
-    private String idUsuario;
+    private String userId;
+    private Long codigo;
+    private String cpf;
+    private String email;
     private String nome;
-    private String estadoFuncionario;
+    private String telefone;
     private String mensagem;
-    
+
 }

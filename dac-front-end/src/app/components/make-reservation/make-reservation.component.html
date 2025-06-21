@@ -8,14 +8,14 @@
           <form>
             <div class="input-container">
               <span class="material-symbols-outlined">flight_takeoff</span>
-              <input type="text" id="destino" [(ngModel)]="destino" placeholder="De" />
+              <input type="text" id="destino" [(ngModel)]="destinoAeroportoCodigo" placeholder="De" />
             </div>
 
             <span class="material-symbols-outlined">sync_alt</span>
 
             <div class="input-container">
               <span class="material-symbols-outlined">flight_land</span>
-              <input type="text" id="destino" [(ngModel)]="destino" placeholder="Para" />
+              <input type="text" id="destino" [(ngModel)]="destinoAeroportoCodigo" placeholder="Para" />
             </div>
             
             <button type="button" (click)="buscarVoos()">Buscar</button>
@@ -29,8 +29,8 @@
           <div class="voo-card-footer">
             <div class="voo-detalhes">
                 <div class="origem">
-                    <p>{{ flight.dataHora }}</p>
-                    <p>{{ flight.origem }}</p>
+                    <p>{{ flight.data }}</p>
+                    <p>{{ flight.aeroporto_origem.nome }}</p>
                 </div>
                 <div class="tempo-voo">
                     <p>9hr 50min</p>
@@ -39,11 +39,11 @@
                     <div class="line"></div>
                 </div>
                 <div class="destino">
-                    <p>{{ flight.destino }}</p>
+                    <p>{{ flight.aeroporto_destino.nome }}</p>
                 </div>
             </div>
             <div class="voo-preco">
-              <p>R${{ flight.preco | number:'1.2-2' }}</p>
+              <p>R${{ flight.valor_passagem | number:'1.2-2' }}</p>
               <button class="comprar-btn" (click)="selecionarVoo(flight)">Comprar</button>
             </div>
           </div>

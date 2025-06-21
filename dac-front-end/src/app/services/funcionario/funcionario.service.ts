@@ -10,7 +10,6 @@ import { Voo } from '../../models/voo/voo.model';
   providedIn: 'root'
 })
 export class FuncionarioService {
-  http: any;
 
   constructor(
     private httpClient: HttpClient,
@@ -19,56 +18,54 @@ export class FuncionarioService {
 
   BASE_URL = "http://localhost:3000";
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  };
 
-  setarToken() {
-    let token = this.loginService.usuarioLogado?.access_token;
-    this.httpOptions.headers = this.httpOptions.headers.set('x-access-token', `${token}`);
+  private getAuthHeaders(useXAccessToken: boolean = false): HttpHeaders {
+    const usuarioLogado = this.loginService.usuarioLogado;
+    let token: string | null = null;
+
+    if (usuarioLogado && usuarioLogado.access_token) {
+      token = usuarioLogado.access_token;
+    }
+
+    if (!token) {
+      console.error('ERRO: Token de autenticação não encontrado no LoginService ao tentar obter cabeçalhos!');
+
+      return new HttpHeaders({ 'Content-Type': 'application/json' });
+    }
+
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    if (useXAccessToken) {
+      headers = headers.set('x-access-token', `${token}`);
+    } else {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
   }
 
   listarVoosProx48h<T>(id: string): Observable<T> {
-    this.setarToken();
+    const headers = this.getAuthHeaders(true);
     const dataInicio = '2025-05-10';
     const dataFim = '2025-05-15';
-    return this.httpClient.get<T>(`${this.BASE_URL}/voos?data=${dataInicio}&data-fim=${dataFim}`, this.httpOptions);
+    return this.httpClient.get<T>(`${this.BASE_URL}/voos?data=${dataInicio}&data-fim=${dataFim}`, { headers });
   }
+
   patchFlightState(codigoVoo: number, estado: 'CANCELADO' | 'REALIZADO'): Observable<Voo> {
     const payload = { estado: estado };
-    const headers = this.getHeaders(); 
+    const headers = this.getAuthHeaders();
     return this.httpClient.patch<Voo>(`${this.BASE_URL}/voos/${codigoVoo}/estado`, payload, { headers }).pipe(
       catchError(this.handleError)
     );
   }
 
-
   listarTodos(): Observable<Funcionario[]> {
-    this.setarToken();
-    return this.httpClient.get<Funcionario[]>(this.BASE_URL + '/funcionarios', this.httpOptions);
+    const headers = this.getAuthHeaders(true);
+    return this.httpClient.get<Funcionario[]>(this.BASE_URL + '/funcionarios', { headers });
   }
 
   novoFuncionario(novo: NovoFuncionario): Observable<any> {
-    console.log('chegou no servico: ' + novo);
-    this.setarToken();
-    return this.httpClient.post<NovoFuncionario>(this.BASE_URL + '/funcionarios', JSON.stringify(novo), this.httpOptions
-    );
-  }
-
-    
-
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('funcionarioToken');
-    if (!token) {
-      console.error('Token de autenticação não encontrado!');
-      return new HttpHeaders({ 'Content-Type': 'application/json' });
-    }
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
+    const headers = this.getAuthHeaders(true);
+    return this.httpClient.post<NovoFuncionario>(this.BASE_URL + '/funcionarios', JSON.stringify(novo), { headers });
   }
 
   private handleError(error: any): Observable<never> {

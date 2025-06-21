@@ -70,7 +70,7 @@ public class FuncListener {
 
                     EventoFuncInativado evento = objectMapper.convertValue(map, EventoFuncInativado.class);
 
-                    delFuncSaga.manipularFuncInativado(evento);
+                    delFuncSaga.manipularFuncRemovido(evento);
 
                     break;
 

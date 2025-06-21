@@ -82,7 +82,11 @@ public class ServicoSagas {
         funcionario = funcionarioRepositorio.save(funcionario);
 
         EventoFuncCriado evento = EventoFuncCriado.builder()
+                .codigo(funcionario.getIdFuncionario())
+                .cpf(funcionario.getCpf())
                 .email(funcionario.getEmail())
+                .nome(funcionario.getNome())
+                .telefone(funcionario.getNumeroTelefone())
                 .mensagem("EventoFuncCriado")
                 .build();
 
@@ -93,16 +97,19 @@ public class ServicoSagas {
     @Transactional
     public EventoFuncInativado inativarFuncionario(ComandoInativarFunc comando) {
 
-        Funcionario funcionario = funcionarioRepositorio.findByIdUsuario(comando.getUsuarioId());
+        Funcionario funcionario = funcionarioRepositorio.findByIdFuncionario(comando.getId());
 
-        funcionario.setEstado(comando.getEstadoUsuario());
+        funcionario.setEstado("INATIVO");
 
         funcionario = funcionarioRepositorio.save(funcionario);
 
         EventoFuncInativado evento = EventoFuncInativado.builder()
-                .idUsuario(funcionario.getIdUsuario())
+                .userId(funcionario.getIdUsuario())
+                .codigo(funcionario.getIdFuncionario())
+                .cpf(funcionario.getCpf())
+                .email(funcionario.getEmail())
                 .nome(funcionario.getNome())
-                .estadoFuncionario(funcionario.getEstado())
+                .telefone(funcionario.getNumeroTelefone())
                 .mensagem("EventoFuncInativado")
                 .build();
 

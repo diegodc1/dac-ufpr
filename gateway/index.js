@@ -12,8 +12,8 @@ const axios = require('axios');
 
 const corsOptions = {
     origin: ['http://localhost:4200'],
-    allowedHeaders: ['Content-Type', 'x-access-token'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    allowedHeaders: ['Content-Type', 'x-access-token', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
 };
 
 app.use(express.json());
@@ -27,13 +27,37 @@ app.use(cors(corsOptions));
 
 
 // PROXIES - IMPORTANTE: NÃO RETIRAR OS proccess.env!... senão não vai funcionar no docker
+
+const novoFunc = httpProxy(process.env.SAGA_SERVICE_URL || 'http://localhost:8087', {
+    proxyReqPathResolver: (req) => {
+        return '/saga/novo-funcionario';
+    },
+    preserveHostHdr: true
+});
+
+const removeFuncProxy = httpProxy(process.env.SAGA_SERVICE_URL || 'http://localhost:8087', {
+    proxyReqPathResolver: (req) => {
+        // Pega o código do funcionário dos parâmetros da rota
+        const codigoFuncionario = req.params.codigoFuncionario;
+        return `/saga/remover/${codigoFuncionario}`;
+    },
+    preserveHostHdr: true
+});
+
 const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL || 'http://localhost:8080');
 
 const voosProxy = httpProxy(process.env.VOOS_SERVICE_URL || 'http://localhost:8081');
 
 const clienteServiceProxy = httpProxy(process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082');
 
-const funcionariosServiceProxy = httpProxy(process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083');
+const funcionariosServiceProxy = httpProxy(process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083', {
+    proxyReqPathResolver: (req) => {
+        return '/funcionario/funcionarios';
+    },
+    preserveHostHdr: true
+});
+
+//const funcionariosServiceProxy = httpProxy(process.env.FUNCIONARIOS_SERVICE_URL || 'http://localhost:8083');
 
 const reservasServiceProxy = httpProxy(process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084');
 
@@ -83,6 +107,21 @@ const validateTokenProxy = (req, res, next) => {
 };
 
 
+
+// R17 - Inserção de funcionário
+app.post('/funcionarios', validateTokenProxy, (req, res, next) => {
+    novoFunc(req, res, next);
+});
+
+// R16 - Lista de Funcionarios
+app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
+    funcionariosServiceProxy(req, res, next);
+});
+
+// R19 - Remoção lógica do funcionário
+app.delete('/funcionarios/:codigoFuncionario', validateTokenProxy, (req, res, next) => {
+    removeFuncProxy(req, res, next);
+});
 
 // teste validacao token
 app.get('/validate', (req, res, next) => {
@@ -137,6 +176,16 @@ app.post('/voos', validateTokenProxy, (req, res, next) => {
 // R16 - Listar Funcionarios
 app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
     funcionariosServiceProxy(req, res, next);
+});
+//R14- Realizar Voo
+app.patch('/voos/:codigoVoo/estado', validateTokenProxy, (req, res, next) => {
+    voosProxy(req, res, next);
+});
+
+//R--- Busca aeroporto para cadastrar Voo
+app.get('/aeroportos', validateTokenProxy, (req, res, next) => {
+    console.log('Gateway: Recebida requisição GET /aeroportos. Encaminhando para voosProxy.');
+    voosProxy(req, res, next);
 });
 
 

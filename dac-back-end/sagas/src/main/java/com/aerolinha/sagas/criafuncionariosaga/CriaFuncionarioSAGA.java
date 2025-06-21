@@ -4,6 +4,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.aerolinha.controlador.ControladorSagas;
 import com.aerolinha.dto.requisicao.NovoFuncDTO;
 import com.aerolinha.sagas.criafuncionariosaga.comandos.ComandoCriarFunc;
 import com.aerolinha.sagas.criafuncionariosaga.comandos.ComandoCriarFuncUser;
@@ -27,6 +28,9 @@ public class CriaFuncionarioSAGA {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private ControladorSagas controladorSagas;
 
     public void manipularRequisicao(NovoFuncDTO novoFuncDTO) throws JsonProcessingException {
 
@@ -69,5 +73,7 @@ public class CriaFuncionarioSAGA {
                 + evento.getEmail();
 
         this.emailService.sendApproveEmail(evento.getEmail(), subject, message);
+
+        controladorSagas.completarSagaR17(this.novoFuncDTO.getCpf(), evento);
     }
 }

@@ -37,6 +37,7 @@
   text-align: center;
 }
 
+
 .btn-embarcar-passageiro {
   background-color: #482A89;
   color: white;
@@ -90,3 +91,17 @@
 .btn-cadastrar-voo:hover {
   background-color: #3abd7f; 
 }
+.table-voos tbody .estado-realizado { 
+    color: #3abd7f;
+    font-weight: bold;
+}
+
+.table-voos tbody .estado-cancelado { 
+    color: #DC3545; 
+    font-weight: bold;
+}
+.table-voos tbody .estado-confirmado { 
+    color:'black'; 
+    font-weight: bold;
+
+  }

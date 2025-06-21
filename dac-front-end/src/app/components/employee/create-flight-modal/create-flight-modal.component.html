@@ -17,15 +17,19 @@
           <label for="origem">Aeroporto de Origem:</label>
           <select id="origem" [(ngModel)]="flightData.origem" name="origem" required>
             <option value="" disabled selected>Selecione</option>
-            <option *ngFor="let aeroporto of aeroportos" [value]="aeroporto">{{ aeroporto }}</option>
+           <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+            {{ aero.nome }} ({{ aero.codigo }}) - {{ aero.cidade }} / {{ aero.uf }}
+           </option>
           </select>
         </div>
         <div class="form-group">
           <label for="destino">Aeroporto de Destino:</label>
-          <select id="destino" [(ngModel)]="flightData.destino" name="destino" required>
+           <select id="destino" [(ngModel)]="flightData.destino" name="destino" required>
             <option value="" disabled selected>Selecione</option>
-            <option *ngFor="let aeroporto of aeroportos" [value]="aeroporto">{{ aeroporto }}</option>
-          </select>
+            <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+                {{ aero.nome }} ({{ aero.codigo }}) - {{ aero.cidade }} / {{ aero.uf }}
+            </option>
+       </select>
         </div>
       </div>
       <div class="form-row">

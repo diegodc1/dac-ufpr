@@ -1,12 +1,10 @@
 package com.dac.authentication_service.sagas;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.dac.authentication_service.sagas.comandos.ComandoCadastroCliente;
 import com.dac.authentication_service.sagas.eventos.EventoAutenticacaoCriada;
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import com.dac.authentication_service.sagas.eventos.EventoFuncUserCriado;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserDeletado;
 import com.dac.authentication_service.securityService.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -38,7 +35,8 @@ public class GerenciaSagas {
         if (mensagem.startsWith("\"{")) {
             mensagem = objectMapper.readValue(mensagem, String.class);
         }
-        Map<String, Object> map = objectMapper.readValue(mensagem, new TypeReference<>() {});
+        Map<String, Object> map = objectMapper.readValue(mensagem, new TypeReference<>() {
+        });
         String tipoMensagem = (String) map.get("mensagem");
 
         switch (tipoMensagem) {
@@ -56,6 +54,7 @@ public class GerenciaSagas {
                 rabbitTemplate.convertAndSend("CanalAutRes", msg);
             }
 
+            // R19
             case "ComandoDelFunc" -> {
                 ComandoDelFunc comando = objectMapper.convertValue(map, ComandoDelFunc.class);
                 EventoFuncUserDeletado evento = authService.removerFuncionario(comando);
@@ -65,4 +64,3 @@ public class GerenciaSagas {
         }
     }
 }
-

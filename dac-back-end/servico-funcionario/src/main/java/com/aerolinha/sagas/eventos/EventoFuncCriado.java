@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class EventoFuncCriado {
+    private Long codigo;
+    private String cpf;
     private String email;
+    private String nome;
+    private String telefone;
     private String mensagem;
 }
