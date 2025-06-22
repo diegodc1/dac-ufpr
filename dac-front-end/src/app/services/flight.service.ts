@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 
@@ -38,19 +38,21 @@ createFlight(flightData : any, authToken: string): Observable<any>{
       'x-access-token': authToken
     });
 
-     let url = `${this.API_URL_VOOS}`;
+  let params = new HttpParams();
+    params = params.set('data', dataAtual);
 
-    // if (origem) {
-    //   url += `&origem=${origem}`;
-    // }
-    // if (destino) {
-    //   url += `&destino=${destino}`;
-    // }
+    if (origem) {
+      params = params.set('origem', origem);
+    }
+    if (destino) {
+      params = params.set('destino', destino); 
+    }
 
-    return this.http.get<any>(url, { headers: headers }).pipe(
-      catchError(this.handleError)
-    );
-  }
+   console.log('FlightService.searchFlights: URL da requisição:', `${this.API_URL_VOOS}?${params.toString()}`);
+    return this.http.get<any>(this.API_URL_VOOS, { headers: headers, params: params }).pipe( 
+      catchError(this.handleError)
+    );
+  }
 
   buscarVooPorCodigo(codigoVoo: number, authToken: string): Observable<any>{
     const headers = new HttpHeaders({
