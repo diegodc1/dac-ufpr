@@ -1,1 +1,179 @@
-<<<<<<
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #fff0f5; 
+}
+
+.reserva-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.titulo {
+  
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 16px;
+}
+
+.reserva-box {
+  width: 874px;
+  height: 469px;
+  background-color: #fff;
+  box-shadow: 0px 4px 4px rgba(141, 141, 141, 0.25);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.rota-info {
+  background-color: #ffffff;
+  border-radius: 4px;
+  color: #000000;
+  padding: 12px;
+  text-align: center;
+  font-family: 'Abel', sans-serif;
+}
+
+.rota-info-cidade {
+  font-size: 24px;
+}
+
+.rota-info-detalhes {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.reserva-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.voo-detalhes {
+  font-family: 'Abel', sans-serif;
+  font-size: 16px;
+  color: #000;
+}
+
+.reserva-status {
+  font-size: 14px;
+  color: #000;
+}
+
+.reservado {
+  color: #0F9B29;
+  font-weight: 600;
+}
+
+.reserva-info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  width: 100%;
+  flex-direction: row;
+}
+
+.info-item {
+  color: #000;
+  font-size: 16px;
+}
+
+.reserva-conteudo {
+  background-color: #fff0f5;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-grow: 1;
+  gap: 12px;
+}
+
+.local-info {
+  width: 200px;
+  font-family: 'Abel', sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px;
+  padding: 12px;
+  gap: 2px;
+}
+
+.iata {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.hora {
+  font-size: 16px;
+  padding-top: 20px;
+}
+
+.data,
+.terminal,
+.aeroporto {
+  font-size: 12px;
+  color: #555;
+}
+
+.duracao-container {
+  width: 140px;
+  height: 146px;
+  display: flex;
+  background-color: #fff0f5;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.duracao {
+  font-size: 14px;
+  font-family: 'Abel', sans-serif;
+  color: #000;
+}
+
+.linha-com-aviao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.linha {
+  height: 1px;
+  background-color: #999;
+  flex: 1;
+}
+
+.icone-aviao {
+  font-size: 14px;
+  padding: 0 8px;
+}
+
+.valor-container {
+  align-self: flex-end;
+}
+
+.valor {
+  font-size: 20px;
+  font-family: 'Abel', sans-serif;
+  color: #000;
+}

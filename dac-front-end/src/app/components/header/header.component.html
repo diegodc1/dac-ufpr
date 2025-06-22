@@ -4,3 +4,20 @@
     </div>
     <div class="buttons">
       <button class="btn" routerLink="/home">Home</button>
+      <button class="btn" routerLink="/buy-miles">Comprar Milhas</button>
+      <button class="btn" routerLink="/make-reservation">Efetuar Reserva</button>
+      <button class="btn" routerLink="/check-in">Fazer Check-in</button>
+    </div>
+    <div class="user-infos">
+      <div class="user-infos-box">
+        <span>Olá, </span>
+        <span class="user-name">Maria</span>
+      </div>
+      <div class="milhas-btn">
+        <span>Suas milhas: </span>
+        <span>{{saldoMilhas}}</span>
+      </div>
+      <span class="material-symbols-outlined icon-logout" title="Sair" (click)="logout()">logout</span>
+    </div>
+</header>
+
