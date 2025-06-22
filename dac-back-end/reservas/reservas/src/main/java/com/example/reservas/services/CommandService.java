@@ -1,6 +1,8 @@
 package com.example.reservas.services;
 
 import com.example.reservas.dto.CheckinDTO;
+import com.example.reservas.dto.ReservaCriadaResDTO;
+import com.example.reservas.model.Reserva;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -17,7 +19,7 @@ public interface CommandService {
      * @param command Objeto com os dados necessários para criação da reserva.
      * @return Código gerado da reserva.
      */
-    String criarReserva(CriarReserva command);
+    ReservaCriadaResDTO criarReserva(CriarReserva command);
 
     /**
      * Cancela uma reserva existente a partir do seu código.

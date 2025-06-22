@@ -194,6 +194,12 @@ app.get('/aeroportos', validateTokenProxy, (req, res, next) => {
 });
 
 
+// //R--- Inserir Reserva
+// app.post('/reservas', validateTokenProxy, (req, res, next) => {
+//     reservasServiceProxy(req, res, next);
+// });
+
+
 // ********************************* API COMPOSITION ************************************************
 
 // R02 - login
@@ -331,6 +337,72 @@ app.post('/clientes/comprar-milhas', validateTokenProxy, async (req, res) => {
         return res.status(500).json({ message: 'Erro ao comprar milhas', error: err.message });
     }
 });
+
+
+// Criar reserva
+app.post('/reservas', validateTokenProxy, async (req, res) => {
+    try {
+        const urlReservaService = process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'
+        const reservaResponse = await axios.post(`${urlReservaService}/reservas`, req.body);
+
+
+        const reservaData = reservaResponse.data;
+        const vooCodigo = reservaData.codigo_voo;
+        
+        const urlVoosService = process.env.VOOS_SERVICE_URL || 'http://localhost:8081'
+        const vooResponse = await axios.get(`${urlVoosService}/voos/${vooCodigo}`)
+     
+        const voo = vooResponse.data;
+
+        const responseComposta = {
+            ...reservaData,
+            voo
+        };
+
+
+        if (!voo) {
+            return res.status(502).json({ message: 'Erro ao buscar dados do voo' });
+         }
+
+
+
+         // -- para descontar do saldo do cliente as milhas usadas 
+        const urlClientesService = process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082';
+
+        const milhasDTO = {
+            quantidade: reservaData.milhas_utilizadas,
+            valorPago: reservaData.valor,
+            aeroporto_origem: voo.aeroporto_origem.codigo,
+            aeroporto_destino: voo.aeroporto_destino.codigo,
+            codigo_reserva:  reservaData.codigo
+        };
+
+        let cliente = null;
+        try {
+            const milhasResponse = await axios.put(
+                `${urlClientesService}/clientes/${reservaData.codigo_cliente}/milhas/descontar`,
+                milhasDTO
+            );
+            cliente = milhasResponse.data;
+        } catch (milhasErr) {
+            console.error('Erro ao descontar milhas:', milhasErr?.response?.data || milhasErr.message);
+            return res.status(500).json({ message: 'Erro ao descontar milhas', error: milhasErr.message });
+        }
+        
+  
+         
+        return res.status(201).json(responseComposta);
+
+    } catch (err) {
+        if (err.response && err.response.status === 401) {
+            return res.status(401).json({ message: 'Login inválido' });
+        }
+        console.error('Erro no login via gateway:', err.message);
+        return res.status(500).json({ message: 'Erro no login', error: err.message });
+    }
+});
+
+
 // RF06 - Extrato milhas 
 app.get('/TransacaoMilhas/:email/extract', validateTokenProxy, (req, res, next) => {
     clienteServiceProxy(req, res, next);

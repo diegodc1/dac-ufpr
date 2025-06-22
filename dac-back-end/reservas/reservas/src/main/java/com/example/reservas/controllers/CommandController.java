@@ -1,6 +1,8 @@
 package com.example.reservas.controllers;
 
 import com.example.reservas.dto.EstadoReservaDTO;
+import com.example.reservas.dto.ReservaCriadaResDTO;
+import com.example.reservas.model.Reserva;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.example.reservas.services.CommandService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,8 +28,8 @@ public class CommandController {
     @PostMapping("reservas")
     public ResponseEntity<?> criarReserva(@RequestBody CriarReserva command) {
         try {
-            String codigoReserva = commandService.criarReserva(command);
-            return ResponseEntity.status(HttpStatus.CREATED).body(codigoReserva);
+            ReservaCriadaResDTO reserva = commandService.criarReserva(command);
+            return ResponseEntity.status(HttpStatus.CREATED).body(reserva);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos: " + e.getMessage());
         } catch (IllegalStateException e) {

@@ -22,22 +22,22 @@ public class CriarReserva {
     private UUID codigoReserva;
 
     // Código do voo relacionado à reserva
-    private String codigoVoo;
+    private String codigo_voo;
 
     // Valor total da reserva
     private BigDecimal valor;
 
     // Quantidade de milhas utilizadas na reserva
-    private Integer milhasUtilizadas;
+    private Integer milhas_utilizadas;
 
     // Total de assentos reservados (ou poltronas)
-    private Integer quantidadePoltronas;
+    private Integer quantidade_poltronas;
 
     // Identificador do cliente que está fazendo a reserva
-    private String codigoCliente;
-    private String codigoAeroportoOrigem;
+    private String codigo_cliente;
+    private String codigo_aeroporto_origem;
     
-    private String codigoAeroportoDestino;
+    private String codigo_aeroporto_destino;
 
 
     // ID da transação (usado para rastreamento em sagas)

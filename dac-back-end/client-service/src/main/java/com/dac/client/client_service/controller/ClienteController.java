@@ -180,6 +180,20 @@ public class ClienteController {
         return ResponseEntity.internalServerError().build();
     }
 
+    @PutMapping("/{codigoCliente}/milhas/descontar")
+    public ResponseEntity<?> descontarMilhasByCodCliente(@PathVariable Long codigoCliente, @RequestBody DescontarMilhasReservaDTO milhas) {
+        Map<String, Object> response = new HashMap<>();
+        Cliente cliente = clienteService.descontarMilhasAndRegistraOper(codigoCliente, milhas.getQuantidade(), milhas.getCodigo_reserva(), milhas.getAeroporto_origem(), milhas.getAeroporto_destino(),  milhas.getValorPago());
+
+        if (cliente != null) {
+            response.put("codigo", cliente.getCodigo());
+            response.put("saldo_milhas", cliente.getSaldoMilhas());
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.internalServerError().build();
+    }
+
     // Retorna a lista de transações de milhas do cliente
     @GetMapping("/{codigoCliente}/milhas")
     public ResponseEntity<?> getListaTransacoesMilhas(@PathVariable Long codigoCliente) {
