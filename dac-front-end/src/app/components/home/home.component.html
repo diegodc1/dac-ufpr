@@ -12,25 +12,25 @@
 
         <form>
           <div class="input-container">
-            <span class="material-symbols-outlined">flight_takeoff</span>
-            <input
-              type="text"
-              name="origem"
-              [(ngModel)]="origem"
-              placeholder="Origem"
-            />
+            <span class="material-symbols-outlined icon-plane">flight_takeoff</span>
+           <select id="origemHome" [(ngModel)]="origem" name="origem" required> 
+              <option value="">De</option>
+              <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+                {{ aero.nome }} ({{ aero.codigo }})
+              </option>
+            </select>
           </div>
 
-          <span class="material-symbols-outlined">sync_alt</span>
+          <span class="material-symbols-outlined swap-icon icon-plane">sync_alt</span>
 
           <div class="input-container">
-            <span class="material-symbols-outlined">flight_land</span>
-            <input
-              type="text"
-              name="destino"
-              [(ngModel)]="destino"
-              placeholder="Destino"
-            />
+            <span class="material-symbols-outlined icon-plane">flight_land</span>
+              <select id="destinoHome" [(ngModel)]="destino" name="destino" required> 
+              <option value="">Para</option>
+              <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+                {{ aero.nome }} ({{ aero.codigo }})
+              </option>
+            </select>
           </div>
 
           <button type="button" (click)="buscarVoos()">Buscar</button>
