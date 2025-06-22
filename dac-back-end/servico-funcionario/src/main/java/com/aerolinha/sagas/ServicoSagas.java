@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 
 import com.aerolinha.modelo.Funcionario;
 import com.aerolinha.repositorio.FuncionarioRepositorio;
+import com.aerolinha.sagas.comandos.ComandoAtuFunc;
 import com.aerolinha.sagas.comandos.ComandoCriarFunc;
 import com.aerolinha.sagas.comandos.ComandoInativarFunc;
 import com.aerolinha.sagas.consultas.VerificarFuncionario;
+import com.aerolinha.sagas.eventos.EventoFuncAtu;
 import com.aerolinha.sagas.eventos.EventoFuncCriado;
 import com.aerolinha.sagas.eventos.EventoFuncInativado;
 import com.aerolinha.sagas.resposta.VerificarFuncRes;
@@ -88,6 +90,31 @@ public class ServicoSagas {
                 .nome(funcionario.getNome())
                 .telefone(funcionario.getNumeroTelefone())
                 .mensagem("EventoFuncCriado")
+                .build();
+
+        return evento;
+    }
+
+    // R18
+    @Transactional
+    public EventoFuncAtu atualizarFuncionario(ComandoAtuFunc comando) {
+
+        Funcionario funcionario = funcionarioRepositorio.findByIdFuncionario(comando.getIdUsuario());
+
+        funcionario.setNome(comando.getNome());
+        funcionario.setEmail(comando.getEmail());
+        funcionario.setNumeroTelefone(comando.getNumeroTelefone());
+
+        funcionario = funcionarioRepositorio.save(funcionario);
+
+        EventoFuncAtu evento = EventoFuncAtu.builder()
+                .codigo(funcionario.getIdFuncionario())
+                .cpf(funcionario.getCpf())
+                .telefone(funcionario.getNumeroTelefone())
+                .idUsuario(funcionario.getIdUsuario())
+                .nome(funcionario.getNome())
+                .email(funcionario.getEmail())
+                .mensagem("EventoFuncAtu")
                 .build();
 
         return evento;

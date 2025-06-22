@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PutFuncDTO {
-    private String idUsuario;
-    private String nome;
+    private Long codigo;
+    private String cpf;
     private String email;
-    private String numeroTelefone;
+    private String nome;
+    private String telefone;
+    private String senha;
 }

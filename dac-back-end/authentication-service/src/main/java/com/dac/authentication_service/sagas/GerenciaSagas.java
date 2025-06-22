@@ -2,6 +2,7 @@ package com.dac.authentication_service.sagas;
 
 import java.util.Map;
 
+import com.dac.authentication_service.sagas.comandos.ComandoAtuUsu;
 import com.dac.authentication_service.sagas.comandos.ComandoCadastroCliente;
 import com.dac.authentication_service.sagas.eventos.EventoAutenticacaoCriada;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,6 +15,7 @@ import com.dac.authentication_service.sagas.comandos.ComandoCriarFuncUser;
 import com.dac.authentication_service.sagas.comandos.ComandoDelFunc;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserCriado;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserDeletado;
+import com.dac.authentication_service.sagas.eventos.EventoUsuAtu;
 import com.dac.authentication_service.securityService.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +52,14 @@ public class GerenciaSagas {
             case "ComandoCriarFuncUser" -> {
                 ComandoCriarFuncUser comando = objectMapper.convertValue(map, ComandoCriarFuncUser.class);
                 EventoFuncUserCriado evento = authService.novoFuncionario(comando);
+                String msg = objectMapper.writeValueAsString(evento);
+                rabbitTemplate.convertAndSend("CanalAutRes", msg);
+            }
+
+            // R18
+            case "ComandoAtuUsu" -> {
+                ComandoAtuUsu comando = objectMapper.convertValue(map, ComandoAtuUsu.class);
+                EventoUsuAtu evento = authService.atualizarFuncionario(comando);
                 String msg = objectMapper.writeValueAsString(evento);
                 rabbitTemplate.convertAndSend("CanalAutRes", msg);
             }
