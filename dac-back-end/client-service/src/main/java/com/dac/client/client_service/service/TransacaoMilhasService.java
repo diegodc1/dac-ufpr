@@ -1,6 +1,7 @@
 package com.dac.client.client_service.service;
 
 import ch.qos.logback.core.net.server.Client;
+import com.dac.client.client_service.exception.SaldoMilhasInsuficienteException;
 import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.model.TransacaoMilhas;
 import com.dac.client.client_service.repository.ClienteRepository;
@@ -62,7 +63,7 @@ public class TransacaoMilhasService {
 
         Cliente cliente = findClienteByEmail(email);
         if (cliente.getSaldoMilhas() < quantidadeMilhas) {
-            throw new RuntimeException("Saldo de milhas insuficiente para esta transação.");
+            throw new SaldoMilhasInsuficienteException("Saldo de milhas insuficiente para esta transação.");
         }
 
         cliente.setSaldoMilhas(cliente.getSaldoMilhas() - quantidadeMilhas);

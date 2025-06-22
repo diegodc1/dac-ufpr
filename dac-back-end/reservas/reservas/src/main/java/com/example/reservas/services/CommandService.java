@@ -28,6 +28,8 @@ public interface CommandService {
      */
     void cancelarReserva(String codigoReserva);
 
+    ReservaCriadaResDTO buscarReserva(String codigoReserva);
+
     /**
      * Atualiza o estado atual de uma reserva (ex: CHECK-IN, CANCELADO, etc.).
      *
@@ -36,5 +38,5 @@ public interface CommandService {
      * @return DTO contendo as informações do estado anterior e atual.
      * @throws JsonProcessingException Caso ocorra falha ao serializar a mensagem.
      */
-    CheckinDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException;
+    ReservaCriadaResDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException;
 }

@@ -1,5 +1,6 @@
 package com.example.reservas.controllers;
 
+import com.example.reservas.dto.CheckinDTO;
 import com.example.reservas.dto.EstadoReservaDTO;
 import com.example.reservas.dto.ReservaCriadaResDTO;
 import com.example.reservas.model.Reserva;
@@ -56,16 +57,32 @@ public class CommandController {
     }
 
 
+    // Busca uma reserva
+
+
+    @GetMapping("reservas/{codigoReserva}")
+    public ResponseEntity<?> buscarReserva(@PathVariable String codigoReserva) {
+        try {
+            ReservaCriadaResDTO reservaDTO = commandService.buscarReserva(codigoReserva);
+            return ResponseEntity.ok(reservaDTO);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código de reserva inválido.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cancelar reserva.");
+        }
+    }
+
+
      // Atualiza o estado da reserva.
      
     @PatchMapping("reservas/{codigoReserva}/estado")
     public ResponseEntity<?> atualizarEstadoReserva(
-            @PathVariable UUID codigoReserva,
+            @PathVariable String codigoReserva,
             @RequestBody EstadoReservaDTO dto) {
 
         try {
-            commandService.atualizarEstado(codigoReserva.toString(), dto.getEstado());
-            return ResponseEntity.noContent().build();
+            ReservaCriadaResDTO reserva = commandService.atualizarEstado(codigoReserva, dto.getEstado());
+            return ResponseEntity.ok(reserva);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos: " + e.getMessage());
         } catch (JsonProcessingException e) {

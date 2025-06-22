@@ -24,15 +24,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tb_alt_estado")
+@Table(name = "tb_troca")
 public class HistoricoEstatus  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_alt_estado", nullable = false, updatable = false)
+    @Column(name = "id_troca", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "data_alt_estado", nullable = false)
+    @Column(name = "data_troca", nullable = false)
     private ZonedDateTime dataAltEstado;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

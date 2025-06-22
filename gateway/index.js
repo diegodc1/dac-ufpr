@@ -306,11 +306,28 @@ app.get('/reservas/:codigoReserva', validateTokenProxy, async (req, res) => {
             return res.status(400).send({ message: 'Código da reserva não fornecido!' });
         }
 
+        console.log(codigoReserva)
         const reservaResponse = await axios.get(`${process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'}/reservas/${codigoReserva}`, {
             headers: { 'x-access-token': req.headers['x-access-token'] }
         });
 
-        return res.status(200).json(reservaResponse.data);
+        console.log(reservaResponse.data)
+
+        const reservaData = reservaResponse.data;
+        const vooCodigo = reservaData.codigo_voo;
+        
+        const urlVoosService = process.env.VOOS_SERVICE_URL || 'http://localhost:8081'
+        const vooResponse = await axios.get(`${urlVoosService}/voos/${vooCodigo}`)
+     
+        const voo = vooResponse.data;
+
+        const responseComposta = {
+            ...reservaData,
+            voo
+        };
+
+
+        return res.status(200).json(responseComposta);
     } catch (err) {
         console.error('Erro ao obter detalhes da reserva:', err.message);
         return res.status(500).json({ message: 'Erro ao obter detalhes da reserva', error: err.message });
@@ -380,7 +397,7 @@ app.post('/reservas', validateTokenProxy, async (req, res) => {
 
 
 
-         // -- para descontar do saldo do cliente as milhas usadas 
+         // ---------- para descontar do saldo do cliente as milhas usadas 
         const urlClientesService = process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082';
 
         const milhasDTO = {
@@ -398,11 +415,26 @@ app.post('/reservas', validateTokenProxy, async (req, res) => {
                 milhasDTO
             );
             cliente = milhasResponse.data;
+
         } catch (milhasErr) {
-            console.error('Erro ao descontar milhas:', milhasErr?.response?.data || milhasErr.message);
-            return res.status(500).json({ message: 'Erro ao descontar milhas', error: milhasErr.message });
+            const status = milhasErr?.response?.status;
+            const erroAPI = milhasErr?.response?.data?.erro;
+
+            if (status === 400 && erroAPI === "Saldo de milhas insuficiente para esta transação.") {
+                return res.status(400).json({
+                    erro: 'Saldo de milhas insuficiente',
+                    detalhe: erroAPI
+                });
+            }
+
+            console.error('Erro ao descontar milhas:', erroAPI || milhasErr.message);
+
+            return res.status(500).json({
+                message: 'Erro ao processar desconto de milhas',
+                erro: erroAPI || milhasErr.message
+            });
         }
-        
+        // -------------
   
          
         return res.status(201).json(responseComposta);

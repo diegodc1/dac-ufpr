@@ -1,6 +1,5 @@
 package com.example.reservas.services;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Random;
@@ -12,10 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.reservas.cqrs.Command;
 import com.example.reservas.dto.CheckinDTO;
 import com.example.reservas.exceptions.ReservaNaoEncontradoException;
-import com.example.reservas.model.Aeroporto;
 import com.example.reservas.model.HistoricoEstatus;
 import com.example.reservas.model.Reserva;
 import com.example.reservas.model.EstadoReserva;
@@ -94,14 +91,19 @@ public class CommandServiceImplement implements CommandService {
 
     @Override
     @Transactional
-    public CheckinDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException {
+    public ReservaCriadaResDTO buscarReserva(String codigoReserva) {
+        Reserva reserva = reservaRepository.getByCodigo(codigoReserva)
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
+
+        return new ReservaCriadaResDTO(reserva);
+    }
+
+    @Override
+    @Transactional
+    public ReservaCriadaResDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException {
         int codigoEstado = mapearEstadoParaCodigo(estado);
 
-        Reserva reserva = identifier.length() == 36
-            ? reservaRepository.findById(UUID.fromString(identifier))
-                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para ID: " + identifier))
-            : reservaRepository.getByCodigo(identifier)
-                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
+        Reserva reserva =  reservaRepository.getByCodigo(identifier).orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
 
         EstadoReserva estadoInicial = reserva.getEstado();
         EstadoReserva estadoFinal = statusReservaRepository.findByCodigoEstado(codigoEstado);
@@ -118,16 +120,11 @@ public class CommandServiceImplement implements CommandService {
 
         historicoStatusRepository.save(historico);
 
-        Command commandMessage = new Command(historico);
-        String message = objectMapper.writeValueAsString(commandMessage);
-        rabbitTemplate.convertAndSend("ReservaQueryRequestChannel", message);
+//        Command commandMessage = new Command(historico);
+//        String message = objectMapper.writeValueAsString(commandMessage);
+//        rabbitTemplate.convertAndSend("ReservaQueryRequestChannel", message);
 
-        return CheckinDTO.builder()
-            .idReserva(reserva.getIdReserva())
-            .codigoReserva(reserva.getCodigo())
-            .estadoInicial(estadoInicial.getDescricaoEstado())
-            .estadoAtual(estadoFinal.getDescricaoEstado())
-            .build();
+        return new ReservaCriadaResDTO(reserva);
     }
 
     private int mapearEstadoParaCodigo(String estado) {

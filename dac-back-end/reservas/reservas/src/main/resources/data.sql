@@ -50,7 +50,5 @@ CREATE TABLE IF NOT EXISTS tb_troca (
                              reserva UUID NOT NULL,
                              estado_inicial UUID NOT NULL,
                              estado_final UUID NOT NULL,
-                             CONSTRAINT fk_reserva FOREIGN KEY (reserva) REFERENCES tb_reserva (id_reserva),
-    CONSTRAINT fk_estado_inicial FOREIGN KEY (estado_inicial) REFERENCES tb_estado (id_estado),
-    CONSTRAINT fk_estado_final FOREIGN KEY (estado_final) REFERENCES tb_estado (id_estado)
+                             CONSTRAINT fk_reserva FOREIGN KEY (reserva) REFERENCES tb_reserva (id_reserva)
     );

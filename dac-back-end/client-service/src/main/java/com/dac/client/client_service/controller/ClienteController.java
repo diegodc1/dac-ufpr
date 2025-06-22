@@ -3,6 +3,7 @@ package com.dac.client.client_service.controller;
 import com.dac.client.client_service.components.EsperaResposta;
 import com.dac.client.client_service.dto.*;
 import com.dac.client.client_service.exception.ClientAlreadyExistsException;
+import com.dac.client.client_service.exception.SaldoMilhasInsuficienteException;
 import com.dac.client.client_service.model.Cliente;
 import com.dac.client.client_service.service.ClienteService;
 import com.dac.client.client_service.service.TransacaoMilhasService;
@@ -180,19 +181,40 @@ public class ClienteController {
         return ResponseEntity.internalServerError().build();
     }
 
+    @ResponseBody
     @PutMapping("/{codigoCliente}/milhas/descontar")
-    public ResponseEntity<?> descontarMilhasByCodCliente(@PathVariable Long codigoCliente, @RequestBody DescontarMilhasReservaDTO milhas) {
+    public ResponseEntity<?> descontarMilhasByCodCliente(@PathVariable Long codigoCliente,
+                                                         @RequestBody DescontarMilhasReservaDTO milhas) {
         Map<String, Object> response = new HashMap<>();
-        Cliente cliente = clienteService.descontarMilhasAndRegistraOper(codigoCliente, milhas.getQuantidade(), milhas.getCodigo_reserva(), milhas.getAeroporto_origem(), milhas.getAeroporto_destino(),  milhas.getValorPago());
+        try {
+            Cliente cliente = clienteService.descontarMilhasAndRegistraOper(
+                    codigoCliente,
+                    milhas.getQuantidade(),
+                    milhas.getCodigo_reserva(),
+                    milhas.getAeroporto_origem(),
+                    milhas.getAeroporto_destino(),
+                    milhas.getValorPago()
+            );
 
-        if (cliente != null) {
-            response.put("codigo", cliente.getCodigo());
-            response.put("saldo_milhas", cliente.getSaldoMilhas());
-            return ResponseEntity.ok(response);
+            if (cliente != null) {
+
+                response.put("codigo", cliente.getCodigo());
+                response.put("saldo_milhas", cliente.getSaldoMilhas());
+                return ResponseEntity.ok(response);
+            }
+
+            return ResponseEntity.internalServerError().build();
+
+        } catch (SaldoMilhasInsuficienteException e) {
+            response.put("erro", "Saldo de milhas insuficiente");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("erro", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("erro", "Erro inesperado ao processar milhas"));
         }
-
-        return ResponseEntity.internalServerError().build();
     }
+
 
     // Retorna a lista de transações de milhas do cliente
     @GetMapping("/{codigoCliente}/milhas")
