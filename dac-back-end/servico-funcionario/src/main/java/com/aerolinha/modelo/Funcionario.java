@@ -30,7 +30,7 @@ public class Funcionario {
     private String cpf;
     @Column(name = "email", nullable = false, unique = true, updatable = true)
     private String email;
-    @Column(name = "numero_telefone", nullable = false, unique = true, updatable = true)
+    @Column(name = "numero_telefone", nullable = false, unique = false, updatable = true)
     private String numeroTelefone;
     @Column(name = "estado", nullable = false, updatable = true)
     private String estado;

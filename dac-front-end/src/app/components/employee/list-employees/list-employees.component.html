@@ -92,8 +92,6 @@
     </div>
   </div>
 
-
-
   <!-- Modal de Edição -->
   <div class="custom-modal-backdrop" *ngIf="showEditModal">
     <div class="custom-modal">
@@ -131,6 +129,14 @@
             </label>
             <input type="text" [(ngModel)]="selectedEmployee.telefone" name="editTelefone" [mask]="phoneMask" required
               #editTelefone="ngModel" />
+          </div>
+
+          <div class="label-div">
+            <label>Senha
+              <div class="error-msg" *ngIf="editSenha.invalid && editSenha.touched">Senha é obrigatória.</div>
+            </label>
+            <input type="text" [(ngModel)]="selectedEmployee.senha" name="editSenha" minlength="4" maxlength="4"
+              [mask]="senhaMask" required #editSenha="ngModel" />
           </div>
         </div>
 
