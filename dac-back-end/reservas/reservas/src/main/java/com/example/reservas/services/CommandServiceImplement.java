@@ -12,21 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.reservas.cqrs.Command;
 import com.example.reservas.dto.CheckinDTO;
-import com.example.reservas.entity.AeroportoEntity;
-import com.example.reservas.entity.EstadoReservaEntity;
-import com.example.reservas.entity.HistoricoEstatusEntity;
-import com.example.reservas.entity.ReservaEntity;
 import com.example.reservas.exceptions.ReservaNaoEncontradoException;
-import com.example.reservas.repositorys.EstadoReservaRepository;
+import com.example.reservas.model.Aeroporto;
+import com.example.reservas.model.HistoricoEstatus;
+import com.example.reservas.model.Reserva;
+import com.example.reservas.model.EstadoReserva;
+import com.example.reservas.repositorys.AeroportoRepository;
 import com.example.reservas.repositorys.HistoricoStatusRepository;
 import com.example.reservas.repositorys.ReservaRepository;
+import com.example.reservas.repositorys.StatusReservaRepository;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class CommandServiceImplement implements CommandService {
 
     @Autowired
@@ -39,162 +38,126 @@ public class CommandServiceImplement implements CommandService {
     private ReservaRepository reservaRepository;
 
     @Autowired
-    private EstadoReservaRepository estadoReservaRepository;
+    private StatusReservaRepository statusReservaRepository;
+
+    @Autowired
+    private AeroportoRepository aeroportoRepository;
 
     @Autowired
     private HistoricoStatusRepository historicoStatusRepository;
 
-    @Autowired
-    private AeroportoService aeroportoService;
-
-    // Método para criar reserva
     @Override
     @Transactional
     public String criarReserva(CriarReserva command) {
-        // Criando uma nova reserva
-        ReservaEntity reserva = new ReservaEntity();
-        reserva.setCodigo(gerarCodigoReserva());
-        reserva.setCodigoCliente(command.getCodigoCliente());
+        // Garantir que o codigoCliente seja do tipo Integer
+        Integer codigoCliente = command.getCodigoCliente();
+        
+        // Criação da reserva
+        Reserva reserva = new Reserva();
+        reserva.setIdReserva(UUID.randomUUID());
+        reserva.setCodigo(gerarCodigoReserva());  // Código de 3 letras + 3 números
+        reserva.setCodigoCliente(codigoCliente);  // Agora códigoCliente é Integer
         reserva.setValor(command.getValor());
         reserva.setMilhasUtilizadas(command.getMilhasUtilizadas());
         reserva.setQuantidadePoltronas(command.getQuantidadePoltronas());
         reserva.setCodigoVoo(command.getCodigoVoo());
-        reserva.setData(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")));
-        reserva.setIdTransacao(UUID.randomUUID()); // O UUID pode ser gerado automaticamente, mas aqui definimos explicitamente.
 
-        // Buscando aeroportos
-        AeroportoEntity origem = aeroportoService.buscarPorCodigo(command.getCodigoAeroportoOrigem());
-        AeroportoEntity destino = aeroportoService.buscarPorCodigo(command.getCodigoAeroportoDestino());
+        // Validar aeroporto de origem
+        Aeroporto origem = aeroportoRepository.findById(command.getCodigoAeroportoOrigem())
+            .orElseThrow(() -> new RuntimeException("Aeroporto de origem não encontrado"));
 
-        // Buscando o estado "CONFIRMADA"
-        EstadoReservaEntity estadoConfirmada = estadoReservaRepository.findByCodigoEstado(1)
-                .orElseThrow(() -> new RuntimeException("Estado CONFIRMADA não encontrado"));
+        // Validar aeroporto de destino
+        Aeroporto destino = aeroportoRepository.findById(command.getCodigoAeroportoDestino())
+            .orElseThrow(() -> new RuntimeException("Aeroporto de destino não encontrado"));
 
-        // Associando entidades
+        // Atribuir aeroportos
         reserva.setAeroportoOrigem(origem);
         reserva.setAeroportoDestino(destino);
-        reserva.setDescricao(estadoConfirmada);  // Aqui associamos o estado "CONFIRMADA".
 
-        // Salvando a reserva
+        // Buscar o estado "Confirmada" (se não encontrado, lançar exceção)
+        EstadoReserva estadoCriada = statusReservaRepository.findByCodigoEstado(1); // CONFIRMADA = 1
+        if (estadoCriada == null) {
+            throw new RuntimeException("Estado CONFIRMADA não encontrado");
+        }
+        reserva.setEstado(estadoCriada);
+
+        // Salvar a reserva
         reservaRepository.save(reserva);
-        log.info("Reserva criada com sucesso, código: {}", reserva.getCodigo());
-
         return reserva.getCodigo();
     }
 
-    // Método para atualizar o estado da reserva
-    @Transactional
-    public void atualizarEstadoReserva(String codigoReserva, String novoEstado) {
-        // Buscando a reserva
-        ReservaEntity reserva = reservaRepository.findByCodigo(codigoReserva)
-                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada"));
-
-        // Buscando o estado atual e o novo estado
-        EstadoReservaEntity estadoAtual = reserva.getDescricao();
-        EstadoReservaEntity estadoNovo = estadoReservaRepository.findByDescricao(novoEstado.toUpperCase())
-                .orElseThrow(() -> new RuntimeException("Estado " + novoEstado + " não encontrado"));
-
-        // Atualizando o estado da reserva
-        reserva.setDescricao(estadoNovo);
-        reservaRepository.save(reserva);
-        log.info("Estado da reserva {} atualizado de {} para {}", reserva.getCodigo(), estadoAtual.getDescricao(), estadoNovo.getDescricao());
-
-        // Registrando o histórico de mudança de estado
-        HistoricoEstatusEntity historico = HistoricoEstatusEntity.builder()
-                .dataAltEstado(ZonedDateTime.now(ZoneId.of("UTC")))
-                .reserva(reserva)
-                .estadoInicial(estadoAtual)
-                .estadoFinal(estadoNovo)
-                .build();
-        historicoStatusRepository.save(historico);
-        log.info("Histórico de status registrado para a reserva {}", reserva.getCodigo());
-    }
-
-    // Método para cancelar a reserva
     @Override
     @Transactional
     public void cancelarReserva(String codigoReserva) {
-        // Buscando a reserva
-        ReservaEntity reserva = reservaRepository.findByCodigo(codigoReserva)
-                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
+        Reserva reserva = reservaRepository.getByCodigo(codigoReserva)
+            .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
 
-        // Buscando o estado "CANCELADO"
-        EstadoReservaEntity estadoCancelado = estadoReservaRepository.findByCodigoEstado(3)
-                .orElseThrow(() -> new RuntimeException("Estado CANCELADO não encontrado"));
-
-        // Atualizando o estado da reserva
-        reserva.setDescricao(estadoCancelado);
+        EstadoReserva estadoCancelada = statusReservaRepository.findByCodigoEstado(3); // CANCELADO = 3
+        reserva.setEstado(estadoCancelada);
         reservaRepository.save(reserva);
-        log.info("Reserva {} cancelada com sucesso.", reserva.getCodigo());
     }
 
-    // Método para atualizar o estado de uma reserva (com check-in)
     @Override
     @Transactional
-    public CheckinDTO atualizarEstado(String identifier, String descricao) throws JsonProcessingException {
-        // Mapeando o estado para código
-        int codigoEstado = mapearEstadoParaCodigo(descricao);
+    public CheckinDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException {
+        int codigoEstado = mapearEstadoParaCodigo(estado);
 
-        // Buscando a reserva pelo ID ou código
-        ReservaEntity reserva = identifier.length() == 36
-                ? reservaRepository.findById(UUID.fromString(identifier))
-                    .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para ID: " + identifier))
-                : reservaRepository.findByCodigo(identifier)
-                    .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
+        Reserva reserva = identifier.length() == 36
+            ? reservaRepository.findById(UUID.fromString(identifier))
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para ID: " + identifier))
+            : reservaRepository.getByCodigo(identifier)
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
 
-        // Buscando o estado atual e o novo estado
-        EstadoReservaEntity estadoInicial = reserva.getDescricao();
-        EstadoReservaEntity estadoFinal = estadoReservaRepository.findByCodigoEstado(codigoEstado)
-                .orElseThrow(() -> new RuntimeException("Estado não encontrado: " + descricao));
+        EstadoReserva estadoInicial = reserva.getEstado();
+        EstadoReserva estadoFinal = statusReservaRepository.findByCodigoEstado(codigoEstado);
 
-        // Atualizando o estado da reserva
-        reserva.setDescricao(estadoFinal);
+        reserva.setEstado(estadoFinal);
         reservaRepository.save(reserva);
 
-        // Registrando o histórico de mudança de estado
-        HistoricoEstatusEntity historico = HistoricoEstatusEntity.builder()
-                .dataAltEstado(ZonedDateTime.now(ZoneId.of("UTC")))
-                .reserva(reserva)
-                .estadoInicial(estadoInicial)
-                .estadoFinal(estadoFinal)
-                .build();
+        HistoricoEstatus historico = HistoricoEstatus.builder()
+            .dataAltEstado(ZonedDateTime.now(ZoneId.of("UTC")))// UTC
+            .reserva(reserva)
+            .estadoInicial(estadoInicial)
+            .estadoFinal(estadoFinal)
+            .build();
+
         historicoStatusRepository.save(historico);
 
-        // Enviando a mensagem para a fila de eventos
         Command commandMessage = new Command(historico);
         String message = objectMapper.writeValueAsString(commandMessage);
         rabbitTemplate.convertAndSend("ReservaQueryRequestChannel", message);
 
-        log.info("Estado da reserva {} atualizado para {}.", reserva.getCodigo(), estadoFinal.getDescricao());
-
         return CheckinDTO.builder()
-                .idReserva(reserva.getIdReserva())
-                .codigoReserva(reserva.getCodigo())
-                .estadoInicial(estadoInicial.getDescricao())
-                .estadoAtual(estadoFinal.getDescricao())
-                .build();
+            .idReserva(reserva.getIdReserva())
+            .codigoReserva(reserva.getCodigo())
+            .estadoInicial(estadoInicial.getDescricaoEstado())
+            .estadoAtual(estadoFinal.getDescricaoEstado())
+            .build();
     }
 
-    // Método para mapear o nome do estado para um código numérico
-    private int mapearEstadoParaCodigo(String descricao) {
-        return switch (descricao.toUpperCase()) {
-            case "CONFIRMADA" -> 1;
-            case "CHECK-IN" -> 2;
-            case "CANCELADA", "CANCELADO" -> 3;
-            case "EMBARCADA" -> 4;
-            case "REALIZADA", "REALIZADO" -> 5;
-            default -> throw new IllegalArgumentException("Estado inválido: " + descricao);
-        };
+    private int mapearEstadoParaCodigo(String estado) {
+        switch (estado.toUpperCase()) {
+            case "CONFIRMADA": return 1;
+            case "CHECK-IN":   return 2;
+            case "EMBARCADA":  return 3;
+            case "CANCELADO":  return 4;
+            case "REALIZADO":  return 5;
+            default:
+                throw new IllegalArgumentException("Estado inválido: " + estado);
+        }
     }
 
-    // Método para gerar um código único para a reserva
+    // ✅ Gera código de reserva com 3 letras aleatórias + 3 números (ex: ABC123)
     private String gerarCodigoReserva() {
         Random random = new Random();
+
         StringBuilder letras = new StringBuilder();
         for (int i = 0; i < 3; i++) {
-            letras.append((char) ('A' + random.nextInt(26)));  // Gerando letras aleatórias
+            letras.append((char) ('A' + random.nextInt(26)));
         }
-        int numeros = 100 + random.nextInt(900);  // Gerando números aleatórios
+
+        int numeros = 100 + random.nextInt(900); // Gera entre 100 e 999
+
         return letras.toString() + numeros;
     }
 }

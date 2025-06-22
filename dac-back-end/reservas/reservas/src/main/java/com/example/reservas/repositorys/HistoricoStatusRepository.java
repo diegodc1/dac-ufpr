@@ -1,12 +1,15 @@
 package com.example.reservas.repositorys;
 
-import com.example.reservas.entity.HistoricoEstatusEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+
 
 import java.util.UUID;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.reservas.model.HistoricoEstatus;
+
 @Repository
-public interface HistoricoStatusRepository extends JpaRepository<HistoricoEstatusEntity, UUID> {
-    
+public interface HistoricoStatusRepository extends JpaRepository<HistoricoEstatus, UUID> {
+
 }
