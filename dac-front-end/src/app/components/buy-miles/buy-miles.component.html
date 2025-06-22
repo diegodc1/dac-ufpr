@@ -1,0 +1,63 @@
+<div class="main-container">
+  <app-header></app-header>
+  <div class="title">
+    <h2 class="txtTitle">Comprar milhas</h2>
+  </div>
+  <div class="box">
+    <div class="content">
+      <div>
+        <h3 class="h3">Quantas milhas você deseja comprar?</h3>
+        <input
+          class="input"
+          placeholder="1.000"
+          type="number"
+          [(ngModel)]="milesToBuy"
+          (input)="onMilesInputChange($event)"
+        />
+        <p class="p">milhas</p>
+      </div>
+      <div class="lines">
+        <div class="linha"></div>
+        <div class="igual">=</div>
+        <div class="linha"></div>
+      </div>
+      <div>
+        <h3 class="h3">Total</h3>
+        <h1 class="price">R$ {{ totalPrice }}</h1>
+        <button class="btn" (click)="buyMiles()">
+          Comprar milhas
+        </button>
+      </div>
+    </div>
+    <div class="extract">
+      <h3>Extrato das suas milhas</h3>
+      <table class="extrato-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Código da Reserva</th>
+            <th>Valor</th>
+            <th>Descrição</th>
+            <th>Qtd. Milhas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of mileageExtract">
+            <td>{{ transaction.date | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ transaction.reservationCode || '-' }}</td>
+            <td>
+              {{ transaction.amountReais != null
+              ? (transaction.amountReais | currency:'BRL':'symbol':'1.2-2')
+              : '-' }}
+            </td>
+            <td>{{ transaction.description }}</td>
+            <td>{{ transaction.miles }}</td>
+          </tr>
+          <tr *ngIf="mileageExtract.length === 0">
+            <td colspan="5" style="text-align: center;">Nenhuma transação encontrada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

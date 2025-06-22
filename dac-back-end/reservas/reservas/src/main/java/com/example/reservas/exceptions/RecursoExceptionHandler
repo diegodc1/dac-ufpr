@@ -1,0 +1,29 @@
+package com.example.reservas.exceptions;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+@ControllerAdvice
+public class RecursoExceptionHandler {
+
+    @ExceptionHandler(ReservaNaoEncontradaException.class)
+    public ResponseEntity<StandardError> vooNaoEncontrado(ReservaNaoEncontradaException e, HttpServletRequest request) {
+
+        StandardError error = StandardError.builder()
+                .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
+                .estado(HttpStatus.NOT_FOUND.value())
+                .error("Reserva não encontrada")
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.estado(HttpStatus.NOT_FOUND).body(error);
+    }
+}

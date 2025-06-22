@@ -1,0 +1,87 @@
+Um fluxo padrão para desenvolvimento versionado é:
+
+- Vou fazer uma modificação, por exemplo: "Vou criar a classe Something responsável por fazer alguma coisa". A primeira coisa que eu preciso fazer é atualizar a versão que eu estou na minha máquina, com a master. Como eu faço isso?
+ 
+- git checkout master && git fetch && git pull
+
+- Pronto, você está na versão mais atual. 
+- Agora, você vai mudar de branch para uma nova branch, que o nome descreva aqui que você quer fazer.
+
+ git checkout -b NOME_DA_BRANCH
+
+, um exemplo de nome da branch pro enunciado do primeiro item aqui seria "something-class"
+- Beleza, agora você está na sua branch. Protegido e protegendo o trabalho de todo mundo. Você abre o projeto, vai no diretório que tu quer, cria a classe Something.java, por exemplo. Escreve o código dela. Terminou o código dela, commita.
+
+ git add /caminho/do/arquivo/Something.java && git commit -m 'arquivo Something fazendo aquilo' && git push -u origin NOME_DA_BRANCH 
+
+- Pronto, você acabou de commitar, dentro da sua branch a modificação que tu queria fazer. "Ahhh mas eu lembrei que o Something ia ser usado pelo Main.java, e agora, preciso abrir uma nova branch?". - Não, porque faz parte do contexto da branch de criação do arquivo Something, que ele seja utilizado. Então agora tu vai editar o conteúdo do Main.java e fazer a chamada da nova classe Something.
+- Feito isso, tu vai commitar de novo.
+
+ git add /caminho/do/Main.java && git commit -m 'utilizando a classe Something na Main' && git push -u origin something-class
+
+- Pronto, finalizou aquilo que tu tinha se proposto. Não precisa fazer mais nada exatamente agora. Acessa o www.github.com/dac20242/back-end, lá vai ter um botão "Create Pull Request". Tu clica, abre um PR dizendo o que foi feito. E se tudo estiver OK pra mergear na master, clica no botão "MERGE". Agora tu quer fazer outra modificação, não relacionada com a Something.java, volta a sua máquina pra master seguindo esse mesmo roteiro aqui.
+- Assim todos ficam protegidos das modificações dos outro. 
+- "Ah, eu fui trabalhando aqui e percebi que esqueci de commitar, agora vou enviar tudo de uma vez com o título 'update'". - Não faça isso. Foi isso que trouxe a gente pro cenário de MUITO mais trabalho pra arrumar. O jeito descrito aqui é o principal modelo de produção das empresas, é bom irem se acostumando a fazer pequenas modificações e commitar com mais frequência
+
+
+// ****************************************************************************************************
+
+Passo 1: Atualizar a branch master local com a versão remota
+
+Primeiro, atualize a sua branch master local para garantir que ela esteja sincronizada com a master remota:
+
+    git fetch origin master
+    git checkout master
+    git pull origin master
+
+Isso garante que a branch master local tenha as mesmas alterações da master remota.
+Passo 2: Voltar para a sua branch GERAL_BRANCH
+
+Agora, volte para a branch na qual você está trabalhando (GERAL_BRANCH):
+
+    git checkout GERAL_BRANCH
+
+Passo 3: Fazer o merge da master local na sua branch
+
+Com a master local já sincronizada com a versão remota, agora faça o merge dela na sua branch atual:
+
+    git merge master
+
+Se houver conflitos, resolva-os, adicione os arquivos corrigidos, e finalize o merge:
+
+    git add <arquivo>
+    git commit
+
+4. Enviar as alterações para o repositório remoto
+
+Agora, envie a branch GERAL_BRANCH atualizada para o GitHub:
+
+    git push origin GERAL_BRANCH
+
+// ************************************* DOCKER ***************************************************************
+
+- stopando todos os containers:
+
+    docker stop $(docker ps -q)
+
+- startando todos os containers:
+
+    docker start $(docker ps -a -q)
+
+- Remover todos os containers, imagens, volumes  e redes:
+
+    docker rm -f $(docker ps -a -q)
+
+    docker rmi -f $(docker images -a -q)
+
+    docker volume rm $(docker volume ls -q)
+
+    docker network ls --filter type=custom --format '{{.ID}}' | xargs -r docker network rm
+
+- Remover por status:
+
+    docker rm -f $(docker ps -f status=exited -q)
+
+- IP: 
+
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <nome-do-container>

@@ -1,0 +1,65 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ServicoFuncionarioApplication<servico-funcionario>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.aerolinha.ServicoFuncionarioApplication",
+            "projectName": "servico-funcionario",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SagasApplication<sagas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.aerolinha.SagasApplication",
+            "projectName": "sagas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AuthenticationServiceApplication<authentication-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.dac.authentication_service.AuthenticationServiceApplication",
+            "projectName": "authentication-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=39211 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=authentication-service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-VoosApplication<voos>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.dac.voos.voos.VoosApplication",
+            "projectName": "voos",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ReservasApplication<reservas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.reservas.ReservasApplication",
+            "projectName": "reservas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ReservasQueryServiceApplication<reservas-query-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.topus.reservas_query_service.ReservasQueryServiceApplication",
+            "projectName": "reservas-query-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

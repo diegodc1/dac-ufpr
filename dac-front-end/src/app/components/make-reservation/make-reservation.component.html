@@ -1,0 +1,61 @@
+<app-header></app-header>
+
+<div class="main-container">
+  <div class="search-section">
+      <div class="container">
+          <h1>Buscar Voos</h1>
+
+          <form>
+            <div class="input-container">
+              <span class="material-symbols-outlined">flight_takeoff</span>
+              <input type="text" id="origem" [(ngModel)]="destinoAeroportoCodigo" placeholder="De" />
+            </div>
+
+            <span class="material-symbols-outlined">sync_alt</span>
+
+            <div class="input-container">
+              <span class="material-symbols-outlined">flight_land</span>
+              <input type="text" id="destino" [(ngModel)]="destinoAeroportoCodigo" placeholder="Para" />
+            </div>
+
+            <button type="button" (click)="buscarVoos()">Buscar</button>
+          </form>
+      </div>
+  </div>
+
+  <div class="results-section">
+      <div *ngIf="filteredFlights.length > 0">
+        <div *ngFor="let flight of filteredFlights" class="voo-card">
+          <div class="voo-card-footer">
+            <div style=" background-color: #FFF1E4; padding: 1.2rem; width: 100%; border-radius: 6px">
+                <div class="div-date">
+                  <p>{{ flight.data  | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+                <div class="voo-detalhes">
+                  <div class="origem">
+                    <p>{{ flight.aeroporto_origem.nome }} ({{flight.aeroporto_origem.codigo}})</p>
+                  </div>
+                  <div class="tempo-voo">
+                    <p>9hr 50min</p>
+                    <div class="line"></div>
+                    <span class="material-symbols-outlined icon-flight">flight_takeoff</span>
+                    <div class="line"></div>
+                  </div>
+                  <div class="destino">
+                    <p>{{ flight.aeroporto_destino.nome }}({{flight.aeroporto_destino.codigo}})</p>
+                  </div>
+                </div>
+            </div>
+
+            <div class="voo-preco">
+              <p>R${{ flight.valor_passagem | number:'1.2-2' }}</p>
+              <button class="comprar-btn" (click)="selecionarVoo(flight)">Comprar</button>
+            </div>
+          </div>
+          <p>100 vagas restantes</p>
+        </div>
+      </div>
+
+      <p *ngIf="filteredFlights.length === 0">Nenhum voo encontrado.</p>
+  </div>
+</div>

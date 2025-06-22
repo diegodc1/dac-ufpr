@@ -1,0 +1,139 @@
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=flight_takeoff" />
+</head>
+<div class="main-container">
+
+  <app-header> </app-header>
+  <div class="content-container">
+    <div class="details-container">
+      <h2 class="title-page">Insira os dados da sua Reserva</h2>
+      <div class="box-flight">
+        <span class="material-symbols-outlined icon">travel</span>
+        <div class="flight-infos">
+          <div class="airports-infos">
+            <span class="airport-name">{{ voo?.aeroporto_origem.nome }} ({{ voo?.aeroporto_origem.codigo }})</span>
+            <span class="material-symbols-outlined icon-title">arrow_right_alt</span>
+            <span class="airport-name">{{ voo?.aeroporto_destino.nome }} ({{ voo?.aeroporto_destino.codigo }})</span>
+          </div>
+          <div class="flight-details">
+            <span>{{ voo?.data  | date:'dd/MM/yyyy HH:mm' }} - </span>
+            <span>Sem parada - </span>
+            <span>9hr 50min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-container">
+        <h4 class="card-title">Detalhes do Voo</h4>
+        <div class="header-card">
+          <div class="company-infos">
+            <img src="assets/images/logo-company.png">
+            <span>ABC Airline</span>
+          </div>
+          <span>Classe: <b>Econômica</b></span>
+        </div>
+
+        <div class="card-content">
+          <div class="card-item">
+            <span class="card-info-title">{{ voo?.aeroporto_origem.codigo }}</span>
+            <span class="card-time">{{ voo?.data | date:'HH:mm' }}</span>
+            <span class="card-info">{{ voo?.data | date:'mediumDate' }}</span>
+            <span class="card-info">{{ voo?.aeroporto_origem.nome }}</span>
+            <span class="card-info">{{ voo?.aeroporto_origem.cidade }}</span>
+            <span class="card-info">Terminal - 2, Portão 25</span>
+          </div>
+          <div class="card-item middle">
+            <span class="card-time middle">9hr 50min</span>
+            <div class="div-middle-infos">
+              <div class="line"></div>
+              <span class="material-symbols-outlined icon-flight">flight_takeoff</span>
+              <div class="line"></div>
+            </div>
+          </div>
+          <div class="card-item">
+            <span class="card-info-title">{{ voo?.aeroporto_destino.codigo }}</span>
+            <span class="card-time">{{ voo?.data | date:'HH:mm' }}</span>
+            <span class="card-info">{{ voo?.data | date:'mediumDate' }}</span>
+            <span class="card-info">{{ voo?.aeroporto_destino.nome }}</span>
+            <span class="card-info">{{ voo?.aeroporto_destino.cidade }}</span>
+            <span class="card-info">Terminal - 2, Portão 25</span>
+          </div>
+          <div class="card-item-price">
+            <span class="card-price">{{ voo?.valor_passagem | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-container">
+        <h4 class="card-title">Quantidade de Passagens</h4>
+        <select class="select-tickets" [(ngModel)]="quantidadePassagens" (change)="atualizarValorFinal()">
+            <option [value]="1">1 Passagem</option>
+            <option [value]="2">2 Passagens</option>
+            <option [value]="3">3 Passagens</option>
+        </select>
+      </div>
+
+
+      <div class="card-container">
+        <h4 class="card-title">Pagamento</h4>
+        <div class="content-card-payment">
+          <span>Utilizar saldo de milhas</span>
+          <input
+            type="number"
+            id="input-use-miles"
+            placeholder="Ex.: 1.000"
+            [(ngModel)]="milhasUsadas"
+            (input)="atualizarValorFinal()"
+            [max]="saldoMilhas"
+          >
+          <div class="footer-card-payment">
+              <span>Valor restante a ser pago em dinheiro:</span>
+            <div class="footer-div-money-value">
+              <span class="footer-money-value">{{ valorFinal | currency:'BRL' }}</span>
+              <button class="btn-payment">Realizar Pagamento</button>
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="resum-container">
+      <div class="resumo-card">
+        <h3 class="card-title">Resumo da Reserva</h3>
+        <div class="resumo-box">
+          <span class="resumo-title">Total Passagens</span>
+          <div class="resumo-desc-box">
+            <span class="resumo-des">
+                Adulto(s) ({{ quantidadePassagens }} x {{ precoPorPassagem | currency:'BRL' }})
+            </span>
+            <span class="resumo-value">{{ precoPorPassagem *  quantidadePassagens | currency:'BRL' }}</span>
+          </div>
+        </div>
+        <div class="line-separate"></div>
+        <div class="resumo-box">
+          <span class="resumo-title">Milhas</span>
+          <div class="resumo-desc-box">
+            <span class="resumo-des">Milhas necessárias: </span>
+            <span class="resumo-value">{{ milhasNecessarias }} milhas</span>
+          </div>
+        </div>
+        <div class="line-separate"></div>
+        <div class="resumo-box">
+          <span class="resumo-title">Descontos</span>
+          <div class="resumo-desc-box">
+            <span class="resumo-des">Milhas utilizadas: </span>
+            <span class="resumo-value"> - R${{milhasUsadas}},00 ({{ milhasUsadas }} milhas)</span>
+          </div>
+        </div>
+        <div class="line-separate"></div>
+        <div class="footer-resumo">
+          <span class="title-amount">Valor Total: </span>
+          <span class="value-amount">{{ valorFinal | currency:'BRL' }}</span>
+        </div>
+      </div>
+
+      <div class="btn-milhas"><span>Suas milhas: {{ saldoMilhas }}</span></div>
+    </div>
+  </div>
+</div>

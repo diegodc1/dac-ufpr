@@ -1,73 +1,96 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-body {
-    font-family: 'Inter', sans-serif;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+    height: 100%;
     margin: 0;
-    padding: 0;
-    height: 100vh;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+  overflow-x: hidden;
+  background-color: #A27443;
 }
 
 .header {
-    padding: 5px;
-    padding-left:20px;
+    padding-left: 24px;
+    height: 8vh;
+    margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 .title1 {
-    font-size: 30px;
+    font-size: 25px;
     font-family: "Inter", sans-serif;
     color: #A27443;
+    margin: 0;
 }
 .container{
-    display: flex;  
-    flex-direction: row; 
-    height: 100%;    
-    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
 }
+
 .start{
+    box-sizing: border-box;
+    width: 70%;
+    height: 92vh;
+    background-color: #A27443;
 }
 
 .container_login{
     background-color: #A27443;
+    height:auto;
+    width:30%;
+    align-content: center;
+    justify-content: center;
     display: flex;
-    padding: 30px;
-    height: 645px;    
-    width: 100%;
-    align-content: center; 
-    justify-content: center;   
+    height: 92vh;
+    max-height: 92vh;
+    align-items: center;
 }
-.containerBox{
+
+.containerBox {
     background-color: white;
     border-radius: 20px;
-    padding: 20px;
-    padding-top: 100px;
-    align-items: center;
-    padding-left: 50px;
-    padding-right: 50px;
+    display: flex;
+    top: 20px;
+    height: 70%;
+    flex-direction: column;
+    padding: 2rem;
+    width: 70%;
 }
 .img{
     filter: brightness(50%);
-    height: 706px;
-    width: 1300px;
-    display: block;
+    height:auto;
+    width: 100%;
+    height: 100%;
 
 }
 .text-overlay {
     position: absolute;
-    top: 50%; 
-    left: 35%; 
-    transform: translate(-50%, -50%); 
+    top: 50%;
+    left: 35%;
+    transform: translate(-50%, -50%);
     color: white;
     font-size: 45px;
     text-align: center;
     font-family: "Inter", sans-serif;
     font-weight: bold;
-    width: 80%; 
+    width: 80%;
     flex-wrap: wrap;
 }
 .boxTitle{
     display: flex;
     flex-direction: row;
     gap: 50px;
+    margin-top: 8%;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 .noCont{
     color: #8D8D8D;
@@ -81,27 +104,38 @@ body {
     font-weight: 400;
     color: #E48700;
 }
+
+.sing:hover, .forgot:hover {
+  cursor: pointer;
+  color: #c8853a;
+}
+
+
+
 .input{
     border-radius: 10px;
     border-color: #ADADAD;
-    border-width: 1px; 
-    padding: 12px; 
-    width: 255px;
-    height: 30px;
-    margin-top: 15px;
+    border-width: 1px;
+    padding: 12px;
+    width: 100%;
+    height: 45px;
+    box-sizing: border-box;
     transition: border-color 0.3s ease-in-out;
     outline: none;
+    border: 1px solid #ccc;
+    align-items: center;
+    margin-top: 8px;
 
 }
 .a{
     font-size: 14px;
     font-family: "Inter", sans-serif;
-    margin-top: 14px;
     font-weight: 400;
     color: black;
+    margin-top: 15px;
 }
 .input:focus{
-    border-color: #E48700; /* Agora fica laranjinha */
+    border-color: #E48700;
     box-shadow: 0 0 5px rgba(228, 135, 0, 0.5);
 
 }
@@ -116,9 +150,10 @@ body {
     font-size: 12px;
 }
 .h1{
-    font-size: 40px;
+    font-size: 37px;
     font-family: "Inter",sans-serif;
     font-weight: 500;
+    margin: 0;
 }
 .btn{
     background-color: #A27443;
@@ -134,4 +169,22 @@ body {
     font-weight: 500;
     color: white;
     font-size: 15px;
+    border: 1px solid #A27443;
+  animation: linear 0.9s linear;
+}
+
+.btn:hover {
+  background-color: #bc8449;
+  cursor: pointer;
+  transform: scale(1.02);
+  animation: linear 0.9s linear;
+}
+
+.ALL{
+     /*width: 100%;*/
+     /*height: 100%;*/
+  overflow-y: hidden;
+}
+.inputss{
+    gap: 25px;
 }

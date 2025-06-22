@@ -1,0 +1,61 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <h3 class="modal-title">Cadastrar Voo</h3>
+    <form (ngSubmit)="submitForm()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="codigo">Digite o Código do Voo:</label>
+          <input id="codigo" type="text" [(ngModel)]="flightData.codigo" name="codigo" required />
+        </div>
+        <div class="form-group">
+          <label for="dataHora">Data e Hora:</label>
+          <input id="dataHora" type="datetime-local" [(ngModel)]="flightData.dataHora" name="dataHora" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="origem">Aeroporto de Origem:</label>
+          <select id="origem" [(ngModel)]="flightData.origem" name="origem" required>
+            <option value="" disabled selected>Selecione</option>
+           <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+            {{ aero.nome }} ({{ aero.codigo }}) - {{ aero.cidade }} / {{ aero.uf }}
+           </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="destino">Aeroporto de Destino:</label>
+           <select id="destino" [(ngModel)]="flightData.destino" name="destino" required>
+            <option value="" disabled selected>Selecione</option>
+            <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+                {{ aero.nome }} ({{ aero.codigo }}) - {{ aero.cidade }} / {{ aero.uf }}
+            </option>
+       </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="valor">Valor (R$):</label>
+          <input id="valor" type="number" [(ngModel)]="flightData.valor" name="valor" required />
+        </div>
+        <div class="form-group">
+          <label for="milhas">Equivalente em Milhas:</label>
+          <input id="milhas" type="number" [(ngModel)]="flightData.milhas" name="milhas" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="poltronas">Poltronas Disponíveis:</label>
+          <input id="poltronas" type="number" [(ngModel)]="flightData.poltronas" name="poltronas" required />
+        </div>
+        <div class="form-group">
+          <label for="estado">Estado do Voo:</label>
+          <p id="estado" class="estado-confirmado">CONFIRMADO</p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn-confirm">Salvar Voo</button>
+      </div>
+    </form>
+  </div>
+</div>

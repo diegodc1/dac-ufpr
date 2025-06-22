@@ -1,0 +1,5 @@
+mvn clean package -DskipTests
+
+docker build -t auth-image:1.0.0 .
+                                                                                                                                                                                                                                          1.1s
+docker-compose up -d
