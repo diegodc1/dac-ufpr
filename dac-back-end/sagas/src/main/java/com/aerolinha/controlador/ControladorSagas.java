@@ -17,14 +17,18 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aerolinha.dto.requisicao.NovoFuncDTO;
+import com.aerolinha.dto.requisicao.PutFuncDTO;
 import com.aerolinha.dto.resposta.R17ResDTO;
+import com.aerolinha.dto.resposta.R18ResDTO;
 import com.aerolinha.dto.resposta.R19ResDTO;
 import com.aerolinha.dto.resposta.ResGenDTO;
+import com.aerolinha.sagas.atualizafuncionariosaga.AtuFuncSaga;
 import com.aerolinha.sagas.criafuncionariosaga.CriaFuncionarioSAGA;
 import com.aerolinha.sagas.criafuncionariosaga.eventos.EventoFuncCriado;
 import com.aerolinha.sagas.criafuncionariosaga.requisicoes.VerificarFuncionario;
@@ -57,12 +61,18 @@ public class ControladorSagas {
     @Autowired
     private DelFuncSaga delFuncSaga;
 
+    @Lazy
+    @Autowired
+    private AtuFuncSaga atuFuncSaga;
+
     // Armazenamento temporário para respostas
     private final Map<String, VerificarFuncRes> respostasTemporarias = new ConcurrentHashMap<>();
 
     private final Map<String, CompletableFuture<EventoFuncCriado>> futuresSaga = new ConcurrentHashMap<>();
 
     private final Map<Long, CompletableFuture<EventoFuncInativado>> futuresSagaR19 = new ConcurrentHashMap<>();
+
+    private final Map<Long, CompletableFuture<R18ResDTO>> futuresSagaR18 = new ConcurrentHashMap<>();
 
     // R17
     @PostMapping("/novo-funcionario")
@@ -177,6 +187,42 @@ public class ControladorSagas {
     // Método para completar a Saga R19
     public void completarSagaR19(Long idUsuario, EventoFuncInativado evento) {
         CompletableFuture<EventoFuncInativado> future = futuresSagaR19.get(idUsuario);
+        if (future != null) {
+            future.complete(evento);
+        }
+    }
+
+    // R18
+    @PutMapping("alterar/{id}")
+    public ResponseEntity<?> alterarFuncionario(@PathVariable("id") Long idUsuario,
+            @RequestBody PutFuncDTO putFuncDTO)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
+
+        Long chaveResposta = idUsuario; // Usamos o ID como chave
+
+        // Cria o Future para acompanhar a SAGA
+        CompletableFuture<R18ResDTO> future = new CompletableFuture<>();
+        futuresSagaR18.put(chaveResposta, future);
+
+        // Inicia a SAGA
+        this.atuFuncSaga.manipularRequisicao(putFuncDTO);
+
+        // Aguarda e retorna o resultado da SAGA
+        try {
+            R18ResDTO resultado = future.get(30, TimeUnit.SECONDS);
+            return ResponseEntity.ok().body(resultado);
+
+        } catch (TimeoutException e) {
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT)
+                    .body(new ResGenDTO("Tempo excedido ao atualizar funcionário"));
+        } finally {
+            futuresSagaR18.remove(chaveResposta);
+        }
+    }
+
+    // completar a Saga R18
+    public void completarSagaR18(Long codigo, R18ResDTO evento) {
+        CompletableFuture<R18ResDTO> future = futuresSagaR18.get(codigo);
         if (future != null) {
             future.complete(evento);
         }

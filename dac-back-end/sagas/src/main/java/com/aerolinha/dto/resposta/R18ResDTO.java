@@ -1,16 +1,18 @@
-package com.aerolinha.sagas.atualizafuncionariosaga.eventos;
+package com.aerolinha.dto.resposta;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
-public class EventoUsuAtu {
-    private String nome;
+public class R18ResDTO {
+    private Long codigo;
+    private String cpf;
     private String email;
-    private String mensagem;
+    private String nome;
+    private String telefone;
 }

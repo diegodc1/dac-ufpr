@@ -5,21 +5,37 @@
       <div class="container">
           <h1>Buscar Voos</h1>
 
-          <form>
-            <div class="input-container">
-              <span class="material-symbols-outlined">flight_takeoff</span>
-              <input type="text" id="origem" [(ngModel)]="destinoAeroportoCodigo" placeholder="De" />
-            </div>
+         <form (ngSubmit)="buscarVoos()">
+        <div class="input-container">
+          <span class="material-symbols-outlined icon-plane">flight_takeoff</span>
+          <select id="origem"
+                  [(ngModel)]="origemAeroportoCodigo"
+                  name="origemAeroportoCodigo"
+                  required> 
+            <option value="">De</option> 
+            <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+              {{ aero.nome }} ({{ aero.codigo }})
+            </option>
+          </select>
+        </div>
 
-            <span class="material-symbols-outlined">sync_alt</span>
+        <span class="material-symbols-outlined">sync_alt</span>
 
-            <div class="input-container">
-              <span class="material-symbols-outlined">flight_land</span>
-              <input type="text" id="destino" [(ngModel)]="destinoAeroportoCodigo" placeholder="Para" />
-            </div>
+        <div class="input-container">
+          <span class="material-symbols-outlined icon-plane ">flight_land</span>
+          <select id="destino"
+                  [(ngModel)]="destinoAeroportoCodigo"
+                  name="destinoAeroportoCodigo"
+                  required> 
+            <option value="">Para</option> 
+            <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
+              {{ aero.nome }} ({{ aero.codigo }})
+            </option>
+          </select>
+        </div>
 
-            <button type="button" (click)="buscarVoos()">Buscar</button>
-          </form>
+        <button type="submit">Buscar</button>
+      </form>
       </div>
   </div>
 

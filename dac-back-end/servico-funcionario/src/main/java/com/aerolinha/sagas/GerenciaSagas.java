@@ -7,9 +7,11 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.aerolinha.sagas.comandos.ComandoAtuFunc;
 import com.aerolinha.sagas.comandos.ComandoCriarFunc;
 import com.aerolinha.sagas.comandos.ComandoInativarFunc;
 import com.aerolinha.sagas.consultas.VerificarFuncionario;
+import com.aerolinha.sagas.eventos.EventoFuncAtu;
 import com.aerolinha.sagas.eventos.EventoFuncCriado;
 import com.aerolinha.sagas.eventos.EventoFuncInativado;
 import com.aerolinha.sagas.resposta.VerificarFuncRes;
@@ -61,6 +63,21 @@ public class GerenciaSagas {
                     ComandoCriarFunc comando = objectMapper.convertValue(map, ComandoCriarFunc.class);
 
                     EventoFuncCriado evento = servicoSagas.criarFuncionario(comando);
+
+                    String msg = objectMapper.writeValueAsString(evento);
+
+                    rabbitTemplate.convertAndSend("CanalFuncRes", msg);
+
+                    break;
+
+                }
+
+                // R18
+                case "ComandoAtuFunc" -> {
+
+                    ComandoAtuFunc comando = objectMapper.convertValue(map, ComandoAtuFunc.class);
+
+                    EventoFuncAtu evento = servicoSagas.atualizarFuncionario(comando);
 
                     String msg = objectMapper.writeValueAsString(evento);
 

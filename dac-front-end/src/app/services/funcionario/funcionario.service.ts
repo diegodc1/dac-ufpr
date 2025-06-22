@@ -5,6 +5,8 @@ import { LoginService } from '../login/login.service';
 import { Funcionario } from '../../models/funcionario/funcionario';
 import { NovoFuncionario } from '../../models/novo-funcionario/novo-funcionario';
 import { Voo } from '../../models/voo/voo.model';
+import { RetornoFunc } from '../../models/retorno-func/retorno-func.model';
+import { FuncAlterado } from '../../models/func-alterado/func-alterado';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +68,18 @@ export class FuncionarioService {
   novoFuncionario(novo: NovoFuncionario): Observable<any> {
     const headers = this.getAuthHeaders(true);
     return this.httpClient.post<NovoFuncionario>(this.BASE_URL + '/funcionarios', JSON.stringify(novo), { headers });
+  }
+
+  // R18
+  alteraFuncionario(func: FuncAlterado): Observable<any> {
+    const headers = this.getAuthHeaders(true);
+    return this.httpClient.put<any>(this.BASE_URL + '/funcionarios/' + func.codigo, JSON.stringify(func), { headers });
+  }
+
+  // R19
+  remover(codigoFuncionario: number): Observable<RetornoFunc> {
+    const headers = this.getAuthHeaders(true);
+    return this.httpClient.delete<RetornoFunc>(this.BASE_URL + '/funcionarios/' + codigoFuncionario, { headers });
   }
 
   private handleError(error: any): Observable<never> {

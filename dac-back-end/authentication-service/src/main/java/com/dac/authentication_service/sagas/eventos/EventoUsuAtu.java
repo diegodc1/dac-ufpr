@@ -1,4 +1,4 @@
-package com.aerolinha.sagas.atualizafuncionariosaga.eventos;
+package com.dac.authentication_service.sagas.eventos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

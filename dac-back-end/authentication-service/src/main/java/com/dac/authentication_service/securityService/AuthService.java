@@ -2,12 +2,14 @@ package com.dac.authentication_service.securityService;
 
 import com.dac.authentication_service.collection.User;
 import com.dac.authentication_service.repository.UserRepository;
+import com.dac.authentication_service.sagas.comandos.ComandoAtuUsu;
 import com.dac.authentication_service.sagas.comandos.ComandoCadastroCliente;
 import com.dac.authentication_service.sagas.comandos.ComandoCriarFuncUser;
 import com.dac.authentication_service.sagas.comandos.ComandoDelFunc;
 import com.dac.authentication_service.sagas.eventos.EventoAutenticacaoCriada;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserCriado;
 import com.dac.authentication_service.sagas.eventos.EventoFuncUserDeletado;
+import com.dac.authentication_service.sagas.eventos.EventoUsuAtu;
 import com.dac.authentication_service.security.TokenService;
 
 import java.security.SecureRandom;
@@ -133,6 +135,27 @@ public class AuthService {
 
     public void validateToken(String token) {
         tokenService.validateToken(token);
+    }
+
+    // R18
+    @Transactional
+    public EventoUsuAtu atualizarFuncionario(ComandoAtuUsu comando) {
+
+        User user = userRepository.findById(comando.getIdUsuario()).orElse(null);
+
+        user.setName(comando.getNome());
+        user.setLogin(comando.getEmail());
+        user.setPassword(passwordEncoder.encode(comando.getSenha()));
+
+        user = userRepository.save(user);
+
+        EventoUsuAtu evento = EventoUsuAtu.builder()
+                .nome(user.getName())
+                .email(user.getLogin())
+                .mensagem("EventoUsuAtu")
+                .build();
+
+        return evento;
     }
 
     // R19

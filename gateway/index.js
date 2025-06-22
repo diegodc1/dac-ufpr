@@ -44,6 +44,15 @@ const removeFuncProxy = httpProxy(process.env.SAGA_SERVICE_URL || 'http://localh
     preserveHostHdr: true
 });
 
+const alteraFuncProxy = httpProxy(process.env.SAGA_SERVICE_URL || 'http://localhost:8087', {
+    proxyReqPathResolver: (req) => {
+        // Pega o código do funcionário dos parâmetros da rota
+        const codigoFuncionario = req.params.codigoFuncionario;
+        return `/saga/alterar/${codigoFuncionario}`;
+    },
+    preserveHostHdr: true
+});
+
 const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL || 'http://localhost:8080');
 
 const voosProxy = httpProxy(process.env.VOOS_SERVICE_URL || 'http://localhost:8081');
@@ -116,6 +125,11 @@ app.post('/funcionarios', validateTokenProxy, (req, res, next) => {
 // R16 - Lista de Funcionarios
 app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
     funcionariosServiceProxy(req, res, next);
+});
+
+// R18 - Alteração do funcionário
+app.put('/funcionarios/:codigoFuncionario', validateTokenProxy, (req, res, next) => {
+    alteraFuncProxy(req, res, next);
 });
 
 // R19 - Remoção lógica do funcionário
@@ -254,7 +268,7 @@ app.get('/clientes/home/:clienteId', validateTokenProxy, async (req, res) => {
             return res.status(400).send({ message: 'Cliente ID não fornecido!' });
         }
 
-        
+
         // Obtem saldo de milhas
         const saldoMilhasResponse = await axios.get(`${process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'}/clientes/saldo-milhas/${clienteId}`, {
             headers: { 'x-access-token': req.headers['x-access-token'] }
@@ -270,7 +284,7 @@ app.get('/clientes/home/:clienteId', validateTokenProxy, async (req, res) => {
             headers: { 'x-access-token': req.headers['x-access-token'] }
         });
 
-     
+
         const responseComposta = {
             saldoMilhas: saldoMilhasResponse.data.saldoMilhas,
             // reservas: reservasResponse.data,

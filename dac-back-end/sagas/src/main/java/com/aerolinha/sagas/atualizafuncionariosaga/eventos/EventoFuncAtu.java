@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class EventoFuncAtu {
-    private Boolean prosseguirSAGA;
+    private Long codigo;
+    private String cpf;
+    private String telefone;
+    private String idUsuario;
     private String nome;
     private String email;
     private String mensagem;

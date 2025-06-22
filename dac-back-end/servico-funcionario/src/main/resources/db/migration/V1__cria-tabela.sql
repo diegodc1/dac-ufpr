@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS tabela_funcionario (
         nome VARCHAR(50) NOT NULL,
         cpf VARCHAR(11) NOT NULL UNIQUE,
         email VARCHAR(50) NOT NULL UNIQUE,
-        numero_telefone VARCHAR(11) NOT NULL UNIQUE,
+        numero_telefone VARCHAR(11) NOT NULL,
         estado VARCHAR(8) NOT NULL
     );

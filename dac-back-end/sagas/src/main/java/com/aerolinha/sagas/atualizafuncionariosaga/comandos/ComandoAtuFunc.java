@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ComandoAtuFunc {
-    private String idUsuario;
+    private Long idUsuario;
     private String nome;
     private String email;
     private String numeroTelefone;
     private String mensagem;
 
     public ComandoAtuFunc(PutFuncDTO entidade) {
-        this.idUsuario = entidade.getIdUsuario();
+        this.idUsuario = entidade.getCodigo();
         this.nome = entidade.getNome();
         this.email = entidade.getEmail();
-        this.numeroTelefone = entidade.getNumeroTelefone();
+        this.numeroTelefone = entidade.getTelefone();
     }
 }
