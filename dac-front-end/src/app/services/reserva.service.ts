@@ -134,4 +134,3 @@ export class ReservaService {
   getExtratoTransacoes(): Transacao[] {
     return this.transacoes;
   }
-}
