@@ -63,21 +63,57 @@ form {
   position: relative;
   display: flex;
   align-items: center;
-}
-
-.input-container .material-symbols-outlined {
-  position: absolute;
-  left: 10px;
-  color: #aaa;
-  pointer-events: none;
-}
-
-.input-container input {
-  padding: 10px 10px 10px 36px;
-  font-size: 16px;
-  border: 1px solid #ccc;
+  background-color: #fff; 
+  border: 1px solid #ccc; 
   border-radius: 5px;
-  outline: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); 
+  width: 200px; 
+}
+
+.input-container .material-symbols-outlined.icon-plane {
+  position: absolute;
+  left: 10px; 
+  color: #aaa; 
+  pointer-events: none; 
+  font-size: 20px;
+}
+
+.input-container select {
+  width: 100%; 
+  padding: 10px 10px 10px 36px; 
+  font-size: 16px;
+  border: none; 
+  background-color: transparent; 
+  outline: none; 
+  cursor: pointer; 
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-repeat: no-repeat;
+  background-position: right 10px center; 
+  background-size: 10px; 
+  padding-right: 25px; 
+}
+
+.input-container select:hover {
+    border-color: #999;
+}
+.input-container select:focus {
+    border-color: #6a0dad;
+    box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.2);
+}
+
+
+span.material-symbols-outlined.swap-icon {
+  color: #482A89;
+  font-size: 2rem;
+  transition: transform 0.3s ease;
+}
+
+span.material-symbols-outlined.swap-icon:hover {
+  transform: rotate(180deg);
 }
 
 button {

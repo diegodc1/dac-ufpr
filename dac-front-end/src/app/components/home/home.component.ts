@@ -6,11 +6,13 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ModalCancelarReservaComponent } from '../modal-cancelar-reserva/modal-cancelar-reserva.component';
 import { HeaderComponent } from '../header/header.component';
+import { FlightService } from '../../services/flight.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModalCancelarReservaComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ModalCancelarReservaComponent, HeaderComponent, HttpClientModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
@@ -23,17 +25,18 @@ export class HomeComponent implements OnInit {
 
   origem: string = '';
   destino: string = '';
-
+  aeroportos: any[] = [];
   mostrarModal: boolean = false;
   reservaSelecionada: any = null;
 
   constructor(
     private clienteService: ClienteService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private flightService: FlightService  ) {}
 
   ngOnInit() {
     this.carregarTelaInicial();
+     this.loadAeroportos();
   }
 
   carregarTelaInicial() {
@@ -139,6 +142,29 @@ export class HomeComponent implements OnInit {
 //       error: (err) => console.error('Erro ao comprar milhas:', err),
 //   });
 // }
+private getAuthToken(): string | null {
+    const authToken = localStorage.getItem('token');
+    return authToken;
+  }
+  
+ loadAeroportos(): void {
+    const authToken = this.getAuthToken();
+    console.log('HomeComponent: Tentando carregar aeroportos...')
+    if (authToken) {
+      this.flightService.getAeroportos(authToken).subscribe({
+        next: (data: any[]) => {
+          this.aeroportos = data;
+          console.log('Aeroportos carregados na Home:', this.aeroportos);
+        },
+        error: (error: any) => {
+          console.error('Erro ao carregar aeroportos na Home:', error);
+        }
+      });
+    } else {
+      console.error('Token de autenticação não encontrado para carregar aeroportos na Home.');
+    }
+  }
+
 
   buscarVoos() {
     this.router.navigate(['/make-reservation'], {

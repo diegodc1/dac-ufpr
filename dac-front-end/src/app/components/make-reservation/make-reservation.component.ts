@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {HeaderComponent} from "../header/header.component";
 import { FlightService } from '../../services/flight.service';
 import { th } from 'date-fns/locale';
@@ -41,7 +41,7 @@ export class MakeReservationComponent {
 
   filteredFlights: Voo[] = [];
 
-  constructor(private router: Router, private flightService: FlightService) {}
+  constructor(private router: Router, private flightService: FlightService, private activatedRoute: ActivatedRoute,) {}
 
   // voos: Voo[] = [
   //   { id: 1, origem: 'São Paulo', destino: 'Nova York', dataHora: '29 Jan 2026, 14:50', preco: 3500 },
@@ -52,8 +52,12 @@ export class MakeReservationComponent {
 
   ngOnInit(): void{
     this.loadAeroportos();
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.origemAeroportoCodigo = params['origem'] || ''; 
+      this.destinoAeroportoCodigo = params['destino'] || ''; 
+      console.log('MakeReservation: QueryParams lidos - Origem:', this.origemAeroportoCodigo, 'Destino:', this.destinoAeroportoCodigo);
     this.buscarVoos();
-  }
+  })}
 
 private getAuthToken(): string | null {
     const authToken = localStorage.getItem('token');
@@ -78,7 +82,7 @@ private getAuthToken(): string | null {
     }
   }
 
-  buscarVoos() {
+buscarVoos() {
     const authToken = this.getAuthToken();
     if (!authToken) {
       console.error('Token de autenticação não encontrado para buscar voos.');
@@ -90,13 +94,38 @@ private getAuthToken(): string | null {
     const formattedDate = now.toISOString().substring(0, now.toISOString().length - 5) + '+00:00';
     console.log('Data formatada para backend (buscarVoos):', formattedDate);
 
-    console.log(this.origemAeroportoCodigo)
+    console.log('Valor de origemAeroportoCodigo:', this.origemAeroportoCodigo);
+    console.log('Valor de destinoAeroportoCodigo:', this.destinoAeroportoCodigo);
 
+  
     this.flightService.searchFlights(this.origemAeroportoCodigo, this.destinoAeroportoCodigo, formattedDate, authToken).subscribe({
       next: (response: any) => {
-        if (response) {
-          this.filteredFlights = response.filter((voo: Voo) => voo.estado === 'CONFIRMADO');
-          console.log('Voos CONFIRMADOS buscados:', this.filteredFlights);
+        if (response && response.voos) {
+          console.log('Resposta bruta da API (todos os voos recebidos):', response.voos.length, 'voos.'); 
+          console.log('Primeiro voo da resposta (para ver estrutura):', response.voos[0]);
+
+          let voosProcessados = response.voos.filter((voo: Voo) => voo.estado === 'CONFIRMADO');
+          console.log('Voos após filtro de ESTADO CONFIRMADO:', voosProcessados.length, 'voos.');
+
+          if (this.origemAeroportoCodigo) {
+            console.log('Aplicando filtro de Origem:', this.origemAeroportoCodigo);
+            voosProcessados = voosProcessados.filter((voo: Voo) => {
+              const match = voo.aeroporto_origem?.codigo === this.origemAeroportoCodigo;
+              return match;
+            });
+            console.log('Voos após filtro de Origem (agora):', voosProcessados.length, 'voos.');
+          }
+          if (this.destinoAeroportoCodigo) {
+            console.log('Aplicando filtro de Destino:', this.destinoAeroportoCodigo);
+            voosProcessados = voosProcessados.filter((voo: Voo) => {
+              const match = voo.aeroporto_destino?.codigo === this.destinoAeroportoCodigo;
+              return match;
+            });
+            console.log('Voos após filtro de Destino (agora):', voosProcessados.length, 'voos.');
+          }
+
+          this.filteredFlights = voosProcessados;
+          console.log('Voos CONFIRMADOS e FILTRADOS FINALMENTE no frontend:', this.filteredFlights.length, 'voos.', this.filteredFlights);
         } else {
           this.filteredFlights = [];
           console.warn('Resposta da busca de voos não contém a propriedade "voos" ou está vazia.', response);
