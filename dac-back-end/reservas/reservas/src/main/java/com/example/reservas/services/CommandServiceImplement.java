@@ -5,15 +5,14 @@ import java.time.ZonedDateTime;
 import java.util.Random;
 import java.util.UUID;
 
+import com.example.reservas.dto.ReservaCriadaResDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.reservas.cqrs.Command;
 import com.example.reservas.dto.CheckinDTO;
 import com.example.reservas.exceptions.ReservaNaoEncontradoException;
-import com.example.reservas.model.Aeroporto;
 import com.example.reservas.model.HistoricoEstatus;
 import com.example.reservas.model.Reserva;
 import com.example.reservas.model.EstadoReserva;
@@ -49,30 +48,34 @@ public class CommandServiceImplement implements CommandService {
 
     @Override
     @Transactional
-    public String criarReserva(CriarReserva command) {
+    public ReservaCriadaResDTO criarReserva(CriarReserva command) {
         Reserva reserva = new Reserva();
         reserva.setIdReserva(UUID.randomUUID());
         reserva.setCodigo(gerarCodigoReserva());  // Código de 3 letras + 3 números
-        reserva.setCodigoCliente(command.getCodigoCliente());
+        reserva.setCodigoCliente(command.getCodigo_cliente());
         reserva.setValor(command.getValor());
-        reserva.setMilhasUtilizadas(command.getMilhasUtilizadas());
-        reserva.setQuantidadePoltronas(command.getQuantidadePoltronas());
-        reserva.setCodigoVoo(command.getCodigoVoo());
-        Aeroporto origem = aeroportoRepository.findById(command.getCodigoAeroportoOrigem())
-        .orElseThrow(() -> new RuntimeException("Aeroporto de origem não encontrado"));
+        reserva.setMilhasUtilizadas(command.getMilhas_utilizadas());
+        reserva.setQuantidadePoltronas(command.getQuantidade_poltronas());
+        reserva.setCodigoVoo(command.getCodigo_voo());
+        reserva.setData(ZonedDateTime.now());
+//        Aeroporto origem = aeroportoRepository.findById(command.getCodigo_aeroporto_origem())
+//        .orElseThrow(() -> new RuntimeException("Aeroporto de origem não encontrado"));
+//
+//            Aeroporto destino = aeroportoRepository.findById(command.getCodigo_aeroporto_destino())
+//    .orElseThrow(() -> new RuntimeException("Aeroporto de destino não encontrado"));
+//
+//        reserva.setAeroportoOrigem(origem);
+//        reserva.setAeroportoDestino(destino);
 
-            Aeroporto destino = aeroportoRepository.findById(command.getCodigoAeroportoDestino())
-    .orElseThrow(() -> new RuntimeException("Aeroporto de destino não encontrado"));
 
-        reserva.setAeroportoOrigem(origem);
-        reserva.setAeroportoDestino(destino);
-
-
-        EstadoReserva estadoCriada = statusReservaRepository.findByCodigoEstado(1); // CONFIRMADA = 1
+        EstadoReserva estadoCriada = statusReservaRepository.findByCodigoEstado(6); // CRIADA = 6
         reserva.setEstado(estadoCriada);
 
         reservaRepository.save(reserva);
-        return reserva.getCodigo();
+
+
+        ReservaCriadaResDTO reservaDto = new ReservaCriadaResDTO(reserva);
+        return reservaDto;
     }
 
     @Override
@@ -88,14 +91,19 @@ public class CommandServiceImplement implements CommandService {
 
     @Override
     @Transactional
-    public CheckinDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException {
+    public ReservaCriadaResDTO buscarReserva(String codigoReserva) {
+        Reserva reserva = reservaRepository.getByCodigo(codigoReserva)
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
+
+        return new ReservaCriadaResDTO(reserva);
+    }
+
+    @Override
+    @Transactional
+    public ReservaCriadaResDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException {
         int codigoEstado = mapearEstadoParaCodigo(estado);
 
-        Reserva reserva = identifier.length() == 36
-            ? reservaRepository.findById(UUID.fromString(identifier))
-                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para ID: " + identifier))
-            : reservaRepository.getByCodigo(identifier)
-                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
+        Reserva reserva =  reservaRepository.getByCodigo(identifier).orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada para código: " + identifier));
 
         EstadoReserva estadoInicial = reserva.getEstado();
         EstadoReserva estadoFinal = statusReservaRepository.findByCodigoEstado(codigoEstado);
@@ -112,16 +120,11 @@ public class CommandServiceImplement implements CommandService {
 
         historicoStatusRepository.save(historico);
 
-        Command commandMessage = new Command(historico);
-        String message = objectMapper.writeValueAsString(commandMessage);
-        rabbitTemplate.convertAndSend("ReservaQueryRequestChannel", message);
+//        Command commandMessage = new Command(historico);
+//        String message = objectMapper.writeValueAsString(commandMessage);
+//        rabbitTemplate.convertAndSend("ReservaQueryRequestChannel", message);
 
-        return CheckinDTO.builder()
-            .idReserva(reserva.getIdReserva())
-            .codigoReserva(reserva.getCodigo())
-            .estadoInicial(estadoInicial.getDescricaoEstado())
-            .estadoAtual(estadoFinal.getDescricaoEstado())
-            .build();
+        return new ReservaCriadaResDTO(reserva);
     }
 
     private int mapearEstadoParaCodigo(String estado) {

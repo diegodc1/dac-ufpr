@@ -19,5 +19,5 @@ public class CheckinDTO {
     private UUID idReserva;
     private String codigoReserva;
     private String estadoInicial;
-    private String estadoAtual;
+    private String estado;
 }

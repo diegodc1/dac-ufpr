@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tb_estado_reserva")
+@Table(name = "tb_estado")
 public class EstadoReserva implements Serializable {
 
     @Id

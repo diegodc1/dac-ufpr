@@ -1,6 +1,8 @@
 package com.example.reservas.services;
 
 import com.example.reservas.dto.CheckinDTO;
+import com.example.reservas.dto.ReservaCriadaResDTO;
+import com.example.reservas.model.Reserva;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -17,7 +19,7 @@ public interface CommandService {
      * @param command Objeto com os dados necessários para criação da reserva.
      * @return Código gerado da reserva.
      */
-    String criarReserva(CriarReserva command);
+    ReservaCriadaResDTO criarReserva(CriarReserva command);
 
     /**
      * Cancela uma reserva existente a partir do seu código.
@@ -25,6 +27,8 @@ public interface CommandService {
      * @param codigoReserva Código da reserva (UUID em string).
      */
     void cancelarReserva(String codigoReserva);
+
+    ReservaCriadaResDTO buscarReserva(String codigoReserva);
 
     /**
      * Atualiza o estado atual de uma reserva (ex: CHECK-IN, CANCELADO, etc.).
@@ -34,5 +38,5 @@ public interface CommandService {
      * @return DTO contendo as informações do estado anterior e atual.
      * @throws JsonProcessingException Caso ocorra falha ao serializar a mensagem.
      */
-    CheckinDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException;
+    ReservaCriadaResDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException;
 }

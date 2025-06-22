@@ -45,15 +45,15 @@ public class Reserva implements Serializable {
 
     @Column(name = "codigo_cliente", nullable = false)
     private String codigoCliente;
+//
+//    @Column(name = "id_transacao", nullable = false, unique = true)
+//    private UUID idTransacao;
 
-    @Column(name = "id_transacao", nullable = false, unique = true)
-    private UUID idTransacao;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "aeroporto_origem", referencedColumnName = "codigo", nullable = false)
-    private Aeroporto aeroportoOrigem;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "aeroporto_destino", referencedColumnName = "codigo", nullable = false)
-    private Aeroporto aeroportoDestino;
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "aeroporto_origem", referencedColumnName = "codigo", nullable = false)
+//    private Aeroporto aeroportoOrigem;
+//
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "aeroporto_destino", referencedColumnName = "codigo", nullable = false)
+//    private Aeroporto aeroportoDestino;
 }

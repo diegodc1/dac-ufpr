@@ -47,7 +47,7 @@ services:
     environment:
       AUTH_SERVICE_URL: http://auth-service:8080
       VOOS_SERVICE_URL: http://voos-service:8081
-      CLIENTE_SERVICE_URL: http://cliente-service:8082
+      CLIENTE_SERVICE_URL: http://clientes-service:8082
       FUNCIONARIOS_SERVICE_URL: http://funcionarios-service:8083
       RESERVAS_SERVICE_URL: http://reservas-service:8084
       SAGA_SERVICE_URL: http://sagas-service:8087

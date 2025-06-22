@@ -51,7 +51,6 @@ public class ReservaCommand {
         milhasUtilizadas = reserva.getMilhasUtilizadas();
         quantidadePoltronas= reserva.getQuantidadePoltronas();
         codigoCliente = reserva.getCodigoCliente();
-        idTransacao = reserva.getIdTransacao();
         messageType = "ReservaCommand";
     }
 }

@@ -161,6 +161,21 @@ public class ClienteService {
         return null;
     }
 
+    public Cliente descontarMilhasAndRegistraOper(Long codigoUser, int quantidade, String codigoReserva, String aeroportoOrigem, String aeroportoDestino,  double valorPago) {
+
+        System.out.println(">>> Cliente recebido no DTO: " + codigoUser);
+        Cliente cliente = clienteRepository.findByCodigo(codigoUser);
+        System.out.println(">>> Cliente encontrado: " + cliente);
+
+
+        if (cliente != null) {
+            transacaoMilhasService.registrarSaidaMilhas(cliente.getEmail(), quantidade, codigoReserva, aeroportoOrigem + "->" + aeroportoDestino, valorPago);
+            return cliente;
+        }
+
+        return null;
+    }
+
     public ResponseTransacoesMilhasDTO getListTransacoesMilhasByCodigoCliente(Long codigoCliente) {
         Cliente cliente = clienteRepository.findByCodigo(codigoCliente);
 
@@ -176,7 +191,7 @@ public class ClienteService {
             });
 
 
-            return new ResponseTransacoesMilhasDTO(cliente.getCodigo(), cliente.getSaldoMilhas(), list.reversed());
+            return new ResponseTransacoesMilhasDTO(cliente.getCodigo(), cliente.getSaldoMilhas(), list);
         }
 
         return null;

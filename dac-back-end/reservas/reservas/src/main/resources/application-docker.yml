@@ -1,3 +1,6 @@
+server:
+  port: 8084
+
 spring:
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:reservas}
@@ -14,3 +17,9 @@ spring:
     port: 5672
     username: guest
     password: guest
+  sql:
+    init:
+      mode: always
+      platform: postgres
+      continue-on-error: true
+      data-locations: classpath:data.sql
