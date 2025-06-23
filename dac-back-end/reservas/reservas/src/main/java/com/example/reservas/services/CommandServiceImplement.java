@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Random;
 import java.util.UUID;
+import java.util.Map;
 
 import com.example.reservas.dto.ReservaCriadaResDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -23,6 +24,10 @@ import com.example.reservas.repositorys.StatusReservaRepository;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class CommandServiceImplement implements CommandService {
@@ -42,6 +47,10 @@ public class CommandServiceImplement implements CommandService {
     @Autowired
     private AeroportoRepository aeroportoRepository;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(CommandServiceImplement.class);
 
     @Autowired
     private HistoricoStatusRepository historicoStatusRepository;
@@ -95,8 +104,43 @@ public class CommandServiceImplement implements CommandService {
         Reserva reserva = reservaRepository.getByCodigo(codigoReserva)
                 .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
 
+        String codigoVoo = reserva.getCodigoVoo();
+
+        if (codigoVoo != null && !codigoVoo.isEmpty()) {
+            String voosServiceUrl = System.getenv("VOOS_SERVICE_URL") != null ? System.getenv("VOOS_SERVICE_URL") : "http://localhost:8081";
+            String vooEndpoint = String.format("%s/voos/%s", voosServiceUrl, codigoVoo);
+
+            logger.info("CommandService - Buscando Reserva: Consultando serviço de voos para Voo ID {} em {}", codigoVoo, vooEndpoint);
+
+            // >>>>>>>>>>>>>>> THIS LINE WILL NOW THROW THE EXCEPTION <<<<<<<<<<<<<<<<
+            ResponseEntity<Map> vooResponse = restTemplate.getForEntity(vooEndpoint, Map.class);
+
+            if (vooResponse.getStatusCode().is2xxSuccessful() && vooResponse.getBody() != null) {
+                Map<String, Object> vooData = vooResponse.getBody();
+                String estadoVoo = (String) vooData.get("estado");
+
+                logger.info("CommandService - Buscando Reserva: Voo {} tem estado {}", codigoVoo, estadoVoo);
+
+                if ("CANCELADO".equalsIgnoreCase(estadoVoo)) {
+                    return new ReservaCriadaResDTO(
+                            reserva.getCodigo(), reserva.getData(), reserva.getValor(), reserva.getMilhasUtilizadas(),
+                            reserva.getQuantidadePoltronas(), Long.valueOf(reserva.getCodigoCliente()),
+                            "CANCELADA VOO", reserva.getCodigoVoo()
+                    );
+                } else if ("REALIZADO".equalsIgnoreCase(estadoVoo)) {
+                    return new ReservaCriadaResDTO(
+                            reserva.getCodigo(), reserva.getData(), reserva.getValor(), reserva.getMilhasUtilizadas(),
+                            reserva.getQuantidadePoltronas(), Long.valueOf(reserva.getCodigoCliente()),
+                            "REALIZADA", reserva.getCodigoVoo()
+                    );
+                }
+            }
+        }
+        logger.info("CommandService - Buscando Reserva: Retornando estado real do DB para reserva {}. Estado: {}", codigoReserva, reserva.getEstado().getDescricaoEstado());
         return new ReservaCriadaResDTO(reserva);
     }
+// TEMPORARY DEBUGGING CODE END
+
 
     @Override
     @Transactional

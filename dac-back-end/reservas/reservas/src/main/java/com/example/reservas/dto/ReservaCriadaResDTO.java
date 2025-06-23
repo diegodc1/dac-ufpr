@@ -33,4 +33,17 @@ public class ReservaCriadaResDTO {
         this.estado = reserva.getEstado().getDescricaoEstado();
         this.codigo_voo = reserva.getCodigoVoo();
     }
+
+
+    public ReservaCriadaResDTO(String codigo, ZonedDateTime data, BigDecimal valor, Integer milhas_utilizadas,
+                               Integer quantidade_poltronas, Long codigo_cliente, String estado, String codigo_voo) {
+        this.codigo = codigo;
+        this.data = data;
+        this.valor = valor;
+        this.milhas_utilizadas = milhas_utilizadas;
+        this.quantidade_poltronas = quantidade_poltronas;
+        this.codigo_cliente = codigo_cliente;
+        this.estado = estado;
+        this.codigo_voo = codigo_voo;
+    }
 }
