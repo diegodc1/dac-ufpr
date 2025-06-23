@@ -12,10 +12,12 @@ INSERT INTO tb_estado (codigo_estado, acronimo_estado, desc_estado)
 VALUES
     (1, 'CFD', 'CONFIRMADA'),
     (2, 'CKN', 'CHECK-IN'),
-    (3, 'CLD', 'CANCELADO'),
+    (3, 'CLD', 'CANCELADA'),
     (4, 'EBD', 'EMBARCADA'),
-    (5, 'RZD', 'REALIZADO'),
-    (6, 'CRD', 'CRIADA')
+    (5, 'RZD', 'REALIZADA'),
+    (6, 'CRD', 'CRIADA'),
+    (7, 'CLV', 'CANCELADA VOO'),
+    (8, 'NRL', 'NÃO REALIZADA')
     ON CONFLICT (codigo_estado) DO NOTHING;
 
 

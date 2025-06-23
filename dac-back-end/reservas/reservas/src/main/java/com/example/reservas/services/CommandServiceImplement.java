@@ -2,9 +2,7 @@ package com.example.reservas.services;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Random;
-import java.util.UUID;
-import java.util.Map;
+import java.util.*;
 
 import com.example.reservas.dto.ReservaCriadaResDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.reservas.dto.CheckinDTO;
 import com.example.reservas.exceptions.ReservaNaoEncontradoException;
 import com.example.reservas.model.HistoricoEstatus;
 import com.example.reservas.model.Reserva;
@@ -25,7 +22,6 @@ import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,13 +85,15 @@ public class CommandServiceImplement implements CommandService {
 
     @Override
     @Transactional
-    public void cancelarReserva(String codigoReserva) {
+    public ReservaCriadaResDTO cancelarReserva(String codigoReserva) {
         Reserva reserva = reservaRepository.getByCodigo(codigoReserva)
             .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
 
-        EstadoReserva estadoCancelada = statusReservaRepository.findByCodigoEstado(3); // CANCELADO = 3
+        EstadoReserva estadoCancelada = statusReservaRepository.findByCodigoEstado(3); // CANCELADA = 3
         reserva.setEstado(estadoCancelada);
         reservaRepository.save(reserva);
+
+        return new ReservaCriadaResDTO(reserva);
     }
 
     @Override
@@ -104,42 +102,19 @@ public class CommandServiceImplement implements CommandService {
         Reserva reserva = reservaRepository.getByCodigo(codigoReserva)
                 .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada: " + codigoReserva));
 
-        String codigoVoo = reserva.getCodigoVoo();
-
-        if (codigoVoo != null && !codigoVoo.isEmpty()) {
-            String voosServiceUrl = System.getenv("VOOS_SERVICE_URL") != null ? System.getenv("VOOS_SERVICE_URL") : "http://localhost:8081";
-            String vooEndpoint = String.format("%s/voos/%s", voosServiceUrl, codigoVoo);
-
-            logger.info("CommandService - Buscando Reserva: Consultando serviço de voos para Voo ID {} em {}", codigoVoo, vooEndpoint);
-
-            // >>>>>>>>>>>>>>> THIS LINE WILL NOW THROW THE EXCEPTION <<<<<<<<<<<<<<<<
-            ResponseEntity<Map> vooResponse = restTemplate.getForEntity(vooEndpoint, Map.class);
-
-            if (vooResponse.getStatusCode().is2xxSuccessful() && vooResponse.getBody() != null) {
-                Map<String, Object> vooData = vooResponse.getBody();
-                String estadoVoo = (String) vooData.get("estado");
-
-                logger.info("CommandService - Buscando Reserva: Voo {} tem estado {}", codigoVoo, estadoVoo);
-
-                if ("CANCELADO".equalsIgnoreCase(estadoVoo)) {
-                    return new ReservaCriadaResDTO(
-                            reserva.getCodigo(), reserva.getData(), reserva.getValor(), reserva.getMilhasUtilizadas(),
-                            reserva.getQuantidadePoltronas(), Long.valueOf(reserva.getCodigoCliente()),
-                            "CANCELADA VOO", reserva.getCodigoVoo()
-                    );
-                } else if ("REALIZADO".equalsIgnoreCase(estadoVoo)) {
-                    return new ReservaCriadaResDTO(
-                            reserva.getCodigo(), reserva.getData(), reserva.getValor(), reserva.getMilhasUtilizadas(),
-                            reserva.getQuantidadePoltronas(), Long.valueOf(reserva.getCodigoCliente()),
-                            "REALIZADA", reserva.getCodigoVoo()
-                    );
-                }
-            }
-        }
-        logger.info("CommandService - Buscando Reserva: Retornando estado real do DB para reserva {}. Estado: {}", codigoReserva, reserva.getEstado().getDescricaoEstado());
         return new ReservaCriadaResDTO(reserva);
     }
-// TEMPORARY DEBUGGING CODE END
+
+    @Transactional
+    @Override
+    public List<ReservaCriadaResDTO> buscarListaReservasByClienteCodigo(String clienteCodigo) {
+        List<Reserva> reservaList = reservaRepository.findAllByCodigoCliente(clienteCodigo);
+        List<ReservaCriadaResDTO> listaReservasDTO = new ArrayList<>();
+
+        reservaList.forEach(a -> listaReservasDTO.add(new ReservaCriadaResDTO(a)));
+
+        return listaReservasDTO;
+    }
 
 
     @Override
@@ -171,13 +146,50 @@ public class CommandServiceImplement implements CommandService {
         return new ReservaCriadaResDTO(reserva);
     }
 
+
+    @Transactional
+    @Override
+    public Boolean atualizarEstadoByCodigoVoo(String codigoVoo, String estado) throws JsonProcessingException {
+        try {
+            int codigoEstado = mapearEstadoParaCodigo(estado);
+
+            List<Reserva> listReservas = reservaRepository.findAllByCodigoVoo(codigoVoo);
+
+            listReservas.forEach(a -> {
+                EstadoReserva estadoFinal = statusReservaRepository.findByCodigoEstado(codigoEstado);
+
+                if (estadoFinal.getDescricaoEstado().equals("REALIZADA")) {
+                    if (a.getEstado().getDescricaoEstado().equals("EMBARCADA")) {
+                        a.setEstado(estadoFinal);
+                    } else {
+                        a.setEstado(statusReservaRepository.findByCodigoEstado(8));
+                    }
+
+                } else {
+                    a.setEstado(estadoFinal);
+                }
+
+
+
+                reservaRepository.save(a);
+            });
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private int mapearEstadoParaCodigo(String estado) {
         switch (estado.toUpperCase()) {
             case "CONFIRMADA": return 1;
             case "CHECK-IN":   return 2;
-            case "EMBARCADA":  return 3;
-            case "CANCELADO":  return 4;
-            case "REALIZADO":  return 5;
+            case "CANCELADA":  return 3;
+            case "EMBARCADA":  return 4;
+            case "REALIZADA":  return 5;
+            case "CRIADA":      return 6;
+            case "CANCELADA VOO": return 7;
+            case "NÃO REALIZADA": return 8;
             default:
                 throw new IllegalArgumentException("Estado inválido: " + estado);
         }

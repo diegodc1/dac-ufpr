@@ -5,6 +5,9 @@ import com.example.reservas.dto.ReservaCriadaResDTO;
 import com.example.reservas.model.Reserva;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Interface de serviço de comando responsável por manipular ações
@@ -26,9 +29,12 @@ public interface CommandService {
      *
      * @param codigoReserva Código da reserva (UUID em string).
      */
-    void cancelarReserva(String codigoReserva);
+    ReservaCriadaResDTO cancelarReserva(String codigoReserva);
 
     ReservaCriadaResDTO buscarReserva(String codigoReserva);
+
+    @Transactional
+    List<ReservaCriadaResDTO> buscarListaReservasByClienteCodigo(String clienteCodigo);
 
     /**
      * Atualiza o estado atual de uma reserva (ex: CHECK-IN, CANCELADO, etc.).
@@ -39,4 +45,7 @@ public interface CommandService {
      * @throws JsonProcessingException Caso ocorra falha ao serializar a mensagem.
      */
     ReservaCriadaResDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException;
+
+    @Transactional
+    Boolean atualizarEstadoByCodigoVoo(String codigoVoo, String estado) throws JsonProcessingException;
 }

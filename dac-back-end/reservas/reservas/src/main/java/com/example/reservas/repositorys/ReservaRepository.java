@@ -20,4 +20,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, UUID> {
     
     List<Reserva> findByCodigoVoo(String codigoVoo);
 
+    List<Reserva> findAllByCodigoCliente(String codigoCliente);
+
+    List<Reserva> findAllByCodigoVoo(String codigoVoo);
 }

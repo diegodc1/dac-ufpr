@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import java.util.UUID;
 
@@ -45,12 +46,12 @@ public class CommandController {
      
 
     @DeleteMapping("reservas/{codigoReserva}")
-    public ResponseEntity<?> cancelarReserva(@PathVariable UUID codigoReserva) {
+    public ResponseEntity<?> cancelarReserva(@PathVariable String codigoReserva) {
         try {
-            commandService.cancelarReserva(codigoReserva.toString());
-            return ResponseEntity.noContent().build();
+            ReservaCriadaResDTO reservaDTO = commandService.cancelarReserva(codigoReserva.toString());
+            return ResponseEntity.ok(reservaDTO);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID de reserva inválido.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código da reserva inválido.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cancelar reserva.");
         }
@@ -58,13 +59,28 @@ public class CommandController {
 
 
     // Busca uma reserva
-
-
     @GetMapping("reservas/{codigoReserva}")
     public ResponseEntity<?> buscarReserva(@PathVariable String codigoReserva) {
         try {
             ReservaCriadaResDTO reservaDTO = commandService.buscarReserva(codigoReserva);
             return ResponseEntity.ok(reservaDTO);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código de reserva inválido.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cancelar reserva.");
+        }
+    }
+
+
+
+
+
+    //Busca lista de reservas
+    @GetMapping("reservas/cliente/{codigoCliente}")
+    public ResponseEntity<?> buscarListaReservaByCodigoCliente(@PathVariable String codigoCliente) {
+        try {
+            List<ReservaCriadaResDTO> listaReservaDTO = commandService.buscarListaReservasByClienteCodigo(codigoCliente);
+            return ResponseEntity.ok(listaReservaDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código de reserva inválido.");
         } catch (Exception e) {
@@ -83,6 +99,25 @@ public class CommandController {
         try {
             ReservaCriadaResDTO reserva = commandService.atualizarEstado(codigoReserva, dto.getEstado());
             return ResponseEntity.ok(reserva);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro no processamento do JSON.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar estado.");
+        }
+    }
+
+
+    // Atualiza o estado da reserva pelo codigo de voo
+    @PatchMapping("reservas/estado/atualizar/{codigoVoo}")
+    public ResponseEntity<?> atualizarEstadoReservaByCodigoVoo(
+            @PathVariable String codigoVoo,
+            @RequestBody EstadoReservaDTO dto) {
+
+        try {
+            Boolean result = commandService.atualizarEstadoByCodigoVoo(codigoVoo, dto.getEstado());
+            return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos: " + e.getMessage());
         } catch (JsonProcessingException e) {

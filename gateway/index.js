@@ -196,10 +196,17 @@ app.post('/voos', validateTokenProxy, (req, res, next) => {
 app.get('/funcionarios', validateTokenProxy, (req, res, next) => {
     funcionariosServiceProxy(req, res, next);
 });
-//R14- Realizar Voo
-app.patch('/voos/:codigoVoo/estado', validateTokenProxy, (req, res, next) => {
-    voosProxy(req, res, next);
+
+// atualizar estado reserva
+app.patch('/reservas/:codigoReserva/estado', validateTokenProxy, (req, res, next) => {
+    reservasServiceProxy(req, res, next);
 });
+
+// cancelar reserva
+app.delete('/reservas/:codigoReserva', validateTokenProxy, (req, res, next) => {
+    reservasServiceProxy(req, res, next);
+});
+
 
 //R--- Busca aeroporto para cadastrar Voo
 app.get('/aeroportos', validateTokenProxy, (req, res, next) => {
@@ -373,31 +380,26 @@ app.post('/clientes/comprar-milhas', validateTokenProxy, async (req, res) => {
 // Criar reserva
 app.post('/reservas', validateTokenProxy, async (req, res) => {
     try {
-        const urlReservaService = process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'
+        const urlReservaService = process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084';
         const reservaResponse = await axios.post(`${urlReservaService}/reservas`, req.body);
-
 
         const reservaData = reservaResponse.data;
         const vooCodigo = reservaData.codigo_voo;
-        
-        const urlVoosService = process.env.VOOS_SERVICE_URL || 'http://localhost:8081'
-        const vooResponse = await axios.get(`${urlVoosService}/voos/${vooCodigo}`)
-     
+
+        const urlVoosService = process.env.VOOS_SERVICE_URL || 'http://localhost:8081';
+        const vooResponse = await axios.get(`${urlVoosService}/voos/${vooCodigo}`);
         const voo = vooResponse.data;
+
+        if (!voo) {
+            return res.status(502).json({ message: 'Erro ao buscar dados do voo' });
+        }
 
         const responseComposta = {
             ...reservaData,
             voo
         };
 
-
-        if (!voo) {
-            return res.status(502).json({ message: 'Erro ao buscar dados do voo' });
-         }
-
-
-
-         // ---------- para descontar do saldo do cliente as milhas usadas 
+        // ---------- para descontar do saldo do cliente as milhas usadas
         const urlClientesService = process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082';
 
         const milhasDTO = {
@@ -405,48 +407,137 @@ app.post('/reservas', validateTokenProxy, async (req, res) => {
             valorPago: reservaData.valor,
             aeroporto_origem: voo.aeroporto_origem.codigo,
             aeroporto_destino: voo.aeroporto_destino.codigo,
-            codigo_reserva:  reservaData.codigo
+            codigo_reserva: reservaData.codigo
         };
 
-        let cliente = null;
         try {
             const milhasResponse = await axios.put(
                 `${urlClientesService}/clientes/${reservaData.codigo_cliente}/milhas/descontar`,
                 milhasDTO
             );
-            cliente = milhasResponse.data;
-
+            const cliente = milhasResponse.data;
         } catch (milhasErr) {
             const status = milhasErr?.response?.status;
             const erroAPI = milhasErr?.response?.data?.erro;
 
-            if (status === 400 && erroAPI === "Saldo de milhas insuficiente para esta transação.") {
+            console.log("error api:")
+            console.log(erroAPI)
+
+            if (status === 400 && erroAPI === "Saldo de milhas insuficiente") {
                 return res.status(400).json({
                     erro: 'Saldo de milhas insuficiente',
-                    detalhe: erroAPI
                 });
             }
 
             console.error('Erro ao descontar milhas:', erroAPI || milhasErr.message);
-
-            return res.status(500).json({
-                message: 'Erro ao processar desconto de milhas',
-                erro: erroAPI || milhasErr.message
-            });
+            return res.status(500).json({ message: 'Erro ao descontar milhas', error: erroAPI || milhasErr.message });
         }
-        // -------------
-  
-         
+
         return res.status(201).json(responseComposta);
 
     } catch (err) {
         if (err.response && err.response.status === 401) {
             return res.status(401).json({ message: 'Login inválido' });
         }
-        console.error('Erro no login via gateway:', err.message);
-        return res.status(500).json({ message: 'Erro no login', error: err.message });
+
+        console.error('Erro ao criar reserva via gateway:', err.message);
+        return res.status(500).json({ message: 'Erro ao criar reserva', error: err.message });
     }
 });
+
+
+
+
+// Listar reservas de um cliente com dados do voo
+app.get('/clientes/:codigoCliente/reservas', validateTokenProxy, async (req, res) => {
+    try {
+        const codigoCliente = req.params.codigoCliente;
+
+        if (!codigoCliente) {
+            return res.status(400).json({ message: 'Código do cliente não fornecido!' });
+        }
+
+        const urlReservasService = process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084';
+        const urlVoosService = process.env.VOOS_SERVICE_URL || 'http://localhost:8081';
+
+        // busca reservas do cliente
+        const reservasResponse = await axios.get(`${urlReservasService}/reservas/cliente/${codigoCliente}`, {
+            headers: { 'x-access-token': req.headers['x-access-token'] }
+        });
+
+        const reservas = reservasResponse.data;
+
+        // busca dados do voo para cada reserva
+        const reservasComVoos = await Promise.all(reservas.map(async (reserva) => {
+            try {
+                const vooResponse = await axios.get(`${urlVoosService}/voos/${reserva.codigo_voo}`);
+                const voo = vooResponse.data;
+
+                return {
+                    ...reserva,
+                    voo
+                };
+            } catch (vooErr) {
+                console.warn(`Erro ao buscar dados do voo ${reserva.codigo_voo}:`, vooErr.message);
+                return {
+                    ...reserva,
+                    voo: null 
+                };
+            }
+        }));
+
+        return res.status(204).json(reservasComVoos);
+
+    } catch (err) {
+        console.error('Erro ao compor reservas com voos:', err.message);
+        return res.status(500).json({ message: 'Erro ao compor reservas com voos', error: err.message });
+    }
+});
+
+
+// atualizaa estado do voo e das reservas 
+app.patch('/voos/:codigoVoo/estado', validateTokenProxy, async (req, res) => {
+    try {
+        const codigoVoo = req.params.codigoVoo;
+        const { estado } = req.body;
+
+        if (!estado) {
+            return res.status(400).json({ mensagem: 'Campo "estado" é obrigatório.' });
+        }
+
+        const estadoUpper = estado.toUpperCase();
+        
+        // atualiza o estado do voo no serviço de voos
+        const urlVoosService = process.env.VOOS_SERVICE_URL || 'http://localhost:8081';
+        const vooResponse = await axios.patch(`${urlVoosService}/voos/${codigoVoo}/estado`, { estado: estadoUpper });
+
+        // define o novo estado para as reservas 
+        let novoEstadoReserva;
+        if (estadoUpper === 'REALIZADO') {
+            novoEstadoReserva = 'REALIZADA';
+        } else if (estadoUpper === 'CANCELADO') {
+            novoEstadoReserva = 'CANCELADA VOO';
+        }
+
+        // atualiza o estado das reservas que possuem esse código de voo
+        const urlReservasService = process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084';
+        const reservaEstadoPayload = { estado: novoEstadoReserva };
+        const reservaResponse = await axios.patch(`${urlReservasService}/reservas/estado/atualizar/${codigoVoo}`, reservaEstadoPayload);
+
+        return res.status(200).json(
+            vooResponse.data
+        );
+
+    } catch (err) {
+        console.error('Erro ao atualizar voo e reservas:', err.message);
+        return res.status(500).json({
+            mensagem: 'Erro ao atualizar voo e/ou reservas.',
+            erro: err.response?.data || err.message
+        });
+    }
+});
+
+
 
 
 // RF06 - Extrato milhas 
