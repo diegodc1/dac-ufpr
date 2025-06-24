@@ -1,4 +1,6 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { catchError, Observable, throwError, map } from 'rxjs';
 
 // Definição da estrutura da reserva
 interface Reserva {
@@ -18,16 +20,55 @@ interface Transacao {
   descricao: string;
   tipo: 'ENTRADA' | 'SAÍDA';
 }
+export interface BackendAirport {
+  codigo: string;
+  nome: string;
+  cidade: string;
+  uf: string;
+}
+export interface BackendFlightDetails {
+  codigo: string; 
+  data: string; 
+  valor_passagem: number;
+  quantidade_poltronas_total: number;
+  quantidade_poltronas_ocupadas: number;
+  estado: string; 
+  aeroporto_origem: BackendAirport;
+  aeroporto_destino: BackendAirport;
+}
+
+export interface BackendReservationStatus {
+  codigoEstado: number;
+  descricaoEstado: string; 
+}
+export interface BackendReservationWithFlight {
+  codigo: string; 
+  codigoCliente: string;
+  valor: number; 
+  milhasUtilizadas: number;
+  quantidadePoltronas: number;
+  codigoVoo: string; 
+  data: string; 
+  estado: BackendReservationStatus; 
+  voo: BackendFlightDetails; 
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReservaService {
+
+  private API_GATEWAY_URL = 'http://localhost:3000';
+  private API_URL_RESERVAS = `${this.API_GATEWAY_URL}/reservas`;
+  private API_URL_VOO = `${this.API_GATEWAY_URL}/voos`;
+private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
+
+
   private saldoMilhas: number = 10000;  // Saldo inicial de milhas
   private reservas: Reserva[] = [];     // Lista de reservas
   private transacoes: Transacao[] = []; // Lista de transações de milhas
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   // Retorna o saldo de milhas atual
   getSaldoMilhas(): number {
@@ -133,5 +174,71 @@ export class ReservaService {
   // Ver o extrato de transações (compra de milhas, cancelamento, etc.)
   getExtratoTransacoes(): Transacao[] {
     return this.transacoes;
+  }
+
+    private getAuthHeaders(): HttpHeaders | null {
+        const authToken = localStorage.getItem('token');
+        if (!authToken) {
+          console.error('ClienteService: Token de autenticação não encontrado.');
+          return null;
+        }
+  
+        return new HttpHeaders({
+          'Content-Type': 'application/json',
+          'x-access-token': authToken}
+        );
+   }
+     private handleError(error: any): Observable<never> {
+        console.error('Um erro ocorreu no ClienteService:', error);
+        let errorMessage = 'Ocorreu um erro desconhecido.';
+        if (error.error instanceof ErrorEvent) {
+           errorMessage = `Erro: ${error.error.message}`;
+        } else {
+           errorMessage = `Código do erro: ${error.status}\nMensagem: ${error.message || error.error?.mensagem || error.error?.message}`;
+        }
+        return throwError(() => new Error(errorMessage));
+     }
+     
+  getReservationsFromBackend(codigoCliente: string): Observable<BackendReservationWithFlight[]> {
+    const headers = this.getAuthHeaders();
+
+    if (!headers) {
+      return throwError(() => new Error('Não foi possível obter cabeçalhos de autenticação.'));
+    }
+    const url = `${this.API_URL_CLIENTES}/${codigoCliente}/reservas`;
+    console.log(`ReservaService (Backend): Buscando reservas do cliente ${codigoCliente} na URL: ${url}`);
+
+    return this.http.get<BackendReservationWithFlight[]>(url, { headers, observe: 'response' }).pipe(
+      map(response => {
+        if (response.status === 204 || response.body === null || response.body === undefined) {
+          console.warn('ReservaService: Resposta 204 No Content ou corpo vazio recebido. Retornando array vazio.');
+          return [];
+        }
+        return Array.isArray(response.body) ? response.body : [];
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+
+   updateReservationStatusOnBackend(codigoReserva: string, novoEstado: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    if (!headers) {
+      return throwError(() => new Error('Não foi possível obter cabeçalhos de autenticação.'));
+    }
+    const url = `${this.API_URL_RESERVAS}/${codigoReserva}/estado`;
+    const body = { estado: novoEstado };
+    console.log(`ReservaService (Backend): Atualizando estado da reserva ${codigoReserva} para ${novoEstado}`);
+    return this.http.patch<any>(url, body, { headers, observe: 'response' }).pipe(
+      map(response => {
+       
+        if (response.status === 204 || response.body === null || response.body === undefined) {
+          console.warn('ReservaService: Resposta PATCH 204 No Content ou corpo vazio. Retornando objeto vazio.');
+          return {};
+        }
+        return response.body;
+      }),
+      catchError(this.handleError)
+    );
   }
 }
