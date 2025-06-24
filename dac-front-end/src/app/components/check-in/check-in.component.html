@@ -1,14 +1,23 @@
 <app-header></app-header>
 <div class="container">
     <div class="ContTitle">
-        <h2>Seus próximos voos  - Check-in</h2>
+        <h2>Seu próximos voos   - Check-in</h2>
     </div>
-    <div class="containerBox">
-        <div class="cardAll">
+
+    <div *ngIf="isLoading" class="loading-message">
+    <p>Carregando voos disponíveis para check-in...</p>
+    </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+    <div class="containerBox" *ngIf="!isLoading && !errorMessage">
+        <div class="cardAll" *ngFor="let reservation of flightsForCheckin">
             <div class="cardTtiles">
                 <div class="imgTitle">
                     <img class="img" src="../../../assets/images/imgAir.png"/>
-                    <h4 class="h4">ABC AirPlane</h4>
+                    <h4 class="h4">{{reservation.voo.aeroporto_origem.nome.split('')[0]}} Air</h4>
                 </div>
                 <div class="cardd">
                     <p class="h3">Classe da Viagem: </p>
@@ -18,11 +27,11 @@
 
             <div class="cardEnd">
             <div class="card">
-                <div class="date">Sábado, 29 Jan 2025</div>
+                <div class="date">{{reservation.voo.data | date : 'fullDate'}}</div>
                 <div class="flight-info">
                 <div class="location">
-                    <div class="time">14:50</div>
-                    <div class="goIn">Curitba, Paraná</div>
+                    <div class="time">{{reservation.voo.data| date : 'HH:mm'}}</div>
+                    <div class="goIn">{{reservation.voo.aeroporto_origem.cidade}}, {{reservation.voo.aeroporto_origem.uf}}</div>
                 </div>
                <div style="align-items: center; text-align: center;margin-bottom: 8px;">
                     <h3 class="timeTxt">2hr 25min</h3>
@@ -33,86 +42,15 @@
                     </div>
                  </div> 
                 <div class="location">
-                    <div class="time">14:50</div>
-                    <div class="goIn">São Paulo, São Paulo</div>
+                    <div class="time"> {{ reservation.voo.data | date:'HH:mm' }}</div>
+                    <div class="goIn">  {{ reservation.voo.aeroporto_destino?.cidade }}, {{ reservation.voo.aeroporto_destino?.uf }}</div>
                 </div>
                 </div>
             </div>
-            <button class="btn">Realizar Check-in</button>
+            <button class="btn" (click)="realizarCheckin(reservation)">Realizar Check-in</button>
         </div>
-    </div>
-    <div class="cardAll">
-        <div class="cardTtiles">
-            <div class="imgTitle">
-                <img class="img" src="../../../assets/images/imgAir.png"/>
-                <h4 class="h4">ABC AirPlane</h4>
-            </div>
-            <div class="cardd">
-                <p class="h3">Classe da Viagem: </p>
-                <p class="h3Strong">Económica</p>
-            </div>
-        </div>
-
-        <div class="cardEnd">
-        <div class="card">
-            <div class="date">Sábado, 29 Jan 2025</div>
-            <div class="flight-info">
-            <div class="location">
-                <div class="time">14:50</div>
-                <div class="goIn">Curitba, Paraná</div>
-            </div>
-           <div style="align-items: center; text-align: center;margin-bottom: 8px;">
-                <h3 class="timeTxt">2hr 25min</h3>
-                <div class="duration">
-                <div class="line"></div>    
-                    <img class="planeImge" src="../../../assets/images/Plane.png"/>
-                    <div class="line"></div>    
-                </div>
-             </div> 
-            <div class="location">
-                <div class="time">14:50</div>
-                <div class="goIn">São Paulo, São Paulo</div>
-            </div>
-            </div>
-        </div>
-        <button class="btn">Realizar Check-in</button>
-    </div>
-</div>
-<div class="cardAll">
-            <div class="cardTtiles">
-                <div class="imgTitle">
-                    <img class="img" src="../../../assets/images/imgAir.png"/>
-                    <h4 class="h4">ABC AirPlane</h4>
-                </div>
-                <div class="cardd">
-                    <p class="h3">Classe da Viagem: </p>
-                    <p class="h3Strong">Económica</p>
-                </div>
-            </div>
-
-            <div class="cardEnd">
-            <div class="card">
-                <div class="date">Sábado, 29 Jan 2025</div>
-                <div class="flight-info">
-                <div class="location">
-                    <div class="time">14:50</div>
-                    <div class="goIn">Curitba, Paraná</div>
-                </div>
-               <div style="align-items: center; text-align: center;margin-bottom: 8px;">
-                    <h3 class="timeTxt">2hr 25min</h3>
-                    <div class="duration">
-                    <div class="line"></div>    
-                        <img class="planeImge" src="../../../assets/images/Plane.png"/>
-                        <div class="line"></div>    
-                    </div>
-                 </div> 
-                <div class="location">
-                    <div class="time">14:50</div>
-                    <div class="goIn">São Paulo, São Paulo</div>
-                </div>
-                </div>
-            </div>
-            <button class="btn">Realizar Check-in</button>
-        </div>
+         <div *ngIf="flightsForCheckin.length === 0" class="no-flights-message">
+           <p>Nenhum voo disponível para check-in nas próximas 48 horas.</p>
+         </div>
     </div>
 </div>

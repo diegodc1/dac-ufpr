@@ -26,7 +26,6 @@ export class HeaderComponent {
   }
 
   get usuarioLogado(): Usuario | null {
-    console.log(this.loginService.usuarioLogado?.name)
     return this.loginService.usuarioLogado;
   }
 
