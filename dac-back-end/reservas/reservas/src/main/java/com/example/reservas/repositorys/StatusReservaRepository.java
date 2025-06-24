@@ -11,4 +11,7 @@ public interface StatusReservaRepository extends JpaRepository<EstadoReserva, UU
 
     
     EstadoReserva findByCodigoEstado(Integer codigoEstado);
+
+     EstadoReserva findByDescricaoEstado(String descricaoEstado);
+    
 }

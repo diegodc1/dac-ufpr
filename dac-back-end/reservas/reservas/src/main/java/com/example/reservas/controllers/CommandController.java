@@ -1,6 +1,7 @@
 package com.example.reservas.controllers;
 
 import com.example.reservas.dto.EstadoReservaDTO;
+import com.example.reservas.dto.ReservaDTO;
 import com.example.reservas.exceptions.ReservaNaoEncontradoException;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.example.reservas.services.CommandService;
@@ -86,6 +87,30 @@ public ResponseEntity<?> criarReserva(@RequestBody CriarReserva command) {
         
     }
 
-    
+@GetMapping("/{codigoReserva}")
+public ResponseEntity<?> obterReserva(@PathVariable String codigoReserva) {
+    try {
+        // Lógica para buscar a reserva usando o código
+        var reserva = commandService.obterReserva(codigoReserva);
+
+        // Se a reserva for encontrada, converta para ReservaDTO
+        var reservaDTO = ReservaDTO.fromEntity(reserva);
+
+        // Retorna o DTO da reserva
+        return ResponseEntity.ok(reservaDTO);
+        
+    } catch (ReservaNaoEncontradoException e) {
+        // Se a reserva não for encontrada, retorna 404 Not Found
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Reserva não encontrada com o código: " + codigoReserva);
+    } catch (Exception e) {
+        // Em caso de erro interno, retorna 500
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro ao obter reserva: " + e.getMessage());
+    }
 }
 
+
+
+    
+}

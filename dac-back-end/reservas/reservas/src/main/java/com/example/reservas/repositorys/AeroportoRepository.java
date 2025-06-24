@@ -1,4 +1,3 @@
-
 package com.example.reservas.repositorys;
 
 import com.example.reservas.model.Aeroporto;
@@ -7,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AeroportoRepository extends JpaRepository<Aeroporto, String> {
+
+    // Método para buscar o Aeroporto pelo código
+    Aeroporto findByCodigo(String codigo);
 }

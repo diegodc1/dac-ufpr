@@ -1,6 +1,8 @@
 package com.example.reservas.services;
 
 import com.example.reservas.dto.CheckinDTO;
+import com.example.reservas.exceptions.ReservaNaoEncontradoException;
+import com.example.reservas.model.Reserva;
 import com.example.reservas.sagas.commands.CriarReserva;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -35,4 +37,7 @@ public interface CommandService {
      * @throws JsonProcessingException Caso ocorra falha ao serializar a mensagem.
      */
     CheckinDTO atualizarEstado(String identifier, String estado) throws JsonProcessingException;
+
+      Reserva obterReserva(String codigoReserva)throws ReservaNaoEncontradoException;
+
 }

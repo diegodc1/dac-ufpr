@@ -140,8 +140,8 @@ public class CommandServiceImplement implements CommandService {
             case "CONFIRMADA": return 1;
             case "CHECK-IN":   return 2;
             case "EMBARCADA":  return 3;
-            case "CANCELADO":  return 4;
-            case "REALIZADO":  return 5;
+            case "CANCELADA":  return 4;
+            case "REALIZADA":  return 5;
             default:
                 throw new IllegalArgumentException("Estado inválido: " + estado);
         }
@@ -159,5 +159,10 @@ public class CommandServiceImplement implements CommandService {
         int numeros = 100 + random.nextInt(900); // Gera entre 100 e 999
 
         return letras.toString() + numeros;
+    }
+
+      public Reserva obterReserva(String codigoReserva) throws ReservaNaoEncontradoException {
+        return reservaRepository.getByCodigo(codigoReserva)
+                .orElseThrow(() -> new ReservaNaoEncontradoException("Reserva não encontrada com o código: " + codigoReserva));
     }
 }

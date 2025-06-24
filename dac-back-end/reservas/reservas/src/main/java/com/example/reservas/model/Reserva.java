@@ -56,4 +56,26 @@ public class Reserva implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "aeroporto_destino", referencedColumnName = "codigo", nullable = false)
     private Aeroporto aeroportoDestino;
+
+    // Método que será executado antes de a reserva ser persistida no banco de dados
+    @PrePersist
+    public void prePersist() {
+        // Se a data não for informada, define como a data atual
+        if (this.data == null) {
+            this.data = ZonedDateTime.now();
+        }
+
+        // Se o estado não for informado, define o estado como "CONFIRMADA"
+        if (this.estado == null) {
+            EstadoReserva estadoDefault = new EstadoReserva();
+            estadoDefault.setDescricaoEstado("CONFIRMADA");  // Aqui, definimos o estado para "CONFIRMADA"
+            estadoDefault.setAcronimoEstado("CONF");  // Código do estado, por exemplo: "CONF"
+            this.estado = estadoDefault;
+        }
+
+        // Se o idTransacao não for informado, gera um novo UUID
+        if (this.idTransacao == null) {
+            this.idTransacao = UUID.randomUUID();
+        }
+    }
 }

@@ -11,10 +11,9 @@ import java.util.UUID;
 public class EstadoReservaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)  // Usando a geração automática de UUID
-    @Column(name = "id_estado") // Garantindo que o campo 'id_estado' seja mapeado corretamente no banco
-    private UUID idEstado;  // Alterado de Long para UUID
-
+    @GeneratedValue(strategy = GenerationType.AUTO)  
+    @Column(name = "id_estado") 
+    private UUID idEstado;  
     private Integer codigoEstado;
     private String acronimoEstado;
     private String descricao;
