@@ -5,7 +5,7 @@
   <div class="reserva-box">
     <div class="rota-info">
       <div class="rota-info-cidade">
-        {{ reserva.aeroportoOrigem }} ({{ reserva.origemIATA }}) → {{ reserva.aeroportoDestino }} ({{ reserva.destinoIATA }})
+        {{ reserva.voo.aeroporto_origem.cidade }} ({{ reserva.voo.aeroporto_origem.codigo }}) → {{ reserva.voo.aeroporto_destino.cidade }} ({{ reserva.voo.aeroporto_destino.codigo  }})
       </div>
       <div class="rota-info-detalhes">
         <span>{{ reserva.dataHora | date: 'EEEE, dd MMMM yyyy' }}</span>
@@ -35,17 +35,17 @@
         <p class="info-item"><strong>Código da Reserva:</strong> {{ reserva.codigo }}</p>
       </div>
       <div style="flex: 1; text-align: right;">
-        <p class="info-item"><strong>Classe:</strong> {{ reserva.classe }}</p>
+        <p class="info-item"><strong>Classe:</strong> Executiva</p>
       </div>
     </div>
 
     <div class="reserva-conteudo">
       <div class="local-info">
-        <p class="iata">{{ reserva.origemIATA }}</p>
-        <p class="hora">{{ reserva.dataHora | date: 'HH:mm' }}</p>
-        <p class="data">{{ reserva.dataHora | date: 'EEEE, dd MMMM yyyy' }}</p>
-        <p class="aeroporto">{{ reserva.aeroportoOrigem }}</p>
-        <p class="terminal">Terminal - {{ reserva.terminalOrigem }}</p>
+        <p class="iata">{{  reserva.voo.aeroporto_origem.codigo}}</p>
+        <p class="hora">{{ reserva.data | date: 'HH:mm' }}</p>
+        <p class="data">{{ reserva.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
+        <p class="aeroporto">{{ reserva.voo.aeroporto_origem.cidade}}</p>
+        <p class="terminal">Terminal - 5</p>
       </div>
 
       <div class="duracao-container">
@@ -58,16 +58,16 @@
       </div>
 
       <div class="local-info">
-        <p class="iata">{{ reserva.destinoIATA }}</p>
-        <p class="hora">{{ reserva.horaChegada | date: 'HH:mm' }}</p>
-        <p class="data">{{ reserva.dataHora | date: 'EEEE, dd MMMM yyyy' }}</p>
-        <p class="aeroporto">{{ reserva.aeroportoDestino }}</p>
-        <p class="terminal">Terminal - {{ reserva.terminalDestino }}</p>
+        <p class="iata">{{  reserva.voo.aeroporto_destino.codigo}}</p>
+        <p class="hora">{{  reserva.data | date: 'HH:mm' }}</p>
+        <p class="data">{{ reserva.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
+        <p class="aeroporto">{{  reserva.voo.aeroporto_destino.cidade }}</p>
+        <p class="terminal">Terminal - 9</p>
       </div>
 
       <div class="valor-container">
-        <p class="valor">R$ {{ reserva.valorGasto }}</p>
-        <p class="milhas">Milhas Gastas: {{ reserva.milhasGastas }}</p>
+        <p class="valor">{{ reserva.valor | currency:'BRL':'symbol':'1.2-2' }}</p>
+        <p class="milhas">Milhas Gastas: {{ reserva.milhas_utilizadas }}</p>
       </div>
     </div>
   </div>

@@ -13,7 +13,7 @@
         <form>
           <div class="input-container">
             <span class="material-symbols-outlined icon-plane">flight_takeoff</span>
-           <select id="origemHome" [(ngModel)]="origem" name="origem" required> 
+           <select id="origemHome" [(ngModel)]="origem" name="origem" required>
               <option value="">De</option>
               <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
                 {{ aero.nome }} ({{ aero.codigo }})
@@ -25,7 +25,7 @@
 
           <div class="input-container">
             <span class="material-symbols-outlined icon-plane">flight_land</span>
-              <select id="destinoHome" [(ngModel)]="destino" name="destino" required> 
+              <select id="destinoHome" [(ngModel)]="destino" name="destino" required>
               <option value="">Para</option>
               <option *ngFor="let aero of aeroportos" [value]="aero.codigo">
                 {{ aero.nome }} ({{ aero.codigo }})
@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="container"  style="padding-bottom: 3rem">
     <h2 class="main-title">Saldo de Milhas: {{ saldoMilhas }}</h2>
 
     <h2 class="main-title">Suas Passagens</h2>
@@ -64,16 +64,13 @@
       <div class="reserva-conteudo">
         <div class="reserva-detalhes">
           <p class="reserva-dia">
-            {{ reserva.dataHora | date:'EEEE, dd MMMM yyyy' }}
-          </p>
-          <p class="reserva-hora">
-            <strong>{{ reserva.dataHora | date:'HH:mm' }}</strong>
-          </p>
+          <p class="data">{{ reserva.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
+
 
           <div class="voo-info">
             <div class="aeroporto">
-              <span class="hora">{{ reserva.dataHora | date:'HH:mm' }}</span>
-              <span>{{ reserva.aeroportoOrigem }}</span>
+              <span class="hora">{{ reserva.data | date:'HH:mm' }}</span>
+              <span>{{ reserva.voo.aeroporto_origem.cidade }} ({{ reserva.voo.aeroporto_origem.codigo }})</span>
             </div>
 
             <div class="voo-linha">
@@ -83,9 +80,9 @@
 
             <div class="aeroporto destino">
               <span class="hora">
-                {{ calcularHoraChegada(reserva.dataHora, 1, 30) }}
+                {{ calcularHoraChegada(reserva.data, 1, 30) }}
               </span>
-              <span>{{ reserva.aeroportoDestino }}</span>
+              <span>{{ reserva.voo.aeroporto_destino.cidade }} ({{ reserva.voo.aeroporto_destino.codigo }})</span>
             </div>
           </div>
         </div>
@@ -98,11 +95,11 @@
             VER RESERVA
           </button>
           <button
-            *ngIf="reserva.estado === 'RESERVADO'"
+            *ngIf="reserva.estado === 'RESERVADO' || reserva.estado === 'CRIADA'"
             (click)="cancelarReserva(reserva)"
             class="btn-cancelar"
           >
-            CANCELAR
+            Cancelar
           </button>
         </div>
       </div>

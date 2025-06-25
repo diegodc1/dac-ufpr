@@ -17,12 +17,14 @@ import { th } from 'date-fns/locale';
 })
 export class HeaderComponent {
   saldoMilhas: number = 0;
+  nameUsuario: string = '';
 
   constructor(private router: Router, private clienteService: ClienteService,private loginService: LoginService){}
 
   ngOnInit(): void {
     this.updateSaldoMilhas();
     this.usuarioLogado;
+    this.nameUsuario = localStorage.getItem('user_name') || '';
   }
 
   get usuarioLogado(): Usuario | null {

@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ClienteService } from '../../services/cliente.service';
-
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
 import { HeaderComponent } from '../header/header.component';
 import { CommonModule } from '@angular/common';
+
+
+registerLocaleData(localePt);
+
 @Component({
   standalone:true,
   imports: [HeaderComponent, CommonModule, ],
@@ -30,6 +35,7 @@ export class VerReservaComponent implements OnInit {
     this.clienteService.getDetalhesReserva(codigoReserva).subscribe({
       next: (reserva) => {
         this.reserva = reserva;
+        console.log(this.reserva)
       },
       error: (err) => console.error('Erro ao carregar detalhes da reserva:', err),
     });

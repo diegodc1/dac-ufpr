@@ -58,7 +58,12 @@ export class ClienteService {
   }
 
   cancelarReserva(codigoReserva: string): Observable<any> {
-    return this.http.delete(`${this.API_GATEWAY_URL}/reservas/${codigoReserva}`);
+    const headers = this.getAuthHeaders();
+    if (!headers) {
+      return throwError(() => new Error('Autenticação necessária para obter detalhes da reserva.'));
+    }
+
+    return this.http.delete(`${this.API_GATEWAY_URL}/reservas/${codigoReserva}`, { headers });
   }
 
   // R03 - Tela Inicial do Cliente
@@ -71,8 +76,13 @@ export class ClienteService {
 
   // R04 - Tela de Detalhes da Reserva
   getDetalhesReserva(codigoReserva: string): Observable<any> {
-    return this.http.get<any>(`${this.API_GATEWAY_URL}/reservas/${codigoReserva}`);
-}
+    const headers = this.getAuthHeaders();
+    if (!headers) {
+      return throwError(() => new Error('Autenticação necessária para obter detalhes da reserva.'));
+    }
+
+    return this.http.get<any>(`${this.API_GATEWAY_URL}/reservas/${codigoReserva}`, { headers });
+  }
 
  // R05 - comprar milhas
   comprarMilhas(clienteId: string, quantidade: number, valorPago: number): Observable<any> {

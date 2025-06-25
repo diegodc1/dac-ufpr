@@ -276,28 +276,36 @@ app.get('/clientes/home/:clienteId', validateTokenProxy, async (req, res) => {
         }
 
 
-        // Obtem saldo de milhas
+
         const saldoMilhasResponse = await axios.get(`${process.env.CLIENTE_SERVICE_URL || 'http://localhost:8082'}/clientes/saldo-milhas/${clienteId}`, {
             headers: { 'x-access-token': req.headers['x-access-token'] }
         });
 
-        // Lista reservas
-        // const reservasResponse = await axios.get(`${process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'}/reservas?clienteId=${clienteId}`, {
-        //     headers: { 'x-access-token': req.headers['x-access-token'] }
-        // });
 
-        // Lista voos feitos e cancelados
+        const reservasResponse = await axios.get(`${process.env.RESERVAS_SERVICE_URL || 'http://localhost:8084'}/reservas/cliente/${clienteId}`, {
+            headers: { 'x-access-token': req.headers['x-access-token'] }
+        });
+        const reservas = reservasResponse.data;
+
+
         const voosResponse = await axios.get(`${process.env.VOOS_SERVICE_URL || 'http://localhost:8081'}/voos?clienteId=${clienteId}`, {
             headers: { 'x-access-token': req.headers['x-access-token'] }
         });
+        const voos = voosResponse.data;
 
+        // vincula cada voo a sua reserva
+        const reservasComVoos = reservas.map(reserva => {
+            const vooRelacionado = voos.find(voo => String(voo.codigo) === String(reserva.codigo_voo));
+            return {
+                ...reserva,
+                voo: vooRelacionado || null
+            };
+        });
 
         const responseComposta = {
             saldoMilhas: saldoMilhasResponse.data.saldoMilhas,
-            // reservas: reservasResponse.data,
-            voos: voosResponse.data
+            reservas: reservasComVoos
         };
-
         return res.status(200).json(responseComposta);
     } catch (err) {
         console.error('Erro ao obter dados da tela inicial do cliente:', err.message);

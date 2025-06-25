@@ -8,6 +8,11 @@ import { ModalCancelarReservaComponent } from '../modal-cancelar-reserva/modal-c
 import { HeaderComponent } from '../header/header.component';
 import { FlightService } from '../../services/flight.service';
 import { HttpClientModule } from '@angular/common/http';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+import { ptBR } from 'date-fns/locale';
+
+registerLocaleData(localePt);
 
 @Component({
   selector: 'app-home',
@@ -50,16 +55,32 @@ export class HomeComponent implements OnInit {
     }
 
 
-    // pegar o id do cliente
     this.clienteService.getTelaInicialCliente(clienteId).subscribe({
       next: (dados) => {
         this.saldoMilhas = dados.saldoMilhas;
-        this.reservas = dados.reservas;
-        this.reservasFiltradas = dados.reservas;
         this.voos = dados.voos;
+
+        this.reservas = dados.reservas.map((reserva: any) => {
+          const data = new Date(reserva.data);
+          return {
+            ...reserva,
+            dataFormatada: data.toLocaleString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false
+            })
+          };
+        });
+        this.reservasFiltradas = this.reservas;
       },
       error: (err) => console.error('Erro ao carregar tela inicial:', err),
     });
+
+
   }
 
   calcularHoraChegada(dataHora: string, horas: number, minutos: number): string {
@@ -69,7 +90,7 @@ export class HomeComponent implements OnInit {
   }
 
   cancelarReserva(reserva: any) {
-    if (reserva.estado === 'RESERVADO') {
+    if (reserva.estado === 'RESERVADO' || reserva.estado === 'CRIADA') {
       this.reservaSelecionada = reserva;
       this.mostrarModal = true;
     }
@@ -146,7 +167,7 @@ private getAuthToken(): string | null {
     const authToken = localStorage.getItem('token');
     return authToken;
   }
-  
+
  loadAeroportos(): void {
     const authToken = this.getAuthToken();
     console.log('HomeComponent: Tentando carregar aeroportos...')
