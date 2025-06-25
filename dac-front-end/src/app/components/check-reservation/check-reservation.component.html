@@ -22,28 +22,28 @@
                 </div>
                 <div class="cardd">
                     <p class="h3">Status do Voo: </p>
-                    <p class="h3Strong">{{reserva.estado?.descricaoEstado || reserva.estado}}</p>
+                    <p class="h3Strong">{{reserva.estado || reserva.estado}}</p>
                 </div>
             </div>
 
             <div class="cardEnd">
             <div class="card">
-                <div class="date">{{reserva.voo?.data | date:'fullDate'}}</div>
+                <div class="date">{{reserva.voo.data | date:'fullDate'}}</div>
                 <div class="flight-info">
                 <div class="location">
-                    <div class="time">{{reserva.voo?.aeroporto_origem?.codigo}}</div>
-                    <div class="goIn">{{reserva.voo?.aeroporto_origem?.nome}}, {{reserva.voo?.aeroporto_origem?.cidade}}</div>
+                    <div class="time">{{reserva.voo.aeroporto_origem.codigo}}</div>
+                    <div class="goIn">{{reserva.voo.aeroporto_origem.nome}}, {{reserva.voo.aeroporto_origem.cidade}}</div>
                 </div>
                <div style="align-items: center; text-align: center;margin-bottom: 8px;">
                     <h3 class="timeTxt">---</h3>
                     <div class="duration">
-                    <div class="line"></div>    
+                    <div class="line"></div>
                         <img class="planeImge" src="../../../assets/images/Plane.png"/>
-                        <div class="line"></div>    
+                        <div class="line"></div>
                     </div>
-                 </div> 
+                 </div>
                 <div class="location">
-                    <div class="time">{{reserva.voo?.aeroporto_destino?.codigo}}</div>
+                    <div class="time">{{reserva.voo.aeroporto_destino.codigo}}</div>
                     <div class="goIn">{{reserva.voo.aeroporto_destino.nome}}, {{reserva.voo.aeroporto_destino.cidade}}</div>
                 </div>
                 </div>
