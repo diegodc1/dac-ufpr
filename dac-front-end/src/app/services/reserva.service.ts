@@ -27,36 +27,45 @@ export interface BackendAirport {
   uf: string;
 }
 export interface BackendFlightDetails {
-  codigo: string; 
-  data: string; 
+  codigo: string;
+  data: string;
   valor_passagem: number;
   quantidade_poltronas_total: number;
   quantidade_poltronas_ocupadas: number;
-  estado: string; 
+  estado: string;
   aeroporto_origem: BackendAirport;
   aeroporto_destino: BackendAirport;
 }
 
 export interface BackendReservationStatus {
   codigoEstado: number;
-  descricaoEstado: string; 
+  descricaoEstado: string;
 }
 export interface BackendReservationWithFlight {
-  codigo: string; 
+  codigo: string;
   codigoCliente: string;
-  valor: number; 
+  valor: number;
   milhasUtilizadas: number;
   quantidadePoltronas: number;
-  codigoVoo: string; 
-  data: string; 
-  estado: BackendReservationStatus; 
-  voo: BackendFlightDetails; 
+  codigoVoo: string;
+  data: string;
+  estado: BackendReservationStatus;
+  voo: BackendFlightDetails;
+}
+
+export interface ReservaDTO {
+  codigo_cliente: number;
+  valor: number;
+  milhas_utilizadas: number;
+  quantidade_poltronas: number;
+  codigo_voo: string | number;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReservaService {
+
 
   private API_GATEWAY_URL = 'http://localhost:3000';
   private API_URL_RESERVAS = `${this.API_GATEWAY_URL}/reservas`;
@@ -69,6 +78,19 @@ private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
   private transacoes: Transacao[] = []; // Lista de transações de milhas
 
   constructor(private http: HttpClient) {}
+
+  private getAuthHeadersReq(): HttpHeaders | null {
+    const authToken = localStorage.getItem('token');
+    if (!authToken) {
+      console.error('ClienteService: Token de autenticação não encontrado.');
+      return null;
+    }
+
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-access-token': authToken}
+    );
+  }
 
   // Retorna o saldo de milhas atual
   getSaldoMilhas(): number {
@@ -86,22 +108,12 @@ private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
   }
 
   // Cria uma nova reserva
-  criarReserva(dataHora: string, aeroportoOrigem: string, aeroportoDestino: string, valorGasto: number, milhasGastadas: number): Reserva {
-    const codigo = this.gerarCodigoReserva();
-    const novaReserva: Reserva = {
-      codigo,
-      dataHora,
-      aeroportoOrigem,
-      aeroportoDestino,
-      valorGasto,
-      milhasGastadas,
-      estado: 'CRIADA',
-    };
-
-    this.reservas.push(novaReserva);
-    this.atualizarMilhas(-milhasGastadas); // Deduz as milhas do saldo
-
-    return novaReserva;
+  criarReserva(reserva: ReservaDTO): Observable<any> {
+    const headers = this.getAuthHeadersReq();
+    if (!headers) {
+      return throwError(() => new Error('Token de autenticação não encontrado.'));
+    }
+    return this.http.post(this.API_URL_RESERVAS, reserva, { headers });
   }
 
   // Gera um código de reserva único
@@ -182,7 +194,7 @@ private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
           console.error('ClienteService: Token de autenticação não encontrado.');
           return null;
         }
-  
+
         return new HttpHeaders({
           'Content-Type': 'application/json',
           'x-access-token': authToken}
@@ -198,7 +210,7 @@ private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
         }
         return throwError(() => new Error(errorMessage));
      }
-     
+
   getReservationsFromBackend(codigoCliente: string): Observable<BackendReservationWithFlight[]> {
     const headers = this.getAuthHeaders();
 
@@ -231,7 +243,7 @@ private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
     console.log(`ReservaService (Backend): Atualizando estado da reserva ${codigoReserva} para ${novoEstado}`);
     return this.http.patch<any>(url, body, { headers, observe: 'response' }).pipe(
       map(response => {
-       
+
         if (response.status === 204 || response.body === null || response.body === undefined) {
           console.warn('ReservaService: Resposta PATCH 204 No Content ou corpo vazio. Retornando objeto vazio.');
           return {};

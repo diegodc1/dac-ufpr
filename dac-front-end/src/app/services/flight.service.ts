@@ -45,11 +45,11 @@ createFlight(flightData : any, authToken: string): Observable<any>{
       params = params.set('origem', origem);
     }
     if (destino) {
-      params = params.set('destino', destino); 
+      params = params.set('destino', destino);
     }
 
-   console.log('FlightService.searchFlights: URL da requisição:', `${this.API_URL_VOOS}?${params.toString()}`);
-    return this.http.get<any>(this.API_URL_VOOS, { headers: headers, params: params }).pipe( 
+   console.log('FlightService.searchFlights: URL da requisição:', `${this.API_URL_VOOS}`);
+    return this.http.get<any>(this.API_URL_VOOS, { headers: headers, params: params }).pipe(
       catchError(this.handleError)
     );
   }

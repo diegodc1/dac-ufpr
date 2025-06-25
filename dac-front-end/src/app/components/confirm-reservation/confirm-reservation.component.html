@@ -91,7 +91,7 @@
               <span>Valor restante a ser pago em dinheiro:</span>
             <div class="footer-div-money-value">
               <span class="footer-money-value">{{ valorFinal | currency:'BRL' }}</span>
-              <button class="btn-payment">Realizar Pagamento</button>
+              <button class="btn-payment" (click)="makePayment()">Realizar Pagamento</button>
             </div>
           </div>
         </div>

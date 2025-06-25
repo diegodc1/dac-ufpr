@@ -5,6 +5,10 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HeaderComponent} from "../header/header.component";
 import { FlightService } from '../../services/flight.service';
 import { ClienteService } from '../../services/cliente.service';
+import { ReservaService } from '../../services/reserva.service';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -36,7 +40,7 @@ export class ConfirmReservationComponent {
   descontoEmReais: number = 0;
   voo: any;
 
-  constructor(private route: ActivatedRoute, protected flightService: FlightService, protected clienteService: ClienteService) {}
+  constructor(private route: ActivatedRoute, protected flightService: FlightService, protected clienteService: ClienteService, protected reservaService: ReservaService, private router: Router) {}
 
   ngOnInit() {
     this.idVoo = this.route.snapshot.params['idVoo'];
@@ -86,4 +90,43 @@ export class ConfirmReservationComponent {
     });
   }
 
+  makePayment(): void {
+    const userCodigoStr = localStorage.getItem('user_codigo');
+    const userCodigo = userCodigoStr ? Number(userCodigoStr) : null;
+
+    if (userCodigo === null) {
+      console.error('Código do usuário não disponível');
+      return;
+    }
+
+    const novaReserva = {
+      codigo_cliente: userCodigo,
+      valor: this.valorFinal,
+      milhas_utilizadas: this.milhasUsadas,
+      quantidade_poltronas: this.quantidadePassagens,
+      codigo_voo: this.idVoo
+    };
+
+    this.reservaService.criarReserva(novaReserva).subscribe({
+      next: (resposta) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Reserva criada!',
+          text: 'Sua reserva foi criada com sucesso.',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.router.navigate(['/home']);
+        });
+      },
+      error: (erro) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Não foi possível criar a reserva.',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+
+  }
 }

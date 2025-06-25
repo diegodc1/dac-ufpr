@@ -42,8 +42,8 @@
     <div class="reserva-conteudo">
       <div class="local-info">
         <p class="iata">{{  reserva.voo.aeroporto_origem.codigo}}</p>
-        <p class="hora">{{ reserva.data | date: 'HH:mm' }}</p>
-        <p class="data">{{ reserva.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
+        <p class="hora">{{ reserva.voo.data | date: 'HH:mm' }}</p>
+        <p class="data">{{ reserva.voo.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
         <p class="aeroporto">{{ reserva.voo.aeroporto_origem.cidade}}</p>
         <p class="terminal">Terminal - 5</p>
       </div>
@@ -59,8 +59,8 @@
 
       <div class="local-info">
         <p class="iata">{{  reserva.voo.aeroporto_destino.codigo}}</p>
-        <p class="hora">{{  reserva.data | date: 'HH:mm' }}</p>
-        <p class="data">{{ reserva.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
+        <p class="hora">{{  reserva.voo.data | date: 'HH:mm' }}</p>
+        <p class="data">{{ reserva.voo.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
         <p class="aeroporto">{{  reserva.voo.aeroporto_destino.cidade }}</p>
         <p class="terminal">Terminal - 9</p>
       </div>

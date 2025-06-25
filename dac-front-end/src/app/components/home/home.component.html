@@ -64,12 +64,16 @@
       <div class="reserva-conteudo">
         <div class="reserva-detalhes">
           <p class="reserva-dia">
-          <p class="data">{{ reserva.data | date:'dd MMMM yyyy':'':'pt-BR' }}</p>
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: start; margin-bottom: 2rem">
+            <span class="data">{{ reserva.voo.data | date:'dd MMMM yyyy':'':'pt-BR' }}</span>
+            <span style="font-weight: 600">{{reserva.codigo}}</span>
+          </div>
+
 
 
           <div class="voo-info">
             <div class="aeroporto">
-              <span class="hora">{{ reserva.data | date:'HH:mm' }}</span>
+              <span class="hora">{{ reserva.voo.data | date:'HH:mm' }}</span>
               <span>{{ reserva.voo.aeroporto_origem.cidade }} ({{ reserva.voo.aeroporto_origem.codigo }})</span>
             </div>
 
@@ -80,7 +84,7 @@
 
             <div class="aeroporto destino">
               <span class="hora">
-                {{ calcularHoraChegada(reserva.data, 1, 30) }}
+                {{ calcularHoraChegada(reserva.voo.data, 1, 30) }}
               </span>
               <span>{{ reserva.voo.aeroporto_destino.cidade }} ({{ reserva.voo.aeroporto_destino.codigo }})</span>
             </div>

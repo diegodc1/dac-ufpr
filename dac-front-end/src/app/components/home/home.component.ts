@@ -60,21 +60,23 @@ export class HomeComponent implements OnInit {
         this.saldoMilhas = dados.saldoMilhas;
         this.voos = dados.voos;
 
-        this.reservas = dados.reservas.map((reserva: any) => {
-          const data = new Date(reserva.data);
-          return {
-            ...reserva,
-            dataFormatada: data.toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false
-            })
-          };
-        });
+        this.reservas = dados.reservas
+          .map((reserva: any) => {
+            const data = new Date(reserva.data);
+            return {
+              ...reserva,
+              dataFormatada: data.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+              })
+            };
+          })
+          .sort((a: any, b: any) => new Date(a.voo.data).getTime() - new Date(b.voo.data).getTime());
         this.reservasFiltradas = this.reservas;
       },
       error: (err) => console.error('Erro ao carregar tela inicial:', err),
