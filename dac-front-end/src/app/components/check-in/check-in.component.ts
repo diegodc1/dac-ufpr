@@ -25,7 +25,7 @@ export class CheckInComponent implements OnInit {
 
 
 
-  constructor( private reservaService: ReservaService, private datePipe: DatePipe, private loginService: LoginService){}
+  constructor( private reservaService: ReservaService, private datePipe: DatePipe, private loginService: LoginService, private router: Router){}
 
   ngOnInit(): void {
          this.loadReservationsForCheckin();
@@ -33,13 +33,13 @@ export class CheckInComponent implements OnInit {
   get usuarioLogado(): Usuario | null {
       return this.loginService.usuarioLogado;
     }
-  
+
 
   loadReservationsForCheckin(){
     this.isLoading = true;
     this.errorMessage = null;
- 
-    const clienteId = this.usuarioLogado?.userId
+
+    const clienteId = localStorage.getItem('user_codigo');
      if (!clienteId) {
       this.errorMessage = 'Erro: Código do cliente não encontrado. Por favor, faça login novamente.';
       this.isLoading = false;
@@ -64,19 +64,20 @@ export class CheckInComponent implements OnInit {
             return false;
           }
 
-         
-            const flightDepartureDateTime = new Date(reserva.voo.data);
-            const isUpcomingAndWithin48Hours =
-            flightDepartureDateTime > now &&
-            flightDepartureDateTime <= forttEightHouresLater;
-          const isReservationEligible = reserva.estado.descricaoEstado === 'CRIADA';
+
+              const flightDepartureDateTime = new Date(reserva.voo.data);
+              const isUpcomingAndWithin48Hours =
+              flightDepartureDateTime > now &&
+              flightDepartureDateTime <= forttEightHouresLater;
+              console.log(reserva)
+            const isReservationEligible = reserva.estado === "CRIADA" || reserva.estado === "CONFIRMADO" ;
 
 
           console.log(`--- Análise Reserva ${reserva.codigo} (Voo ${reserva.voo.codigo}) ---`);
           console.log('  Data/Hora do Voo (Backend String):', reserva.voo.data);
           console.log('  Convertido para Date (Frontend):', flightDepartureDateTime.toLocaleString('pt-BR', { timeZoneName: 'short' }));
           console.log('  Está no futuro e dentro das 48h?', isUpcomingAndWithin48Hours);
-          console.log('  Estado da Reserva:', reserva.estado.descricaoEstado, 'É elegível (CRIADA)?', isReservationEligible);
+          console.log('  Estado da Reserva:', reserva.estado, 'É elegível (CRIADA)?', isReservationEligible);
           console.log('  Resultado da Filtragem para esta Reserva:', isUpcomingAndWithin48Hours && isReservationEligible);
           return isUpcomingAndWithin48Hours && isReservationEligible;
         });
@@ -84,7 +85,7 @@ export class CheckInComponent implements OnInit {
           console.log('Nenhum voo disponível para check-in nas próximas 48 horas após a filtragem.');
           this.errorMessage = 'Não há voos disponíveis para check-in no momento.';
         } else {
-          this.errorMessage = null; 
+          this.errorMessage = null;
         }
            this.isLoading = false;
       },error:(err) =>{
@@ -97,16 +98,16 @@ export class CheckInComponent implements OnInit {
 
   realizarCheckin(reserva : BackendReservationWithFlight){
     const novoEstado = 'CHECK-IN';
-    
+
 
       this.reservaService.updateReservationStatusOnBackend(reserva.codigo, novoEstado).subscribe({
         next:(response)=> {
         console.log('Check-in realizado com sucesso!', response);
             const confirmacao = confirm(`Check-in para o voo ${reserva.voo.codigo} da reserva ${reserva.codigo} realizado com sucesso!\n\nDeseja ir para a tela inicial?`);
         if (confirmacao) {
-       //  this.router.navigate(['/home']); 
+        this.router.navigate(['/home']);
         } else {
-          this.loadReservationsForCheckin(); 
+          this.loadReservationsForCheckin();
         }        }, error: (err) =>{
           console.error('Erro ao realizar check-in: ', err)
           this.errorMessage = `Falha ao realizar check-in para a reserva ${reserva.codigo}. Erro: ${err.message}`;

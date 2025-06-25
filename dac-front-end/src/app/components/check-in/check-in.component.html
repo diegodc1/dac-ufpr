@@ -36,14 +36,14 @@
                <div style="align-items: center; text-align: center;margin-bottom: 8px;">
                     <h3 class="timeTxt">2hr 25min</h3>
                     <div class="duration">
-                    <div class="line"></div>    
+                    <div class="line"></div>
                         <img class="planeImge" src="../../../assets/images/Plane.png"/>
-                        <div class="line"></div>    
+                        <div class="line"></div>
                     </div>
-                 </div> 
+                 </div>
                 <div class="location">
                     <div class="time"> {{ reservation.voo.data | date:'HH:mm' }}</div>
-                    <div class="goIn">  {{ reservation.voo.aeroporto_destino?.cidade }}, {{ reservation.voo.aeroporto_destino?.uf }}</div>
+                    <div class="goIn">  {{ reservation.voo.aeroporto_destino?.cidade }}, {{ reservation.voo.aeroporto_destino?.codigo }}</div>
                 </div>
                 </div>
             </div>

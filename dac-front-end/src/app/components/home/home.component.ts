@@ -129,7 +129,7 @@ export class HomeComponent implements OnInit {
       case 'RESERVADO':
         return 'RESERVADO';
       case 'CHECK-IN':
-        return 'REALIZADO';
+        return 'CHECK-IN';
       case 'CANCELADO':
         return 'CANCELADO';
       default:

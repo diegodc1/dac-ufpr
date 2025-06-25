@@ -49,7 +49,7 @@ export interface BackendReservationWithFlight {
   quantidadePoltronas: number;
   codigoVoo: string;
   data: string;
-  estado: BackendReservationStatus;
+  estado: string;
   voo: BackendFlightDetails;
 }
 
@@ -222,6 +222,7 @@ private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
 
     return this.http.get<BackendReservationWithFlight[]>(url, { headers, observe: 'response' }).pipe(
       map(response => {
+        console.log(response)
         if (response.status === 204 || response.body === null || response.body === undefined) {
           console.warn('ReservaService: Resposta 204 No Content ou corpo vazio recebido. Retornando array vazio.');
           return [];

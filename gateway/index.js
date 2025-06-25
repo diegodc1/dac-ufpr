@@ -493,8 +493,11 @@ app.get('/clientes/:codigoCliente/reservas', validateTokenProxy, async (req, res
                 };
             }
         }));
+        if (!reservasComVoos || reservasComVoos.length === 0) {
+            return res.status(204).send(); // sem conteúdo
+        }
 
-        return res.status(204).json(reservasComVoos);
+        return res.status(200).json(reservasComVoos);
 
     } catch (err) {
         console.error('Erro ao compor reservas com voos:', err.message);
