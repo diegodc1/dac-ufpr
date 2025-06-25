@@ -253,4 +253,16 @@ private API_URL_CLIENTES = `${this.API_GATEWAY_URL}/clientes`;
       catchError(this.handleError)
     );
   }
+
+  getReservaByCodigoBackend(codigoReserva: string): Observable<BackendReservationWithFlight> {
+    const headers = this.getAuthHeaders();
+    if (!headers) {
+      return throwError(() => new Error('Não foi possível obter cabeçalhos de autenticação.'));
+    }
+    const url = `${this.API_URL_RESERVAS}/${codigoReserva}`;
+    console.log(`ReservaService (Backend): Buscando reserva pelo código ${codigoReserva} na URL: ${url}`);
+    return this.http.get<BackendReservationWithFlight>(url, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
 }
